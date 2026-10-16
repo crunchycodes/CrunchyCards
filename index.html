@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUNCHYCARDS - Dynamic JSON Casino Lounge</title>
+    <title>CRUNCHYCARDS - Casino Lobby</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,6 +13,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
+    <!-- Top Navigation Bar -->
     <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-lg shadow-amber-500/10">
@@ -20,7 +21,83 @@
             </div>
             <div>
                 <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
-                <p class="text-xs text-slate-400 font-medium">Dynamic JSON Casino Lounge</p>
+                <p class="text-xs text-slate-400 font-medium">Casino Game Lobby</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="bg-slate-950/80 border border-amber-500/30 px-5 py-2 rounded-2xl flex items-center space-x-3 shadow-inner">
+                <div class="text-amber-400 font-bold"><i class="fa-solid fa-coins"></i></div>
+                <div>
+                    <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-widest">Bankroll</span>
+                    <span id="bankroll-display" class="text-base font-black text-amber-300">1,000 pts</span>
+                </div>
+            </div>
+            <button onclick="claimFreeChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-lg flex items-center space-x-2 cursor-pointer active:scale-95">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Free Chips</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content / Lobby -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 sm:p-8 flex flex-col space-y-8">
+        
+        <!-- Welcome Banner -->
+        <div class="relative bg-gradient-to-r from-slate-900 via-amber-950/30 to-slate-900 border border-amber-500/30 p-8 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="space-y-2 text-center md:text-left z-10">
+                <div class="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-widest">
+                    <i class="fa-solid fa-star text-[10px]"></i>
+                    <span>Welcome to the Floor</span>
+                </div>
+                <h2 class="text-3xl font-extrabold tracking-tight text-white">Select Your Game</h2>
+                <p class="text-sm text-slate-400 max-w-xl">Choose from our selection of casino favorites below. Your points carry over across all tables!</p>
+            </div>
+            <div class="z-10 flex items-center space-x-3 bg-slate-950/60 border border-slate-800 px-4 py-3 rounded-2xl">
+                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-semibold text-slate-300">7 Games Available</span>
+            </div>
+        </div>
+
+        <!-- Games Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Blackjack -->
+            <a href="https://crunchycodes.github.io/CrunchyCards/blackjack/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between hover:-translate-y-1">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
+                            <i class="fa-solid fa-spade"></i>
+                        </div>
+                        <span class="bg-emerald-500/10 border border-emerald-500/Here is the updated **HTML file for your CrunchyCards homepage**. 
+
+It keeps your exact top navigation bar (with bankroll tracking and "Free Chips" logic intact) while completely reworking the main content area into a sleek, casino-style lobby grid. Each card links directly to its respective game URL and displays badges indicating whether a game is **Fully Functioning**.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCHYCARDS - Casino Lounge</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <style>
+        @import url('[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap)');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Top Navigation Bar (Preserved) -->
+    <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
+                <p class="text-xs text-slate-400 font-medium">Casino Lounge</p>
             </div>
         </div>
         <div class="flex items-center space-x-4">
@@ -38,33 +115,173 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col space-y-6">
-        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center space-x-3 w-full sm:w-auto">
-                <i class="fa-solid fa-gamepad text-amber-400 text-lg"></i>
-                <label for="game-selector" class="text-xs font-bold uppercase tracking-wider text-slate-300">Select Game JSON:</label>
-            </div>
-            <select id="game-selector" onchange="loadSelectedGame(this.value)" class="bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 w-full sm:w-72 cursor-pointer font-medium">
-                <option value="">-- Select a Game from CrunchyCards --</option>
-            </select>
-            <div class="text-xs text-slate-400 flex items-center space-x-2">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="games-status-text">Connected: Loading games...</span>
-            </div>
+    <!-- Main Casino Game Directory -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col space-y-8">
+        
+        <!-- Hero Welcome Header -->
+        <div class="text-center space-y-2 py-4">
+            <h2 class="text-3xl font-black tracking-wide text-amber-400">Select Your Game</h2>
+            <p class="text-sm text-slate-400 max-w-md mx-auto">Choose a game below to get started. Your bankroll carries over across all CrunchyCards games!</p>
         </div>
 
-        <div id="game-container" class="flex-1 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden">
-            <div class="text-center space-y-3">
-                <div class="w-16 h-16 bg-slate-800/80 border border-slate-700 rounded-2xl flex items-center justify-center text-slate-500 text-2xl mx-auto">
-                    <i class="fa-solid fa-dice"></i>
+        <!-- Games Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Poker -->
+            <a href="[https://crunchycodes.github.io/CrunchyCards/poker/](https://crunchycodes.github.io/CrunchyCards/poker/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-spade"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Poker</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Test your skill, strategy, and bluffing ability in Texas Hold'em style poker.</p>
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold text-slate-300">No Game Selected</h3>
-                <p class="text-xs text-slate-500 max-w-sm">Choose a game from the selector above to load its immersive JSON layout and rules.</p>
-            </div>
+                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Roulette -->
+            <a href="[https://crunchycodes.github.io/CrunchyCards/roulette/](https://crunchycodes.github.io/CrunchyCards/roulette/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-circle-notch"></i>
+                        </div>
+                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Fully Functioning
+                        </span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Roulette</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Spin the wheel and place your bets on red, black, odds, or individual numbers.</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Blackjack -->
+            <a href="[https://crunchycodes.github.io/CrunchyCards/blackjack/](https://crunchycodes.github.io/CrunchyCards/blackjack/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-clone"></i>
+                        </div>
+                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Fully Functioning
+                        </span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Blackjack</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Beat the dealer by getting as close to 21 as possible without going over.</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Solitaire -->
+            <a href="[https://crunchycodes.github.io/CrunchyCards/solitaire/](https://crunchycodes.github.io/CrunchyCards/solitaire/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Fully Functioning
+                        </span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Solitaire</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Classic card sorting challenge adapted for high stakes casino gameplay.</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Racing -->
+            <a href="[https://crunchycodes.github.io/CrunchyCards/racing/](https://crunchycodes.github.io/CrunchyCards/racing/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Racing</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Pick your runners and place wagers on high-speed track events.</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Cho-Han -->
+            <a href="[https://crunchycodes.github.io/CrunchyCards/cho-han/](https://crunchycodes.github.io/CrunchyCards/cho-han/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-dice"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Cho-Han (丁半)</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Lay stakes and bet on whether the total sum of two upturned dice faces will be even (Cho) or odd (Han).</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+
+            <!-- Minesweeper -->
+            <a href="[https://crunchycodes.github.io/CrunchyCards/minesweeper/](https://crunchycodes.github.io/CrunchyCards/minesweeper/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                            <i class="fa-solid fa-land-mine-on"></i>
+                        </div>
+                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Fully Functioning
+                        </span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Minesweeper</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Clear a grid of hidden tiles without clicking on any hidden mines to win the prize.</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+
         </div>
     </main>
 
+    <!-- Global Bankroll Script -->
     <script>
+        // Shared bankroll logic using localStorage key 'crunchycards_bankroll'
         const savedBankroll = localStorage.getItem('crunchycards_bankroll');
         const initialPoints = savedBankroll !== null ? parseInt(savedBankroll, 10) : 1000;
 
@@ -77,133 +294,14 @@
             const el = document.getElementById('bankroll-display');
             if (el) el.innerText = state.points.toLocaleString() + ' pts';
         }
-        updatePointsDisplay();
 
         function claimFreeChips() {
             state.points += 500;
             updatePointsDisplay();
         }
 
-        const availableGames = [
-            { id: 'chohan', name: 'Cho-Han (丁半)', file: 'games/chohan.json' },
-            { id: 'holdem', name: "Heads-Up Texas Hold'em", file: 'games/holdem.json' },
-            { id: 'solitaire', name: 'Solitaire High Stakes', file: 'games/solitaire.json' },
-            { id: 'ceelo', name: 'Cee-Lo Street Dice', file: 'games/ceelo.json' }
-        ];
-
-        function initApp() {
-            const selector = document.getElementById('game-selector');
-            selector.innerHTML = '<option value="">-- Select a Game from CrunchyCards --</option>';
-            availableGames.forEach(g => {
-                const opt = document.createElement('option');
-                opt.value = g.id;
-                opt.innerText = g.name;
-                selector.appendChild(opt);
-            });
-            document.getElementById('games-status-text').innerText = 'Connected: ' + availableGames.length + ' games available';
-        }
-
-        async function loadSelectedGame(gameId) {
-            if (!gameId) {
-                document.getElementById('game-container').innerHTML = `
-                    <div class="text-center space-y-3">
-                        <div class="w-16 h-16 bg-slate-800/80 border border-slate-700 rounded-2xl flex items-center justify-center text-slate-500 text-2xl mx-auto">
-                            <i class="fa-solid fa-dice"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-300">No Game Selected</h3>
-                        <p class="text-xs text-slate-500 max-w-sm">Choose a game from the selector above to load its immersive JSON layout and rules.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const gameObj = availableGames.find(g => g.id === gameId);
-            if (!gameObj) return;
-
-            try {
-                const res = await fetch(gameObj.file);
-                if (!res.ok) throw new Error('Failed to load definition');
-                const data = await res.json();
-                renderGame(data);
-            } catch (err) {
-                // Fallback direct embedded definitions for local demo reliability
-                if (gameId === 'ceelo') {
-                    renderGame(ceeloDef);
-                } else if (gameId === 'chohan') {
-                    renderGame(chohanDef);
-                } else if (gameId === 'holdem') {
-                    renderGame(holdemDef);
-                } else if (gameId === 'solitaire') {
-                    renderGame(solitaireDef);
-                } else {
-                    document.getElementById('game-container').innerHTML = '<div class="text-red-400 font-bold">Error loading game definition.</div>';
-                }
-            }
-        }
-
-        function renderGame(def) {
-            const container = document.getElementById('game-container');
-            let actionsHtml = '';
-            if (def.actions && def.actions.length > 0) {
-                actionsHtml = '<div class="flex flex-wrap gap-3 w-full max-w-xl justify-center mt-4">';
-                def.actions.forEach(act => {
-                    actionsHtml += `<button id="${act.id}" ${act.disabled ? 'disabled' : ''} onclick="executeGameAction('${act.id}')" class="${act.class || 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 px-6 rounded-2xl shadow-xl transition transform active:scale-95 cursor-pointer'}">${act.label}</button>`;
-                });
-                actionsHtml += '</div>';
-            }
-
-            container.innerHTML = `
-                <div class="w-full flex flex-col items-center">
-                    <div class="mb-4 text-center">
-                        <h2 class="text-xl font-black text-amber-300 tracking-wide">${def.title}</h2>
-                        <p class="text-xs text-slate-400 mt-1">${def.description}</p>
-                    </div>
-                    ${def.htmlLayout}
-                    ${actionsHtml}
-                </div>
-            `;
-
-            if (def.initScript) {
-                try {
-                    const fn = new Function(def.initScript);
-                    fn();
-                } catch(e) { console.error(e); }
-            }
-        }
-
-        window.executeGameAction = function(actionId) {
-            const currentSelected = document.getElementById('game-selector').value;
-            let handlers = {};
-            if (currentSelected === 'ceelo' && typeof ceeloDef !== 'undefined') handlers = ceeloDef.actionHandlers;
-            else if (currentSelected === 'chohan' && typeof chohanDef !== 'undefined') handlers = chohanDef.actionHandlers;
-            else if (currentSelected === 'holdem' && typeof holdemDef !== 'undefined') handlers = holdemDef.actionHandlers;
-            else if (currentSelected === 'solitaire' && typeof solitaireDef !== 'undefined') handlers = solitaireDef.actionHandlers;
-
-            if (handlers && handlers[actionId]) {
-                try {
-                    const fn = new Function(handlers[actionId]);
-                    fn();
-                } catch(e) { console.error(e); }
-            }
-        };
-
-        // Embedded fallbacks for immediate offline/static preview support
-        const ceeloDef = {
-          "id": "ceelo",
-          "title": "Cee-Lo Street Dice",
-          "description": "Roll three dice. Score an automatic win with 4-5-6, an automatic loss with 1-2-3, or establish a point with a pair.",
-          "minBet": 20,
-          "htmlLayout": "<div class=\"flex flex-col items-center justify-center space-y-6 max-w-xl mx-auto w-full py-4\"><div class=\"relative bg-slate-950/80 border-2 border-amber-600/40 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center justify-center w-full overflow-hidden\"><div class=\"absolute inset-0 bg-gradient-to-b from-emerald-950/40 to-slate-950 pointer-events-none\"></div><div class=\"relative z-10 flex items-center justify-between w-full mb-6 bg-slate-900/90 px-5 py-3 rounded-2xl border border-slate-800\"><div><span class=\"text-xs text-slate-400 block uppercase font-semibold\">Cee-Lo Status</span><span id=\"cl-status\" class=\"text-sm font-bold text-amber-300\">Select a stake and roll the dice!</span></div><div class=\"bg-amber-500/10 border border-amber-500/30 px-4 py-1.5 rounded-xl text-center\"><span class=\"text-xs text-amber-400 font-semibold uppercase\">Payout: </span><span id=\"cl-payout-preview\" class=\"text-sm font-black text-amber-300\">100 pts</span></div></div><div class=\"relative z-10 flex flex-col items-center justify-center w-full my-4\"><span class=\"text-xs text-amber-400 font-bold uppercase tracking-wider mb-3\">Dice Roll</span><div id=\"cl-dice-container\" class=\"flex space-x-3 sm:space-x-4 min-h-[5rem] items-center justify-center\"><div class=\"w-14 h-14 bg-slate-900 text-amber-400 rounded-2xl border-2 border-amber-500/40 flex items-center justify-center text-xl font-black shadow-lg\">🎲</div><div class=\"w-14 h-14 bg-slate-900 text-amber-400 rounded-2xl border-2 border-amber-500/40 flex items-center justify-center text-xl font-black shadow-lg\">🎲</div><div class=\"w-14 h-14 bg-slate-900 text-amber-400 rounded-2xl border-2 border-amber-500/40 flex items-center justify-center text-xl font-black shadow-lg\">🎲</div></div></div><div class=\"relative z-10 w-full mt-4 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex flex-col space-y-3\"><div class=\"flex justify-between items-center text-xs text-slate-400 font-bold uppercase\"><span>Select Stake Amount:</span><span id=\"cl-stake-display\" class=\"text-amber-300 text-sm font-black\">50 pts</span></div><div class=\"grid grid-cols-4 gap-2\"><button onclick=\"window.setCeeLoStake(20)\" id=\"cl-bet-20\" class=\"bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer\">20 pts</button><button onclick=\"window.setCeeLoStake(50)\" id=\"cl-bet-50\" class=\"bg-amber-500 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow cursor-pointer\">50 pts</button><button onclick=\"window.setCeeLoStake(100)\" id=\"cl-bet-100\" class=\"bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer\">100 pts</button><button onclick=\"window.setCeeLoStake(250)\" id=\"cl-bet-250\" class=\"bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer\">250 pts</button></div></div></div></div>",
-          "actions": [{ "id": "cl-roll", "label": "Roll Dice (Stake)", "class": "bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl transition transform active:scale-95 cursor-pointer flex-1" }],
-          "initScript": "window.clGame = window.clGame || { stake: 50, rolling: false }; window.setCeeLoStake = function(amt) { if (window.clGame.rolling) return; window.clGame.stake = amt; document.getElementById('cl-stake-display').innerText = amt + ' pts'; document.getElementById('cl-payout-preview').innerText = (amt * 2) + ' pts'; document.querySelectorAll('[id^=\"cl-bet-\"]').forEach(b => b.className = 'bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer'); const activeBtn = document.getElementById('cl-bet-' + amt); if (activeBtn) activeBtn.className = 'bg-amber-500 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow cursor-pointer'; }; window.setCeeLoStake(50);",
-          "actionHandlers": {
-            "cl-roll": "if (window.clGame.rolling) return; const stake = window.clGame.stake; if (state.points < stake) { document.getElementById('cl-status').innerText = 'Insufficient points for this stake!'; return; } window.clGame.rolling = true; state.points -= stake; updatePointsDisplay(); const statusEl = document.getElementById('cl-status'); const container = document.getElementById('cl-dice-container'); statusEl.innerText = 'Rolling the dice... 🎲'; container.classList.add('animate-pulse'); setTimeout(() => { container.classList.remove('animate-pulse'); const d1 = Math.floor(Math.random() * 6) + 1; const d2 = Math.floor(Math.random() * 6) + 1; const d3 = Math.floor(Math.random() * 6) + 1; const roll = [d1, d2, d3].sort((a, b) => a - b); container.innerHTML = roll.map(d => '<div class=\"w-14 h-14 bg-slate-900 text-amber-300 rounded-2xl border-2 border-amber-500/60 flex items-center justify-center text-xl font-black shadow-lg\">' + d + '</div>').join(''); let outcome = ''; let won = false; let multiplier = 0; if (roll[0] === 4 && roll[1] === 5 && roll[2] === 6) { outcome = 'Automatic WIN! Rolled 4-5-6'; won = true; multiplier = 3; } else if (roll[0] === 1 && roll[1] === 2 && roll[2] === 3) { outcome = 'Automatic LOSS! Rolled 1-2-3'; won = false; } else if (roll[0] === roll[1] && roll[1] === roll[2]) { outcome = 'Triples!'; won = true; multiplier = 2; } else if (roll[0] === roll[1]) { outcome = 'Point score: ' + roll[2]; if (roll[2] >= 4) { won = true; multiplier = 1.5; } } else if (roll[1] === roll[2]) { outcome = 'Point score: ' + roll[0]; if (roll[0] >= 4) { won = true; multiplier = 1.5; } } else { outcome = 'No score'; won = false; } if (won) { const winnings = Math.floor(stake * multiplier); state.points += winnings; statusEl.innerHTML = '<span class=\"text-emerald-400 font-extrabold\">' + outcome + '! Won ' + winnings + ' pts</span>'; } else { statusEl.innerHTML = '<span class=\"text-red-400 font-extrabold\">' + outcome + '. House takes stake.</span>'; } updatePointsDisplay(); window.clGame.rolling = false; }, 1000);"
-          }
-        };
-
-        window.onload = function() {
-            initApp();
-        };
+        // Initialize display on load
+        updatePointsDisplay();
     </script>
 </body>
 </html>

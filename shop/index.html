@@ -54,13 +54,13 @@
     </header>
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
-        
+
         <!-- Welcome Banner -->
         <div class="mb-10 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 border border-slate-800 rounded-3xl p-8 relative overflow-hidden shadow-2xl">
             <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
             <div class="mb-6 sm:mb-0 z-10">
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">Customization Emporium</h1>
-                <p class="text-slate-400 max-w-xl text-sm sm:text-base">Upgrade your table aesthetics! Select your favorite dice and card skins sourced directly from GitHub. Your choices sync globally across all Crunchycards games instantly.</p>
+                <p class="text-slate-400 max-w-xl text-sm sm:text-base">Upgrade your table aesthetics! Select your favorite dice, card skins, and horse companions sourced directly from GitHub. Your choices sync globally across all Crunchycards games instantly.</p>
             </div>
             <div class="z-10 flex flex-wrap gap-3">
                 <button onclick="addBonusPoints()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-3 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center space-x-2 text-sm cursor-pointer">
@@ -94,7 +94,7 @@
         </section>
 
         <!-- Section 2: Card Deck Styles -->
-        <section class="mb-10">
+        <section class="mb-14">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
@@ -110,24 +110,43 @@
             </div>
         </section>
 
+        <!-- Section 3: Horse Styles -->
+        <section class="mb-10">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
+                        <i class="fa-solid fa-horse text-amber-500"></i>
+                        <span>Horse Companions</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm">Choose your trusty steed style! Standard horses are free, while My Hero legendary steeds are available for 300 pts.</p>
+                </div>
+            </div>
+
+            <div id="horsesGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
     </main>
 
     <footer class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 CRUNCHYCARDS Casino. All styles sync automatically to localStorage (`crunchycards_bankroll`, `crunchycards_selected_dice`, `crunchycards_selected_cards`).</p>
+        <p>&copy; 2026 CRUNCHYCARDS Casino. All styles sync automatically to localStorage (`crunchycards_bankroll`, `crunchycards_selected_dice`, `crunchycards_selected_cards`, `crunchycards_selected_horses`).</p>
     </footer>
 
     <script>
         const BANKROLL_KEY = 'crunchycards_bankroll';
         const DICE_SELECTION_KEY = 'crunchycards_selected_dice';
         const CARDS_SELECTION_KEY = 'crunchycards_selected_cards';
+        const HORSES_SELECTION_KEY = 'crunchycards_selected_horses';
         const UNLOCKED_DICE_KEY = 'crunchycards_owned_dice';
         const UNLOCKED_CARDS_KEY = 'crunchycards_owned_cards';
+        const UNLOCKED_HORSES_KEY = 'crunchycards_owned_horses';
 
         const diceCatalog = [
             {
                 id: 'standard',
                 name: 'Standard White Dice',
-                description: 'Classic high-contrast dotted casino dice from the repository standard folder.',
+                description: 'Classic high-contrast dotted casino dice.',
                 price: 0,
                 previewImages: [
                     'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/standard/1.png',
@@ -142,7 +161,7 @@
             {
                 id: 'eggplant',
                 name: 'Eggplant Royal Dice',
-                description: 'Exotic purple dice fetched directly from Crunchycards eggplant assets folder.',
+                description: 'Exotic purple dice.',
                 price: 100,
                 previewImages: [
                     'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/eggplant/1.png',
@@ -160,7 +179,7 @@
             {
                 id: 'standard',
                 name: 'Standard Card Set',
-                description: 'Traditional standard card illustrations from the repository cards/standard directory including suit subfolders and jokers.',
+                description: 'Traditional standard card illustrations.',
                 price: 0,
                 badge: 'Default',
                 folderPath: 'standard',
@@ -170,13 +189,13 @@
                     { name: 'King of Hearts', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/hearts/k.png' },
                     { name: 'Queen of Diamonds', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/diamonds/q.png' },
                     { name: 'Jack of Clubs', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/clubs/j.png' },
-                    { name: 'Red Joker', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/r.png' }
+                    { name: 'Red Joker', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/joker/r.png' }
                 ]
             },
             {
                 id: 'alice',
-                name: 'Alice Wonderland Cards',
-                description: 'Whimsical Alice themed card illustrations from the repository cards/alice directory across all 4 suits and jokers.',
+                name: 'Alice',
+                description: 'Whimsical Alice themed card illustrations.',
                 price: 150,
                 badge: 'Themed Deck',
                 folderPath: 'alice',
@@ -186,7 +205,34 @@
                     { name: 'King of Hearts', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/hearts/k.png' },
                     { name: 'Queen of Diamonds', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/diamonds/q.png' },
                     { name: 'Jack of Clubs', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/clubs/j.png' },
-                    { name: 'Red Joker', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/r.png' }
+                    { name: 'Red Joker', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/joker/r.png' }
+                ]
+            }
+        ];
+
+        const horsesCatalog = [
+            {
+                id: 'standard',
+                name: 'Standard Horses',
+                description: 'Reliable classic horses.',
+                price: 0,
+                badge: 'Default',
+                previewItems: [
+                    { name: 'Thunder Hoof', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/standard/1.png' },
+                    { name: 'Golden Galop', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/standard/2.png' },
+                    { name: 'Midnight Runner', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/standard/3.png' }
+                ]
+            },
+            {
+                id: 'myhero',
+                name: 'My Hero Horses',
+                description: 'Legendary hero horses.',
+                price: 300,
+                badge: 'Legendary',
+                previewItems: [
+                    { name: 'Deku', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/1.png' },
+                    { name: 'Shoto', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/2.png' },
+                    { name: 'Great Explosion Murder God Dynamight', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/3.png' }
                 ]
             }
         ];
@@ -225,6 +271,16 @@
             showToast('Card deck style updated globally!');
         }
 
+        function getSelectedHorses() {
+            return localStorage.getItem(HORSES_SELECTION_KEY) || 'standard';
+        }
+
+        function setSelectedHorses(id) {
+            localStorage.setItem(HORSES_SELECTION_KEY, id);
+            renderShop();
+            showToast('Horse style updated globally!');
+        }
+
         function getUnlockedDice() {
             const stored = localStorage.getItem(UNLOCKED_DICE_KEY);
             return stored ? JSON.parse(stored) : ['standard'];
@@ -248,6 +304,19 @@
             if (!unlocked.includes(id)) {
                 unlocked.push(id);
                 localStorage.setItem(UNLOCKED_CARDS_KEY, JSON.stringify(unlocked));
+            }
+        }
+
+        function getUnlockedHorses() {
+            const stored = localStorage.getItem(UNLOCKED_HORSES_KEY);
+            return stored ? JSON.parse(stored) : ['standard'];
+        }
+
+        function unlockHorses(id) {
+            const unlocked = getUnlockedHorses();
+            if (!unlocked.includes(id)) {
+                unlocked.push(id);
+                localStorage.setItem(UNLOCKED_HORSES_KEY, JSON.stringify(unlocked));
             }
         }
 
@@ -322,14 +391,32 @@
             }
         }
 
+        function handleHorsesAction(id, price) {
+            const unlocked = getUnlockedHorses();
+            const currentBankroll = getBankroll();
+
+            if (unlocked.includes(id)) {
+                setSelectedHorses(id);
+            } else {
+                if (currentBankroll >= price) {
+                    setBankroll(currentBankroll - price);
+                    unlockHorses(id);
+                    setSelectedHorses(id);
+                    showToast(`Successfully purchased and equipped ${id} horses!`);
+                } else {
+                    showToast('Insufficient points in your bankroll!', true);
+                }
+            }
+        }
+
         function renderShop() {
             updateBankrollDisplay();
-            
+
             // Dice Grid
             const selectedDice = getSelectedDice();
             const unlockedDice = getUnlockedDice();
             const diceContainer = document.getElementById('diceGrid');
-            
+
             if (diceContainer) {
                 diceContainer.innerHTML = diceCatalog.map(item => {
                     const isUnlocked = unlockedDice.includes(item.id);
@@ -410,6 +497,53 @@
                                     <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Card Asset Previews (Back & Suits)</div>
                                     <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                         ${cardPreviewsHtml}
+                                    </div>
+                                </div>
+                            </div>
+                            <div>${actionButton}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Horses Grid
+            const selectedHorses = getSelectedHorses();
+            const unlockedHorses = getUnlockedHorses();
+            const horsesContainer = document.getElementById('horsesGrid');
+
+            if (horsesContainer) {
+                horsesContainer.innerHTML = horsesCatalog.map(item => {
+                    const isUnlocked = unlockedHorses.includes(item.id);
+                    const isSelected = selectedHorses === item.id;
+
+                    let actionButton = '';
+                    if (isSelected) {
+                        actionButton = `<button disabled class="w-full bg-amber-500/20 border border-amber-500/50 text-amber-400 font-bold py-3 px-4 rounded-xl cursor-default flex items-center justify-center space-x-2"><i class="fa-solid fa-check"></i><span>Currently Equipped</span></button>`;
+                    } else if (isUnlocked) {
+                        actionButton = `<button onclick="handleHorsesAction('${item.id}', ${item.price})" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 font-bold py-3 px-4 rounded-xl transition shadow cursor-pointer">Equip Horses</button>`;
+                    } else {
+                        actionButton = `<button onclick="handleHorsesAction('${item.id}', ${item.price})" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold py-3 px-4 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer"><span>Unlock for ${item.price} pts</span></button>`;
+                    }
+
+                    const horsePreviewsHtml = item.previewItems.map(horse => `
+                        <div class="text-center">
+                            <div class="h-32 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden mb-1 p-2">
+                                <img src="${horse.url}" alt="${horse.name}" class="max-h-full object-contain filter drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/100x120/1e293b/f59e0b?text=Horse';">
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-medium truncate block">${horse.name}</span>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div class="bg-slate-900 border ${isSelected ? 'border-amber-500 gold-glow' : 'border-slate-800'} rounded-3xl p-6 flex flex-col justify-between transition card-glow relative overflow-hidden">
+                            <span class="absolute top-4 right-4 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold px-3 py-1 rounded-full">${item.badge}</span>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">${item.name}</h3>
+                                <p class="text-slate-400 text-sm mb-6">${item.description}</p>
+                                <div class="mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Horse Companion Previews (1-3)</div>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        ${horsePreviewsHtml}
                                     </div>
                                 </div>
                             </div>
