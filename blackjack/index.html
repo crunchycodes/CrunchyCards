@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCHYCARDS - Classic Blackjack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+        }
+        .card-img {
+            object-fit: contain !important;
+            background-color: #0f172a;
+            border-radius: 0.75rem;
+        }
+        .blackjack-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: cardDeal 0.3s ease-out forwards;
+        }
+        @keyframes cardDeal {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <i class="fa-solid fa-diamond text-slate-950 text-xl font-bold"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">BLACKJACK</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">CRUNCHYCARDS Casino</span>
+                </div>
+            </div>
+
+            <!-- Bankroll & Navigation -->
+            <div class="flex items-center space-x-4">
+                <div class="bg-slate-950/80 border border-amber-500/40 rounded-2xl px-4 py-2 flex items-center space-x-3 shadow-inner">
+                    <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i class="fa-solid fa-coins text-xs"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Bankroll</div>
+                        <div id="bankrollDisplay" class="text-base font-bold text-amber-400">1,000 pts</div>
+                    </div>
+                </div>
+
+                <a href="../solitaire/" class="hidden sm:inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl font-medium text-sm transition border border-slate-700">
+                    <i class="fa-solid fa-clone"></i>
+                    <span>Solitaire Room</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Game Table Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden mb-8">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-6 pb-4 border-b border-slate-800 gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
+                        <span>Classic Blackjack 21</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Beat the dealer without going over 21. Blackjack pays 3:2!</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
+                        <span class="text-slate-400">Equipped Deck:</span>
+                        <span id="equippedDeckBadge" class="text-amber-400 font-bold uppercase">Standard Deck</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Notification Box -->
+            <div id="messageBox" class="hidden mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-2xl text-sm flex items-center space-x-3">
+                <i class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
+                <span id="messageText">Notification message here</span>
+            </div>
+
+            <!-- Betting Controls / Phase Banner -->
+            <div id="bettingSection" class="mb-8 bg-slate-950/80 border border-amber-500/40 rounded-2xl p-6 backdrop-blur flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+                <div>
+                    <h3 class="text-lg font-extrabold text-amber-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-coins"></i>
+                        <span>Place Your Bet</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs mt-1">Wager points from your bankroll to start a new round.</p>
+                </div>
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <div class="relative flex-grow sm:flex-grow-0">
+                        <input type="number" id="wagerInput" min="10" max="10000" value="50" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-amber-400 font-bold text-sm w-full sm:w-32 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <button onclick="dealNewGame()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-amber-500/20 cursor-pointer whitespace-nowrap">
+                        Deal Cards
+                    </button>
+                </div>
+            </div>
+
+            <!-- Blackjack Felt Table -->
+            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-3xl p-6 sm:p-8 mb-6 min-h-[460px] flex flex-col justify-between shadow-inner relative">
+                
+                <!-- Dealer Section -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase flex items-center space-x-2">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>Dealer Hand</span>
+                        </span>
+                        <span id="dealerScore" class="text-sm font-extrabold text-slate-300 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Score: -</span>
+                    </div>
+                    <div id="dealerCards" class="flex flex-wrap gap-3 min-h-[112px]">
+                        <div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>
+                    </div>
+                </div>
+
+                <!-- Table Divider & Pot Info -->
+                <div class="my-6 py-3 border-y border-emerald-900/40 flex items-center justify-between text-xs text-emerald-400/80 px-2">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Dealer stands on all 17s</span>
+                    </div>
+                    <div>Current Wager: <span id="wagerDisplay" class="text-amber-400 font-bold">0 pts</span></div>
+                </div>
+
+                <!-- Player Section -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-amber-400 tracking-wider uppercase flex items-center space-x-2">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Your Hand</span>
+                        </span>
+                        <span id="playerScore" class="text-sm font-extrabold text-amber-400 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Score: -</span>
+                    </div>
+                    <div id="playerCards" class="flex flex-wrap gap-3 min-h-[112px]">
+                        <div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- In-Game Action Buttons (Hit, Stand, Double) -->
+            <div id="actionControls" class="hidden flex items-center justify-center space-x-4">
+                <button onclick="playerHit()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Hit</span>
+                </button>
+                <button onclick="playerStand()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer border border-slate-700">
+                    <i class="fa-solid fa-hand"></i>
+                    <span>Stand</span>
+                </button>
+                <button id="doubleBtn" onclick="playerDouble()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer border border-amber-500/40">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Double Down</span>
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <header class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 CRUNCHYCARDS Casino. Fully synced with your bankroll and deck equipment.</p>
+    </header>
+
+    <script>
+        const BANKROLL_KEY = 'crunchycards_bankroll';
+        const CARDS_SELECTION_KEY = 'crunchycards_selected_cards';
+
+        let deck = [];
+        let playerHand = [];
+        let dealerHand = [];
+        let currentWager = 50;
+        let gameInProgress = false;
+
+        function getBankroll() {
+            const val = localStorage.getItem(BANKROLL_KEY);
+            if (val === null) {
+                localStorage.setItem(BANKROLL_KEY, '1000');
+                return 1000;
+            }
+            return parseInt(val, 10) || 0;
+        }
+
+        function setBankroll(amount) {
+            localStorage.setItem(BANKROLL_KEY, amount.toString());
+            updateBankrollDisplay();
+        }
+
+        function updateBankrollDisplay() {
+            const pts = getBankroll();
+            const el = document.getElementById('bankrollDisplay');
+            if (el) el.innerText = pts.toLocaleString() + ' pts';
+        }
+
+        function getEquippedDeckStyle() {
+            return localStorage.getItem(CARDS_SELECTION_KEY) || 'standard';
+        }
+
+        function updateDeckBadge() {
+            const style = getEquippedDeckStyle();
+            const badge = document.getElementById('equippedDeckBadge');
+            if (badge) {
+                badge.innerText = style === 'alice' ? 'Alice Wonderland' : 'Standard Deck';
+            }
+        }
+
+        function showMessage(msg) {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            if (!box || !text) return;
+            text.innerText = msg;
+            box.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            if (box) box.classList.add('hidden');
+        }
+
+        function getCardImageUrl(suit, rank) {
+            const style = getEquippedDeckStyle();
+            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/${suit}/${rank}.png`;
+        }
+
+        function getCardBackUrl() {
+            const style = getEquippedDeckStyle();
+            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/back.png`;
+        }
+
+        function createDeck() {
+            const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
+            const ranks = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
+            let newDeck = [];
+            for (let s of suits) {
+                for (let r of ranks) {
+                    newDeck.push({ suit: s, rank: r });
+                }
+            }
+            // Shuffle
+            for (let i = newDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
+            }
+            return newDeck;
+        }
+
+        function calculateHandScore(hand) {
+            let score = 0;
+            let aces = 0;
+            for (let card of hand) {
+                if (card.rank === 'a') {
+                    aces++;
+                    score += 11;
+                } else if (['j', 'q', 'k'].includes(card.rank)) {
+                    score += 10;
+                } else {
+                    score += parseInt(card.rank, 10);
+                }
+            }
+            while (score > 21 && aces > 0) {
+                score -= 10;
+                aces--;
+            }
+            return score;
+        }
+
+        function dealNewGame() {
+            const wagerInput = document.getElementById('wagerInput');
+            const wager = parseInt(wagerInput.value, 10);
+            const bank = getBankroll();
+
+            if (isNaN(wager) || wager <= 0) {
+                showMessage('Please enter a valid wager amount.');
+                return;
+            }
+            if (wager > bank) {
+                showMessage('You do not have enough points in your bankroll for this wager!');
+                return;
+            }
+
+            hideMessage();
+            currentWager = wager;
+            setBankroll(bank - currentWager);
+            document.getElementById('wagerDisplay').innerText = currentWager.toLocaleString() + ' pts';
+
+            deck = createDeck();
+            playerHand = [deck.pop(), deck.pop()];
+            dealerHand = [deck.pop(), deck.pop()];
+
+            gameInProgress = true;
+            document.getElementById('bettingSection').classList.add('hidden');
+            document.getElementById('actionControls').classList.remove('hidden');
+
+            // Enable double down if enough bankroll left
+            const doubleBtn = document.getElementById('doubleBtn');
+            if (getBankroll() >= currentWager) {
+                doubleBtn.disabled = false;
+                doubleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                doubleBtn.disabled = true;
+                doubleBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            renderTable(false);
+
+            // Check immediate blackjack
+            const playerScore = calculateHandScore(playerHand);
+            if (playerScore === 21) {
+                finishHand();
+            }
+        }
+
+        function playerHit() {
+            if (!gameInProgress) return;
+            playerHand.push(deck.pop());
+            renderTable(false);
+
+            const score = calculateHandScore(playerHand);
+            if (score > 21) {
+                endRound('Bust! Dealer wins.');
+            } else if (score === 21) {
+                playerStand();
+            }
+        }
+
+        function playerStand() {
+            if (!gameInProgress) return;
+            // Dealer draws until 17 or higher
+            while (calculateHandScore(dealerHand) < 17) {
+                dealerHand.push(deck.pop());
+            }
+            finishHand();
+        }
+
+        function playerDouble() {
+            if (!gameInProgress) return;
+            const bank = getBankroll();
+            if (bank < currentWager) {
+                showMessage('Not enough points to double down!');
+                return;
+            }
+            setBankroll(bank - currentWager);
+            currentWager *= 2;
+            document.getElementById('wagerDisplay').innerText = currentWager.toLocaleString() + ' pts';
+
+            playerHand.push(deck.pop());
+            renderTable(false);
+
+            const score = calculateHandScore(playerHand);
+            if (score > 21) {
+                endRound('Bust after Double Down! Dealer wins.');
+            } else {
+                playerStand();
+            }
+        }
+
+        function finishHand() {
+            gameInProgress = false;
+            renderTable(true);
+
+            const pScore = calculateHandScore(playerHand);
+            const dScore = calculateHandScore(dealerHand);
+
+            const pIsBJ = playerHand.length === 2 && pScore === 21;
+            const dIsBJ = dealerHand.length === 2 && dScore === 21;
+
+            if (pIsBJ && dIsBJ) {
+                let refund = currentWager;
+                setBankroll(getBankroll() + refund);
+                endRound(`Push! Both have Blackjack. Wager refunded (${refund.toLocaleString()} pts).`);
+            } else if (pIsBJ) {
+                let payout = Math.floor(currentWager * 2.5);
+                setBankroll(getBankroll() + payout);
+                endRound(`Blackjack! You win 3:2 payout (${payout.toLocaleString()} pts)!`);
+            } else if (dIsBJ) {
+                endRound('Dealer has Blackjack! Dealer wins.');
+            } else if (pScore > 21) {
+                endRound('Bust! Dealer wins.');
+            } else if (dScore > 21 || pScore > dScore) {
+                let payout = currentWager * 2;
+                setBankroll(getBankroll() + payout);
+                endRound(`You win! Collected ${payout.toLocaleString()} pts.`);
+            } else if (pScore < dScore) {
+                endRound('Dealer wins higher hand.');
+            } else {
+                let refund = currentWager;
+                setBankroll(getBankroll() + refund);
+                endRound(`Push! Wager refunded (${refund.toLocaleString()} pts).`);
+            }
+        }
+
+        function endRound(resultText) {
+            gameInProgress = false;
+            document.getElementById('actionControls').classList.add('hidden');
+            document.getElementById('bettingSection').classList.remove('hidden');
+            showMessage(resultText);
+        }
+
+        function renderTable(revealDealer) {
+            // Render Dealer Cards
+            const dealerEl = document.getElementById('dealerCards');
+            let dHtml = '';
+            dealerHand.forEach((card, idx) => {
+                if (idx === 1 && !revealDealer && gameInProgress) {
+                    dHtml += `<div class="w-20 h-28 blackjack-card"><img src="${getCardBackUrl()}" alt="Face Down Card" class="w-full h-full card-img shadow"></div>`;
+                } else {
+                    dHtml += `<div class="w-20 h-28 blackjack-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
+                }
+            });
+            dealerEl.innerHTML = dHtml;
+
+            const dScoreEl = document.getElementById('dealerScore');
+            if (revealDealer || !gameInProgress) {
+                dScoreEl.innerText = `Score: ${calculateHandScore(dealerHand)}`;
+            } else {
+                dScoreEl.innerText = `Score: ?`;
+            }
+
+            // Render Player Cards
+            const playerEl = document.getElementById('playerCards');
+            let pHtml = '';
+            playerHand.forEach(card => {
+                pHtml += `<div class="w-20 h-28 blackjack-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
+            });
+            playerEl.innerHTML = pHtml;
+            document.getElementById('playerScore').innerText = `Score: ${calculateHandScore(playerHand)}`;
+            document.getElementById('wagerDisplay').innerText = currentWager.toLocaleString() + ' pts';
+        }
+
+        window.onload = function() {
+            updateBankrollDisplay();
+            updateDeckBadge();
+        };
+    </script>
+</body>
+</html>

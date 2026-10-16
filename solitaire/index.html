@@ -16,14 +16,30 @@
         .gold-glow {
             box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
         }
-        /* Custom card styling and transitions */
         .solitaire-card {
             transition: transform 0.15s ease, box-shadow 0.15s ease;
             user-select: none;
+            cursor: grab;
+        }
+        .solitaire-card:active {
+            cursor: grabbing;
         }
         .solitaire-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .dragging {
+            opacity: 0.4;
+        }
+        .drag-over {
+            border-color: rgba(245, 158, 11, 0.9) !important;
+            background-color: rgba(16, 185, 129, 0.25) !important;
+        }
+        /* Ensure card images fit completely without getting cropped at corners */
+        .card-img {
+            object-fit: contain !important;
+            background-color: #0f172a;
+            border-radius: 0.75rem;
         }
     </style>
 </head>
@@ -72,14 +88,14 @@
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
                         <span>Classic Klondike Solitaire</span>
                     </h1>
-                    <p class="text-slate-400 text-sm mt-1">Uses your equipped card deck style from the Item Shop.</p>
+                    <p class="text-slate-400 text-sm mt-1">Drag and drop cards across piles, or double-click to auto-move to foundations.</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
                         <span class="text-slate-400">Equipped Deck:</span>
                         <span id="equippedDeckBadge" class="text-amber-400 font-bold uppercase">Standard Deck</span>
                     </div>
-                    <button onclick="startNewGame()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center space-x-2 cursor-pointer">
+                    <button onclick="promptNewGame()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center space-x-2 cursor-pointer">
                         <i class="fa-solid fa-rotate-right"></i>
                         <span>New Game</span>
                     </button>
@@ -92,13 +108,32 @@
                 <span id="messageText">Notification message here</span>
             </div>
 
+            <!-- Betting Modal / Banner -->
+            <div id="bettingModal" class="mb-8 bg-slate-950/80 border border-amber-500/40 rounded-2xl p-6 backdrop-blur flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+                <div>
+                    <h3 class="text-lg font-extrabold text-amber-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-coins"></i>
+                        <span>Place Your Game Wager</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs mt-1">Wager points from your bankroll. Win the Solitaire game to collect a massive 3x payout!</p>
+                </div>
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <div class="relative flex-grow sm:flex-grow-0">
+                        <input type="number" id="wagerInput" min="10" max="10000" value="50" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-amber-400 font-bold text-sm w-full sm:w-32 focus:outline-none focus:border-amber-500">
+                    </div>
+                    <button onclick="confirmWagerAndStart()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-amber-500/20 cursor-pointer whitespace-nowrap">
+                        Deal & Wager
+                    </button>
+                </div>
+            </div>
+
             <!-- Solitaire Board Layout -->
-            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-3xl p-6 mb-4 min-h-[500px] flex flex-col justify-between shadow-inner relative overflow-x-auto">
+            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-3xl p-6 mb-4 min-h-[520px] flex flex-col justify-between shadow-inner relative overflow-x-auto">
                 
                 <!-- Top Row: Stock, Waste, and Foundations -->
                 <div class="grid grid-cols-7 gap-3 mb-8">
                     <!-- Stock Pile -->
-                    <div id="pileStock" onclick="handleStockClick()" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center cursor-pointer relative shadow">
+                    <div id="pileStock" onclick="handleStockClick()" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center cursor-pointer relative shadow hover:border-emerald-700 transition">
                         <span class="text-emerald-600/70 text-xs font-bold">STOCK</span>
                     </div>
                     <!-- Waste Pile -->
@@ -108,29 +143,29 @@
                     <!-- Spacer -->
                     <div></div>
                     <!-- 4 Foundations -->
-                    <div id="foundation_0" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
-                        <i class="fa-solid fa-heart text-emerald-800/50 text-xl"></i>
+                    <div id="foundation_0" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnFoundation(event, 0)" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow transition">
+                        <i class="fa-solid fa-heart text-emerald-800/50 text-xl pointer-events-none"></i>
                     </div>
-                    <div id="foundation_1" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
-                        <i class="fa-solid fa-diamond text-emerald-800/50 text-xl"></i>
+                    <div id="foundation_1" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnFoundation(event, 1)" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow transition">
+                        <i class="fa-solid fa-diamond text-emerald-800/50 text-xl pointer-events-none"></i>
                     </div>
-                    <div id="foundation_2" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
-                        <i class="fa-solid fa-club text-emerald-800/50 text-xl"></i>
+                    <div id="foundation_2" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnFoundation(event, 2)" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow transition">
+                        <i class="fa-solid fa-club text-emerald-800/50 text-xl pointer-events-none"></i>
                     </div>
-                    <div id="foundation_3" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
-                        <i class="fa-solid fa-spade text-emerald-800/50 text-xl"></i>
+                    <div id="foundation_3" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnFoundation(event, 3)" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow transition">
+                        <i class="fa-solid fa-spade text-emerald-800/50 text-xl pointer-events-none"></i>
                     </div>
                 </div>
 
                 <!-- Bottom Row: 7 Tableau Piles -->
-                <div class="grid grid-cols-7 gap-3 min-h-[300px]">
-                    <div id="tableau_0" class="relative min-h-[250px]"></div>
-                    <div id="tableau_1" class="relative min-h-[250px]"></div>
-                    <div id="tableau_2" class="relative min-h-[250px]"></div>
-                    <div id="tableau_3" class="relative min-h-[250px]"></div>
-                    <div id="tableau_4" class="relative min-h-[250px]"></div>
-                    <div id="tableau_5" class="relative min-h-[250px]"></div>
-                    <div id="tableau_6" class="relative min-h-[250px]"></div>
+                <div class="grid grid-cols-7 gap-3 min-h-[320px]">
+                    <div id="tableau_0" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnTableau(event, 0)" class="relative min-h-[280px] rounded-xl border-2 border-transparent transition"></div>
+                    <div id="tableau_1" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnTableau(event, 1)" class="relative min-h-[280px] rounded-xl border-2 border-transparent transition"></div>
+                    <div id="tableau_2" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnTableau(event, 2)" class="relative min-h-[280px] rounded-xl border-2 border-transparent transition"></div>
+                    <div id="tableau_3" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnTableau(event, 3)" class="relative min-h-[280px] rounded-xl border-2 border-transparent transition"></div>
+                    <div id="tableau_4" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnTableau(event, 4)" class="relative min-h-[280px] rounded-xl border-2 border-transparent transition"></div>
+                    <div id="tableau_5" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnTableau(event, 5)" class="relative min-h-[280px] rounded-xl border-2 border-transparent transition"></div>
+                    <div id="tableau_6" ondragover="allowDrop(event)" ondragleave="removeDropStyle(event)" ondrop="dropOnTableau(event, 6)" class="relative min-h-[280px] rounded-xl border-2 border-transparent transition"></div>
                 </div>
 
             </div>
@@ -139,6 +174,7 @@
             <div class="flex items-center justify-between text-xs text-slate-400 px-2">
                 <div>Score: <span id="scoreDisplay" class="text-amber-400 font-bold">0</span></div>
                 <div>Moves: <span id="movesDisplay" class="text-white font-bold">0</span></div>
+                <div>Current Wager: <span id="wagerDisplay" class="text-amber-400 font-bold">0 pts</span></div>
             </div>
 
         </div>
@@ -153,16 +189,16 @@
         const BANKROLL_KEY = 'crunchycards_bankroll';
         const CARDS_SELECTION_KEY = 'crunchycards_selected_cards';
 
-        let bankroll = 1000;
         let score = 0;
         let moves = 0;
+        let currentWager = 50;
+        let gameActive = false;
 
         // Solitaire state
         let stock = [];
         let waste = [];
         let foundations = [[], [], [], []];
         let tableau = [[], [], [], [], [], [], []];
-        let selectedCard = null; // { pileType, pileIndex, cardIndex }
 
         function getBankroll() {
             const val = localStorage.getItem(BANKROLL_KEY);
@@ -204,12 +240,11 @@
             box.classList.remove('hidden');
             setTimeout(() => {
                 box.classList.add('hidden');
-            }, 4000);
+            }, 4500);
         }
 
         function getCardImageUrl(suit, rank) {
             const style = getEquippedDeckStyle();
-            // e.g. https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/spades/a.png
             return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/${suit}/${rank}.png`;
         }
 
@@ -218,15 +253,126 @@
             return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/back.png`;
         }
 
-        // Initialize and shuffle standard 52 deck
-        function startNewGame() {
+        function renderBoard() {
+            document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('movesDisplay').innerText = moves;
+            document.getElementById('wagerDisplay').innerText = currentWager.toLocaleString() + ' pts';
+
+            // Render Stock
+            const stockEl = document.getElementById('pileStock');
+            if (stock.length > 0) {
+                stockEl.innerHTML = `<img src="${getCardBackUrl()}" alt="Stock" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=Back';">`;
+            } else {
+                stockEl.innerHTML = `<span class="text-emerald-600/70 text-xs font-bold text-center px-1"><i class="fa-solid fa-rotate-left"></i> Click to Reset</span>`;
+            }
+
+            // Render Waste
+            const wasteEl = document.getElementById('pileWaste');
+            if (waste.length > 0) {
+                const topWaste = waste[waste.length - 1];
+                wasteEl.innerHTML = `
+                    <div draggable="true" ondragstart="dragWaste(event)" class="w-full h-full solitaire-card">
+                        <img src="${getCardImageUrl(topWaste.suit, topWaste.rank)}" alt="${topWaste.rank} of ${topWaste.suit}" 
+                             class="w-full h-full card-img shadow"
+                             onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${topWaste.rank.toUpperCase()}';">
+                    </div>
+                `;
+            } else {
+                wasteEl.innerHTML = `<span class="text-emerald-600/70 text-xs font-bold">WASTE</span>`;
+            }
+
+            // Render Foundations
+            for (let f = 0; f < 4; f++) {
+                const fEl = document.getElementById(`foundation_${f}`);
+                const pile = foundations[f];
+                if (pile.length > 0) {
+                    const topF = pile[pile.length - 1];
+                    fEl.innerHTML = `
+                        <div draggable="true" ondragstart="dragFoundation(event, ${f})" class="w-full h-full solitaire-card">
+                            <img src="${getCardImageUrl(topF.suit, topF.rank)}" alt="${topF.rank}" 
+                                 class="w-full h-full card-img shadow"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${topF.rank.toUpperCase()}';">
+                        </div>
+                    `;
+                } else {
+                    let icon = f === 0 || f === 1 ? 'fa-heart text-red-800/40' : 'fa-club text-slate-800/40';
+                    if (f === 1) icon = 'fa-diamond text-red-800/40';
+                    if (f === 3) icon = 'fa-spade text-slate-800/40';
+                    fEl.innerHTML = `<i class="fa-solid ${icon} text-xl pointer-events-none"></i>`;
+                }
+            }
+
+            // Render Tableau
+            for (let t = 0; t < 7; t++) {
+                const tEl = document.getElementById(`tableau_${t}`);
+                const pile = tableau[t];
+                let html = '';
+                if (pile.length === 0) {
+                    html = `<div class="w-full h-28 border-2 border-dashed border-emerald-800/40 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">EMPTY</div>`;
+                } else {
+                    pile.forEach((card, idx) => {
+                        const topOffset = idx * 28;
+                        if (card.faceUp) {
+                            html += `
+                                <div style="top: ${topOffset}px;" draggable="true" ondragstart="dragTableau(event, ${t}, ${idx})" ondblclick="autoMoveTableau(${t}, ${idx})" onclick="handleTableauCardClick(${t}, ${idx})" class="absolute w-20 h-28 solitaire-card">
+                                    <img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';">
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div style="top: ${topOffset}px;" class="absolute w-20 h-28">
+                                    <img src="${getCardBackUrl()}" alt="Back" class="w-full h-full card-img shadow opacity-90" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=Back';">
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                tEl.innerHTML = html;
+            }
+        }
+
+        function promptNewGame() {
+            const modal = document.getElementById('bettingModal');
+            if (modal) modal.classList.remove('hidden');
+            showMessage('Choose your wager and click Deal & Wager to start.');
+        }
+
+        function confirmWagerAndStart() {
+            const wagerInput = document.getElementById('wagerInput');
+            const wager = parseInt(wagerInput.value, 10);
+            const currentBank = getBankroll();
+
+            if (isNaN(wager) || wager <= 0) {
+                showMessage('Please enter a valid wager amount.');
+                return;
+            }
+
+            if (wager > currentBank) {
+                showMessage('You do not have enough points in your bankroll for this wager!');
+                return;
+            }
+
+            // Deduct wager
+            currentWager = wager;
+            setBankroll(currentBank - currentWager);
+            gameActive = true;
+
+            // Hide betting modal
+            const modal = document.getElementById('bettingModal');
+            if (modal) modal.classList.add('hidden');
+
+            initializeGameDeck();
+            renderBoard();
+            showMessage(`Game started with a wager of ${currentWager.toLocaleString()} pts! Win for 3x payout (${(currentWager * 3).toLocaleString()} pts).`);
+        }
+
+        function initializeGameDeck() {
             score = 0;
             moves = 0;
             stock = [];
             waste = [];
             foundations = [[], [], [], []];
             tableau = [[], [], [], [], [], [], []];
-            selectedCard = null;
 
             const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
             const ranks = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
@@ -260,13 +406,14 @@
 
             // Remaining cards go to stock
             stock = deck;
-            renderBoard();
-            showMessage('New Solitaire game started!');
         }
 
         function handleStockClick() {
+            if (!gameActive) {
+                promptNewGame();
+                return;
+            }
             if (stock.length === 0) {
-                // Recycle waste back to stock
                 if (waste.length > 0) {
                     stock = waste.reverse().map(c => ({ ...c, faceUp: false }));
                     waste = [];
@@ -281,123 +428,106 @@
             renderBoard();
         }
 
-        function renderBoard() {
-            document.getElementById('scoreDisplay').innerText = score;
-            document.getElementById('movesDisplay').innerText = moves;
-
-            // Render Stock
-            const stockEl = document.getElementById('pileStock');
-            if (stock.length > 0) {
-                stockEl.innerHTML = `<img src="${getCardBackUrl()}" alt="Stock" class="w-full h-full object-cover rounded-xl shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=Back';">`;
-            } else {
-                stockEl.innerHTML = `<span class="text-emerald-600/70 text-xs font-bold"><i class="fa-solid fa-rotate-left"></i></span>`;
-            }
-
-            // Render Waste
-            const wasteEl = document.getElementById('pileWaste');
-            if (waste.length > 0) {
-                const topWaste = waste[waste.length - 1];
-                wasteEl.innerHTML = `
-                    <img src="${getCardImageUrl(topWaste.suit, topWaste.rank)}" alt="${topWaste.rank} of ${topWaste.suit}" 
-                         class="w-full h-full object-cover rounded-xl shadow solitaire-card cursor-pointer"
-                         onclick="selectWasteCard()"
-                         onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${topWaste.rank.toUpperCase()}';">
-                `;
-            } else {
-                wasteEl.innerHTML = `<span class="text-emerald-600/70 text-xs font-bold">WASTE</span>`;
-            }
-
-            // Render Foundations
-            for (let f = 0; f < 4; f++) {
-                const fEl = document.getElementById(`foundation_${f}`);
-                const pile = foundations[f];
-                if (pile.length > 0) {
-                    const topF = pile[pile.length - 1];
-                    fEl.innerHTML = `
-                        <img src="${getCardImageUrl(topF.suit, topF.rank)}" alt="${topF.rank}" 
-                             class="w-full h-full object-cover rounded-xl shadow"
-                             onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${topF.rank.toUpperCase()}';">
-                    `;
-                } else {
-                    fEl.innerHTML = `<i class="fa-solid fa-${f === 0 || f === 1 ? 'heart text-red-800/40' : 'club text-slate-800/40'} text-xl"></i>`;
-                }
-            }
-
-            // Render Tableau
-            for (let t = 0; t < 7; t++) {
-                const tEl = document.getElementById(`tableau_${t}`);
-                const pile = tableau[t];
-                let html = '';
-                if (pile.length === 0) {
-                    html = `<div class="w-20 h-28 border-2 border-dashed border-emerald-800/40 rounded-xl cursor-pointer" onclick="moveToTableau(${t})"></div>`;
-                } else {
-                    pile.forEach((card, idx) => {
-                        const topOffset = idx * 28;
-                        if (card.faceUp) {
-                            html += `
-                                <div style="top: ${topOffset}px;" class="absolute w-20 h-28 solitaire-card cursor-pointer" onclick="selectTableauCard(${t}, ${idx})">
-                                    <img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank}" class="w-full h-full object-cover rounded-xl shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';">
-                                </div>
-                            `;
-                        } else {
-                            html += `
-                                <div style="top: ${topOffset}px;" class="absolute w-20 h-28">
-                                    <img src="${getCardBackUrl()}" alt="Back" class="w-full h-full object-cover rounded-xl shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=Back';">
-                                </div>
-                            `;
-                        }
-                    });
-                }
-                tEl.innerHTML = html;
-            }
+        function allowDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
         }
 
-        function selectWasteCard() {
-            if (waste.length === 0) return;
-            const card = waste[waste.length - 1];
-            // Try auto moving to foundation or toggle selection
-            for (let f = 0; f < 4; f++) {
-                if (canMoveToFoundation(card, foundations[f])) {
-                    foundations[f].push(waste.pop());
-                    score += 10;
-                    moves++;
-                    renderBoard();
-                    checkWin();
-                    return;
-                }
-            }
-            showMessage(`Selected waste card: ${card.rank.toUpperCase()} of ${card.suit}`);
+        function removeDropStyle(event) {
+            event.currentTarget.classList.remove('drag-over');
         }
 
-        function selectTableauCard(tIdx, cIdx) {
-            const card = tableau[tIdx][cIdx];
-            if (!card.faceUp) {
-                // Flip face down card if it's the top card
-                if (cIdx === tableau[tIdx].length - 1) {
-                    card.faceUp = true;
-                    score += 5;
-                    moves++;
-                    renderBoard();
+        function dragWaste(event) {
+            event.dataTransfer.setData('text/plain', JSON.stringify({ sourceType: 'waste' }));
+        }
+
+        function dragFoundation(event, fIdx) {
+            event.dataTransfer.setData('text/plain', JSON.stringify({ sourceType: 'foundation', fIdx: fIdx }));
+        }
+
+        function dragTableau(event, tIdx, cIdx) {
+            event.dataTransfer.setData('text/plain', JSON.stringify({ sourceType: 'tableau', tIdx: tIdx, cIdx: cIdx }));
+        }
+
+        function dropOnFoundation(event, targetFIdx) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            if (!gameActive) return;
+
+            const dataStr = event.dataTransfer.getData('text/plain');
+            if (!dataStr) return;
+            const data = JSON.parse(dataStr);
+
+            let cardToMove = null;
+            if (data.sourceType === 'waste') {
+                if (waste.length > 0) cardToMove = waste[waste.length - 1];
+            } else if (data.sourceType === 'tableau') {
+                const pile = tableau[data.tIdx];
+                if (data.cIdx === pile.length - 1 && pile.length > 0) {
+                    cardToMove = pile[pile.length - 1];
                 }
+            } else if (data.sourceType === 'foundation') {
                 return;
             }
 
-            // Try auto move to foundation if top card
-            if (cIdx === tableau[tIdx].length - 1) {
-                for (let f = 0; f < 4; f++) {
-                    if (canMoveToFoundation(card, foundations[f])) {
-                        foundations[f].push(tableau[tIdx].pop());
-                        if (tableau[tIdx].length > 0) tableau[tIdx][tableau[tIdx].length - 1].faceUp = true;
-                        score += 15;
-                        moves++;
-                        renderBoard();
-                        checkWin();
-                        return;
+            if (cardToMove && canMoveToFoundation(cardToMove, foundations[targetFIdx])) {
+                if (data.sourceType === 'waste') {
+                    foundations[targetFIdx].push(waste.pop());
+                } else if (data.sourceType === 'tableau') {
+                    foundations[targetFIdx].push(tableau[data.tIdx].pop());
+                    if (tableau[data.tIdx].length > 0) {
+                        tableau[data.tIdx][tableau[data.tIdx].length - 1].faceUp = true;
                     }
                 }
+                score += 15;
+                moves++;
+                renderBoard();
+                checkWin();
+            } else {
+                showMessage('Invalid foundation placement.');
+            }
+        }
+
+        function dropOnTableau(event, targetTIdx) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            if (!gameActive) return;
+
+            const dataStr = event.dataTransfer.getData('text/plain');
+            if (!dataStr) return;
+            const data = JSON.parse(dataStr);
+
+            let cardsToMove = [];
+            if (data.sourceType === 'waste') {
+                if (waste.length > 0) cardsToMove = [waste[waste.length - 1]];
+            } else if (data.sourceType === 'foundation') {
+                const fPile = foundations[data.fIdx];
+                if (fPile.length > 0) cardsToMove = [fPile[fPile.length - 1]];
+            } else if (data.sourceType === 'tableau') {
+                const sourcePile = tableau[data.tIdx];
+                cardsToMove = sourcePile.slice(data.cIdx);
             }
 
-            showMessage(`Selected tableau card: ${card.rank.toUpperCase()} of ${card.suit}`);
+            if (cardsToMove.length > 0 && canMoveToTableau(cardsToMove, tableau[targetTIdx])) {
+                if (data.sourceType === 'waste') {
+                    tableau[targetTIdx].push(waste.pop());
+                } else if (data.sourceType === 'foundation') {
+                    tableau[targetTIdx].push(foundations[data.fIdx].pop());
+                    score -= 10;
+                } else if (data.sourceType === 'tableau') {
+                    const sourcePile = tableau[data.tIdx];
+                    sourcePile.splice(data.cIdx, cardsToMove.length);
+                    tableau[targetTIdx].push(...cardsToMove);
+                    if (sourcePile.length > 0) {
+                        sourcePile[sourcePile.length - 1].faceUp = true;
+                    }
+                }
+                score += 5;
+                moves++;
+                renderBoard();
+            } else {
+                showMessage('Invalid card stacking.');
+            }
         }
 
         function canMoveToFoundation(card, foundationPile) {
@@ -410,19 +540,67 @@
             return rankOrder.indexOf(card.rank) === rankOrder.indexOf(topCard.rank) + 1;
         }
 
+        function canMoveToTableau(movingCards, targetPile) {
+            const rankOrder = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
+            const firstCard = movingCards[0];
+
+            if (targetPile.length === 0) {
+                return firstCard.rank === 'k';
+            }
+
+            const topCard = targetPile[targetPile.length - 1];
+            if (!topCard.faceUp) return false;
+            if (topCard.color === firstCard.color) return false;
+
+            const topRankIdx = rankOrder.indexOf(topCard.rank);
+            const firstRankIdx = rankOrder.indexOf(firstCard.rank);
+            return firstRankIdx === topRankIdx - 1;
+        }
+
+        function autoMoveTableau(tIdx, cIdx) {
+            if (!gameActive) return;
+            const pile = tableau[tIdx];
+            if (cIdx !== pile.length - 1) return;
+            const card = pile[cIdx];
+
+            for (let f = 0; f < 4; f++) {
+                if (canMoveToFoundation(card, foundations[f])) {
+                    foundations[f].push(pile.pop());
+                    if (pile.length > 0) pile[pile.length - 1].faceUp = true;
+                    score += 15;
+                    moves++;
+                    renderBoard();
+                    checkWin();
+                    return;
+                }
+            }
+        }
+
+        function handleTableauCardClick(tIdx, cIdx) {
+            if (!gameActive) return;
+            const card = tableau[tIdx][cIdx];
+            if (!card.faceUp && cIdx === tableau[tIdx].length - 1) {
+                card.faceUp = true;
+                score += 5;
+                moves++;
+                renderBoard();
+            }
+        }
+
         function checkWin() {
             let totalFoundations = foundations.reduce((acc, pile) => acc + pile.length, 0);
-            if (totalFoundations === 52) {
-                let reward = 250;
-                setBankroll(getBankroll() + reward);
-                showMessage(`Congratulations! You won Solitaire and collected ${reward} bonus points!`);
+            if (totalFoundations === 52 && gameActive) {
+                gameActive = false;
+                let payout = currentWager * 3;
+                setBankroll(getBankroll() + payout);
+                showMessage(`Victory! You won Solitaire and collected your 3x payout of ${payout.toLocaleString()} points!`);
             }
         }
 
         window.onload = function() {
             updateBankrollDisplay();
             updateDeckBadge();
-            startNewGame();
+            promptNewGame();
         };
     </script>
 </body>

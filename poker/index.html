@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCHYCARDS - 1v1 Texas Hold'em</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+        }
+        .card-img {
+            object-fit: contain !important;
+            background-color: #0f172a;
+            border-radius: 0.75rem;
+        }
+        .poker-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: cardDeal 0.3s ease-out forwards;
+        }
+        @keyframes cardDeal {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <i class="fa-solid fa-crown text-slate-950 text-xl font-bold"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">TEXAS HOLD'EM</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">CRUNCHYCARDS Casino</span>
+                </div>
+            </div>
+
+            <!-- Bankroll & Navigation -->
+            <div class="flex items-center space-x-4">
+                <div class="bg-slate-950/80 border border-amber-500/40 rounded-2xl px-4 py-2 flex items-center space-x-3 shadow-inner">
+                    <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i class="fa-solid fa-coins text-xs"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Bankroll</div>
+                        <div id="bankrollDisplay" class="text-base font-bold text-amber-400">1,000 pts</div>
+                    </div>
+                </div>
+
+                <a href="../blackjack/" class="hidden sm:inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl font-medium text-sm transition border border-slate-700">
+                    <i class="fa-solid fa-diamond"></i>
+                    <span>Blackjack Room</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden mb-8">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-6 pb-4 border-b border-slate-800 gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
+                        <span>Heads-Up Texas Hold'em (1v1)</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Play heads-up poker against the dealer bot. Make the best 5-card hand!</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
+                        <span class="text-slate-400">Equipped Deck:</span>
+                        <span id="equippedDeckBadge" class="text-amber-400 font-bold uppercase">Standard Deck</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Notification Box -->
+            <div id="messageBox" class="hidden mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-2xl text-sm flex items-center space-x-3">
+                <i class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
+                <span id="messageText">Notification message here</span>
+            </div>
+
+            <!-- Buy-in / Betting Section -->
+            <div id="bettingSection" class="mb-8 bg-slate-950/80 border border-amber-500/40 rounded-2xl p-6 backdrop-blur flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+                <div>
+                    <h3 class="text-lg font-extrabold text-amber-400 flex items-center space-x-2">
+                        <i class="fa-solid fa-coins"></i>
+                        <span>Post Blinds & Buy-In</span>
+                    </h3>
+                    <p class="text-slate-400 text-xs mt-1">Small blind is 10 pts, Big blind (your buy-in) is 20 pts to start pre-flop.</p>
+                </div>
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <button onclick="startHoldemHand()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-amber-500/20 cursor-pointer whitespace-nowrap">
+                        Deal New Hand
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-3xl p-6 sm:p-8 mb-6 min-h-[480px] flex flex-col justify-between shadow-inner relative">
+                
+                <!-- Dealer Bot Section -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase flex items-center space-x-2">
+                            <i class="fa-solid fa-robot"></i>
+                            <span>Dealer Bot</span>
+                        </span>
+                        <div class="flex items-center space-x-2">
+                            <span id="dealerStatus" class="text-xs text-slate-300 bg-emerald-900/60 px-2.5 py-1 rounded-lg">Waiting</span>
+                            <span id="dealerChips" class="text-xs font-extrabold text-amber-400 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Chips: 500</span>
+                        </div>
+                    </div>
+                    <div id="dealerCards" class="flex flex-wrap gap-3 min-h-[112px]">
+                        <div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>
+                    </div>
+                </div>
+
+                <!-- Community Cards & Pot -->
+                <div class="my-6 py-4 border-y border-emerald-900/40 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-emerald-400/80 mb-2">Community Cards (<span id="handStage" class="text-amber-400">Pre-Flop</span>)</div>
+                        <div id="communityCards" class="flex flex-wrap gap-2.5 min-h-[96px]">
+                            <div class="w-16 h-24 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-[10px]">None</div>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-900/40 border border-emerald-800/60 rounded-2xl px-5 py-3 text-center shadow-inner">
+                        <div class="text-[10px] uppercase font-bold text-emerald-300">Pot Total</div>
+                        <div id="potDisplay" class="text-xl font-extrabold text-amber-400">0 pts</div>
+                    </div>
+                </div>
+
+                <!-- Player Section -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-amber-400 tracking-wider uppercase flex items-center space-x-2">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Your Hand</span>
+                        </span>
+                        <div class="flex items-center space-x-2">
+                            <span id="playerBestHand" class="text-xs font-bold text-amber-300 bg-emerald-900/60 px-2.5 py-1 rounded-lg">Hand: -</span>
+                            <span id="playerChips" class="text-xs font-extrabold text-amber-400 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Chips: 500</span>
+                        </div>
+                    </div>
+                    <div id="playerCards" class="flex flex-wrap gap-3 min-h-[112px]">
+                        <div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="actionControls" class="hidden flex flex-wrap items-center justify-center gap-3">
+                <button onclick="playerFold()" class="bg-red-900/80 hover:bg-red-800 text-red-200 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer border border-red-700">
+                    <i class="fa-solid fa-flag"></i>
+                    <span>Fold</span>
+                </button>
+                <button id="checkCallBtn" onclick="playerCheckOrCall()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-check"></i>
+                    <span id="checkCallLabel">Call 10 pts</span>
+                </button>
+                <button onclick="playerRaise()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer border border-amber-500/40">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                    <span>Raise (+20 pts)</span>
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <header class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 CRUNCHYCARDS Casino. Fully synced with your bankroll and deck equipment.</p>
+    </header>
+
+    <script>
+        const BANKROLL_KEY = 'crunchycards_bankroll';
+        const CARDS_SELECTION_KEY = 'crunchycards_selected_cards';
+
+        let deck = [];
+        let playerHand = [];
+        let dealerHand = [];
+        let communityCards = [];
+        
+        let pot = 0;
+        let currentBet = 0; // Current bet to match in this betting round
+        let playerCurrentBet = 0;
+        let dealerCurrentBet = 0;
+        let gameStage = 'preflop'; // preflop, flop, turn, river, showdown
+        let handInProgress = false;
+
+        function getBankroll() {
+            const val = localStorage.getItem(BANKROLL_KEY);
+            if (val === null) {
+                localStorage.setItem(BANKROLL_KEY, '1000');
+                return 1000;
+            }
+            return parseInt(val, 10) || 0;
+        }
+
+        function setBankroll(amount) {
+            localStorage.setItem(BANKROLL_KEY, amount.toString());
+            updateBankrollDisplay();
+        }
+
+        function updateBankrollDisplay() {
+            const pts = getBankroll();
+            const el = document.getElementById('bankrollDisplay');
+            if (el) el.innerText = pts.toLocaleString() + ' pts';
+        }
+
+        function getEquippedDeckStyle() {
+            return localStorage.getItem(CARDS_SELECTION_KEY) || 'standard';
+        }
+
+        function updateDeckBadge() {
+            const style = getEquippedDeckStyle();
+            const badge = document.getElementById('equippedDeckBadge');
+            if (badge) {
+                badge.innerText = style === 'alice' ? 'Alice Wonderland' : 'Standard Deck';
+            }
+        }
+
+        function showMessage(msg) {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            if (!box || !text) return;
+            text.innerText = msg;
+            box.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            if (box) box.classList.add('hidden');
+        }
+
+        function getCardImageUrl(suit, rank) {
+            const style = getEquippedDeckStyle();
+            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/${suit}/${rank}.png`;
+        }
+
+        function getCardBackUrl() {
+            const style = getEquippedDeckStyle();
+            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/back.png`;
+        }
+
+        function createDeck() {
+            const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
+            const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'a'];
+            let newDeck = [];
+            for (let s of suits) {
+                for (let r of ranks) {
+                    newDeck.push({ suit: s, rank: r });
+                }
+            }
+            // Shuffle
+            for (let i = newDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
+            }
+            return newDeck;
+        }
+
+        function startHoldemHand() {
+            const bank = getBankroll();
+            if (bank < 30) {
+                showMessage('You need at least 30 points in your bankroll to post blinds and play!');
+                return;
+            }
+
+            hideMessage();
+            setBankroll(bank - 20); // Buy-in / Big blind from bankroll
+
+            deck = createDeck();
+            playerHand = [deck.pop(), deck.pop()];
+            dealerHand = [deck.pop(), deck.pop()];
+            communityCards = [];
+
+            pot = 30; // Small blind (10) + Big blind (20)
+            currentBet = 20;
+            playerCurrentBet = 20;
+            dealerCurrentBet = 10;
+            gameStage = 'preflop';
+            handInProgress = true;
+
+            document.getElementById('bettingSection').classList.add('hidden');
+            document.getElementById('actionControls').classList.remove('hidden');
+            document.getElementById('handStage').innerText = 'Pre-Flop';
+            document.getElementById('dealerStatus').innerText = 'Posted SB (10)';
+
+            renderTable(false);
+            updateActionButtons();
+        }
+
+        function playerCheckOrCall() {
+            if (!handInProgress) return;
+            const callAmount = currentBet - playerCurrentBet;
+            const bank = getBankroll();
+
+            if (callAmount > 0) {
+                if (bank < callAmount) {
+                    showMessage('Not enough points in bankroll to call!');
+                    return;
+                }
+                setBankroll(bank - callAmount);
+                pot += callAmount;
+                playerCurrentBet = currentBet;
+            }
+
+            advanceGameStage();
+        }
+
+        function playerRaise() {
+            if (!handInProgress) return;
+            const raiseAmt = 20;
+            const callAmount = currentBet - playerCurrentBet;
+            const totalCost = callAmount + raiseAmt;
+            const bank = getBankroll();
+
+            if (bank < totalCost) {
+                showMessage('Not enough points to raise!');
+                return;
+            }
+
+            setBankroll(bank - totalCost);
+            pot += totalCost;
+            currentBet += raiseAmt;
+            playerCurrentBet = currentBet;
+
+            document.getElementById('dealerStatus').innerText = 'Player Raised!';
+            advanceGameStage();
+        }
+
+        function playerFold() {
+            if (!handInProgress) return;
+            handInProgress = false;
+            document.getElementById('actionControls').classList.add('hidden');
+            document.getElementById('bettingSection').classList.remove('hidden');
+            renderTable(true);
+            showMessage('You folded. Dealer Bot wins the pot of ' + pot.toLocaleString() + ' pts!');
+        }
+
+        function advanceGameStage() {
+            // Dealer bot simple AI check/call
+            dealerCurrentBet = currentBet;
+
+            if (gameStage === 'preflop') {
+                gameStage = 'flop';
+                communityCards.push(deck.pop(), deck.pop(), deck.pop());
+                document.getElementById('handStage').innerText = 'Flop';
+                document.getElementById('dealerStatus').innerText = 'Checked / Called';
+            } else if (gameStage === 'flop') {
+                gameStage = 'turn';
+                communityCards.push(deck.pop());
+                document.getElementById('handStage').innerText = 'Turn';
+                document.getElementById('dealerStatus').innerText = 'Checked / Called';
+            } else if (gameStage === 'turn') {
+                gameStage = 'river';
+                communityCards.push(deck.pop());
+                document.getElementById('handStage').innerText = 'River';
+                document.getElementById('dealerStatus').innerText = 'Checked / Called';
+            } else if (gameStage === 'river') {
+                gameStage = 'showdown';
+                finishShowdown();
+                return;
+            }
+
+            currentBet = 0;
+            playerCurrentBet = 0;
+            dealerCurrentBet = 0;
+            renderTable(false);
+            updateActionButtons();
+        }
+
+        function updateActionButtons() {
+            const callAmount = currentBet - playerCurrentBet;
+            const label = document.getElementById('checkCallLabel');
+            if (callAmount === 0) {
+                label.innerText = 'Check';
+            } else {
+                label.innerText = `Call ${callAmount} pts`;
+            }
+        }
+
+        function finishShowdown() {
+            handInProgress = false;
+            document.getElementById('actionControls').classList.add('hidden');
+            document.getElementById('bettingSection').classList.remove('hidden');
+            document.getElementById('handStage').innerText = 'Showdown';
+            document.getElementById('dealerStatus').innerText = 'Revealed';
+
+            renderTable(true);
+
+            const pEval = evaluateBestHand(playerHand.concat(communityCards));
+            const dEval = evaluateBestHand(dealerHand.concat(communityCards));
+
+            document.getElementById('playerBestHand').innerText = 'Hand: ' + pEval.name;
+
+            let resultMsg = '';
+            if (pEval.score > dEval.score) {
+                let winnings = pot;
+                setBankroll(getBankroll() + winnings);
+                resultMsg = `You win the showdown with a ${pEval.name}! Collected ${winnings.toLocaleString()} pts.`;
+            } else if (pEval.score < dEval.score) {
+                resultMsg = `Dealer Bot wins with a ${dEval.name}. Better luck next hand!`;
+            } else {
+                let refund = Math.floor(pot / 2);
+                setBankroll(getBankroll() + refund);
+                resultMsg = `Split Pot! Both have equivalent hands. Refunded ${refund.toLocaleString()} pts.`;
+            }
+            showMessage(resultMsg);
+        }
+
+        // Poker Hand Evaluator (Simplified scoring for 1v1 Texas Hold'em)
+        function evaluateBestHand(cards) {
+            const rankValues = { '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'j':11, 'q':12, 'k':13, 'a':14 };
+            
+            // Get all combinations of 5 cards from 7 available
+            let allCombs = getCombinations(cards, 5);
+            let bestScore = -1;
+            let bestName = 'High Card';
+
+            for (let comb of allCombs) {
+                let res = scoreFiveCardHand(comb, rankValues);
+                if (res.score > bestScore) {
+                    bestScore = res.score;
+                    bestName = res.name;
+                }
+            }
+            return { score: bestScore, name: bestName };
+        }
+
+        function getCombinations(arr, k) {
+            let i, j, subscripts, ret = [];
+            if (k <= 0 || k > arr.length) return [];
+            if (k === arr.length) return [arr];
+            if (k === 1) return arr.map(el => [el]);
+            for (let i = 0; i < arr.length - k + 1; i++) {
+                let tail = getCombinations(arr.slice(i + 1), k - 1);
+                for (let t of tail) {
+                    ret.push([arr[i]].concat(t));
+                }
+            }
+            return ret;
+        }
+
+        function scoreFiveCardHand(cards, rankValues) {
+            let values = cards.map(c => rankValues[c.rank]).sort((a, b) => b - a);
+            let suits = cards.map(c => c.suit);
+            let isFlush = suits.every(s => s === suits[0]);
+
+            let isStraight = false;
+            // Check regular straight
+            if (values[0] - values[4] === 4 && new Set(values).size === 5) {
+                isStraight = true;
+            }
+            // Check A-5 straight
+            if (JSON.stringify(values) === JSON.stringify([14, 5, 4, 3, 2])) {
+                isStraight = true;
+                values = [5, 4, 3, 2, 1]; // low ace
+            }
+
+            let counts = {};
+            for (let v of values) counts[v] = (counts[v] || 0) + 1;
+            let freq = Object.values(counts).sort((a, b) => b - a);
+            let uniqueVals = Object.keys(counts).map(Number).sort((a, b) => counts[b] - counts[a] || b - a);
+
+            let baseScore = values[0] + values[1]/15 + values[2]/225 + values[3]/3375 + values[4]/50625;
+
+            if (isFlush && isStraight) return { score: 8000000 + baseScore, name: 'Straight Flush' };
+            if (freq[0] === 4) return { score: 7000000 + baseScore, name: 'Four of a Kind' };
+            if (freq[0] === 3 && freq[1] === 2) return { score: 6000000 + baseScore, name: 'Full House' };
+            if (isFlush) return { score: 5000000 + baseScore, name: 'Flush' };
+            if (isStraight) return { score: 4000000 + baseScore, name: 'Straight' };
+            if (freq[0] === 3) return { score: 3000000 + baseScore, name: 'Three of a Kind' };
+            if (freq[0] === 2 && freq[1] === 2) return { score: 2000000 + baseScore, name: 'Two Pair' };
+            if (freq[0] === 2) return { score: 1000000 + baseScore, name: 'One Pair' };
+            return { score: baseScore, name: 'High Card' };
+        }
+
+        function renderTable(revealDealer) {
+            // Render Dealer Cards
+            const dealerEl = document.getElementById('dealerCards');
+            let dHtml = '';
+            dealerHand.forEach((card, idx) => {
+                if (idx === 1 && !revealDealer && handInProgress) {
+                    dHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardBackUrl()}" alt="Face Down Card" class="w-full h-full card-img shadow"></div>`;
+                } else {
+                    dHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
+                }
+            });
+            dealerEl.innerHTML = dHtml;
+
+            // Render Community Cards
+            const commEl = document.getElementById('communityCards');
+            let cHtml = '';
+            if (communityCards.length === 0) {
+                cHtml = `<div class="w-16 h-24 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-[10px]">None</div>`;
+            } else {
+                communityCards.forEach(card => {
+                    cHtml += `<div class="w-16 h-24 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
+                });
+            }
+            commEl.innerHTML = cHtml;
+
+            // Render Player Cards
+            const playerEl = document.getElementById('playerCards');
+            let pHtml = '';
+            playerHand.forEach(card => {
+                pHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
+            });
+            playerEl.innerHTML = pHtml;
+
+            document.getElementById('potDisplay').innerText = pot.toLocaleString() + ' pts';
+        }
+
+        window.onload = function() {
+            updateBankrollDisplay();
+            updateDeckBadge();
+        };
+    </script>
+</body>
+</html>
