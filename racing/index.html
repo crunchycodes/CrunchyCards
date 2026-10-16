@@ -433,8 +433,8 @@
 
                 card.innerHTML = `
                     <div class="flex items-center space-x-3 overflow-hidden">
-                        <div class="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center font-black text-slate-950 shrink-0 overflow-hidden relative">
-                            <img src="${horse.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="w-full h-full object-cover" alt="${horse.name}">
+                        <div class="w-10 h-10 rounded-xl bg-slate-900/80 flex items-center justify-center font-black text-slate-950 shrink-0 overflow-hidden relative border border-slate-800">
+                            <img src="${horse.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="w-full h-full object-contain object-center p-0.5" alt="${horse.name}">
                             <i class="${horse.icon || 'fa-solid fa-horse'} hidden text-slate-950 text-base"></i>
                         </div>
                         <div class="truncate">
@@ -470,8 +470,8 @@
                     <div class="relative flex-grow h-full mx-2">
                         <!-- Horse Runner Avatar -->
                         <div id="runner-${horse.id}" class="horse-runner absolute top-1/2 -translate-y-1/2 left-0 flex items-center space-x-1 transition-all duration-100 z-20">
-                            <div class="w-8 h-8 rounded-full bg-transparent flex items-center justify-center text-slate-950 text-xs overflow-hidden relative">
-                                <img src="${horse.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="w-full h-full object-cover" alt="${horse.name}">
+                            <div class="w-8 h-8 rounded-full bg-slate-900/90 flex items-center justify-center text-slate-950 text-xs overflow-hidden relative border border-slate-700">
+                                <img src="${horse.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="w-full h-full object-contain object-center p-0.5" alt="${horse.name}">
                                 <i class="${horse.icon || 'fa-solid fa-horse'} hidden text-slate-950"></i>
                             </div>
                         </div>
@@ -508,8 +508,8 @@
 
             // Update Betting Slip
             const badge = document.getElementById('selectedHorseBadge');
-            badge.className = `w-8 h-8 rounded-full flex items-center justify-center font-bold text-slate-950 bg-transparent overflow-hidden`;
-            badge.innerHTML = `<img src="${horse.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="w-full h-full object-cover" alt="${horse.name}"><i class="${horse.icon || 'fa-solid fa-horse'} hidden text-slate-950"></i>`;
+            badge.className = `w-8 h-8 rounded-full flex items-center justify-center font-bold text-slate-950 bg-slate-900 overflow-hidden border border-slate-700`;
+            badge.innerHTML = `<img src="${horse.img}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" class="w-full h-full object-contain object-center p-0.5" alt="${horse.name}"><i class="${horse.icon || 'fa-solid fa-horse'} hidden text-slate-950"></i>`;
 
             document.getElementById('selectedHorseName').innerText = horse.name;
             document.getElementById('selectedHorseOdds').innerText = `Odds: ${horse.label} (${horse.odds}x)`;
