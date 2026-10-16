@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCHYCARDS - European Roulette</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
+                <p class="text-xs text-slate-400 font-medium">Standalone European Roulette</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="bg-slate-950/80 border border-amber-500/30 px-5 py-2 rounded-2xl flex items-center space-x-3 shadow-inner">
+                <div class="text-amber-400 font-bold"><i class="fa-solid fa-coins"></i></div>
+                <div>
+                    <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-widest">Bankroll</span>
+                    <span id="bankroll-display" class="text-base font-black text-amber-300">1,000 pts</span>
+                </div>
+            </div>
+            <button onclick="claimFreeChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-lg flex items-center space-x-2 cursor-pointer">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Free Chips</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col space-y-6">
+        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-circle-dot text-amber-400 text-lg"></i>
+                <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">European Roulette Table</h2>
+            </div>
+            <a href="./index.html" class="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center space-x-1 cursor-pointer">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back to Casino Lounge</span>
+            </a>
+        </div>
+
+        <div class="flex-1 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row gap-6 items-start justify-center w-full max-w-5xl">
+                <!-- Wheel Column -->
+                <div class="flex flex-col items-center space-y-4 bg-slate-950/80 p-5 rounded-2xl border border-slate-800 shadow-inner w-full lg:w-80">
+                    <div class="relative">
+                        <canvas id="roulette-canvas" width="260" height="260" class="rounded-full shadow-2xl border-4 border-amber-600/50"></canvas>
+                    </div>
+                    <div id="roulette-status" class="text-amber-400 font-bold text-sm text-center min-h-[2.5rem] flex items-center justify-center bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800 w-full">Select chip size and click table bets!</div>
+                    <div class="w-full space-y-2">
+                        <div class="flex justify-between items-center text-xs text-slate-400 font-bold uppercase">
+                            <span>Active Bets Total:</span>
+                            <span id="roulette-total-bet" class="text-amber-300 text-sm">0 pts</span>
+                        </div>
+                        <div class="flex space-x-2 w-full">
+                            <button onclick="spinWheel()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl shadow transition text-xs uppercase tracking-wider cursor-pointer">Spin Wheel</button>
+                            <button onclick="clearBets()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 px-4 rounded-xl transition text-xs uppercase tracking-wider cursor-pointer">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Layout Column -->
+                <div class="flex flex-col space-y-4 w-full flex-1">
+                    <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Chip Value:</span>
+                        <div class="flex space-x-2" id="chip-selector">
+                            <button onclick="setChip(10)" id="chip-10" class="chip-btn bg-amber-500 text-slate-950 font-black text-xs w-9 h-9 rounded-full ring-2 ring-amber-300 shadow-md cursor-pointer transition transform scale-110">10</button>
+                            <button onclick="setChip(50)" id="chip-50" class="chip-btn bg-blue-600 text-white font-black text-xs w-9 h-9 rounded-full opacity-70 hover:opacity-100 shadow-md cursor-pointer transition">50</button>
+                            <button onclick="setChip(100)" id="chip-100" class="chip-btn bg-purple-600 text-white font-black text-xs w-9 h-9 rounded-full opacity-70 hover:opacity-100 shadow-md cursor-pointer transition">100</button>
+                            <button onclick="setChip(500)" id="chip-500" class="chip-btn bg-emerald-600 text-white font-black text-xs w-9 h-9 rounded-full opacity-70 hover:opacity-100 shadow-md cursor-pointer transition">500</button>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-950/80 p-4 rounded-2xl border-2 border-emerald-700/80 shadow-2xl flex flex-col space-y-3">
+                        <div onclick="placeBet('number', 0)" class="bg-emerald-700 hover:bg-emerald-600 text-white py-2.5 rounded-lg text-center font-bold text-xs cursor-pointer transition border border-emerald-500/50 relative shadow">0 - Zero (35:1)<span id="chip-count-0" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></div>
+                        <div class="grid grid-cols-12 gap-1.5 text-center font-bold text-xs" id="roulette-grid"></div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-bold pt-1">
+                            <button onclick="placeBet('dozen', 1)" id="bet-dozen1" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition">1st 12 (2:1)<span id="chip-count-dozen1" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></button>
+                            <button onclick="placeBet('dozen', 2)" id="bet-dozen2" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition">2nd 12 (2:1)<span id="chip-count-dozen2" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></button>
+                            <button onclick="placeBet('dozen', 3)" id="bet-dozen3" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition">3rd 12 (2:1)<span id="chip-count-dozen3" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></button>
+                            <button onclick="placeBet('color', 'red')" id="bet-red" class="relative bg-red-700 hover:bg-red-600 text-white py-3 rounded-xl border border-red-500/50 cursor-pointer shadow transition">RED (1:1)<span id="chip-count-red" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></button>
+                            <button onclick="placeBet('color', 'black')" id="bet-black" class="relative bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl border border-slate-700 cursor-pointer shadow transition">BLACK (1:1)<span id="chip-count-black" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></button>
+                            <button onclick="placeBet('parity', 'even')" id="bet-even" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition">EVEN (1:1)<span id="chip-count-even" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></button>
+                            <button onclick="placeBet('parity', 'odd')" id="bet-odd" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition">ODD (1:1)<span id="chip-count-odd" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const savedBankroll = localStorage.getItem('crunchycards_bankroll');
+        const state = {
+            points: savedBankroll !== null ? parseInt(savedBankroll, 10) : 1000
+        };
+
+        function updatePointsDisplay() {
+            localStorage.setItem('crunchycards_bankroll', state.points);
+            const el = document.getElementById('bankroll-display');
+            if (el) el.innerText = state.points.toLocaleString() + ' pts';
+        }
+        updatePointsDisplay();
+
+        function claimFreeChips() {
+            state.points += 500;
+            updatePointsDisplay();
+        }
+
+        let rSelectedChip = 10;
+        let rBets = {};
+        let rSpinning = false;
+        const numbersOrder = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+        const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+        let rAngle = 0;
+
+        function drawWheel() {
+            const canvas = document.getElementById('roulette-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const radius = cx - 10;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const sliceAngle = (Math.PI * 2) / numbersOrder.length;
+            
+            numbersOrder.forEach((num, idx) => {
+                const start = rAngle + idx * sliceAngle;
+                const end = start + sliceAngle;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, radius, start, end);
+                ctx.fillStyle = num === 0 ? '#15803d' : (redNumbers.includes(num) ? '#b91c1c' : '#0f172a');
+                ctx.fill();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#d97706';
+                ctx.stroke();
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(start + sliceAngle / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.fillText(num, radius - 10, 3);
+                ctx.restore();
+            });
+            
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = '#022c22';
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#f59e0b';
+            ctx.stroke();
+        }
+
+        const gridEl = document.getElementById('roulette-grid');
+        if (gridEl) {
+            gridEl.innerHTML = '';
+            for (let i = 1; i <= 36; i++) {
+                const isRed = redNumbers.includes(i);
+                const bg = isRed ? 'bg-red-700 hover:bg-red-600' : 'bg-slate-900 hover:bg-slate-800';
+                gridEl.innerHTML += `<div onclick="placeBet('number', ${i})" class="col-span-2 sm:col-span-1 ${bg} text-white py-2.5 rounded-lg cursor-pointer transition border border-slate-700 relative flex items-center justify-center font-bold">${i}<span id="chip-count-${i}" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span></div>`;
+            }
+        }
+
+        function setChip(val) {
+            rSelectedChip = val;
+            document.querySelectorAll('.chip-btn').forEach(btn => {
+                btn.classList.remove('scale-110', 'ring-2', 'ring-amber-300', 'opacity-100');
+                btn.classList.add('opacity-70');
+            });
+            const activeBtn = document.getElementById('chip-' + val);
+            if (activeBtn) {
+                activeBtn.classList.add('scale-110', 'ring-2', 'ring-amber-300', 'opacity-100');
+                activeBtn.classList.remove('opacity-70');
+            }
+        }
+
+        function updateTotalBetDisplay() {
+            const total = Object.values(rBets).reduce((a, b) => a + b, 0);
+            const totalEl = document.getElementById('roulette-total-bet');
+            if (totalEl) totalEl.innerText = total.toLocaleString() + ' pts';
+        }
+
+        function placeBet(type, key) {
+            if (rSpinning) return;
+            const betKey = type + '*' + key;
+            if (state.points < rSelectedChip) {
+                document.getElementById('roulette-status').innerText = 'Insufficient bankroll!';
+                return;
+            }
+            state.points -= rSelectedChip;
+            rBets[betKey] = (rBets[betKey] || 0) + rSelectedChip;
+            updatePointsDisplay();
+            updateTotalBetDisplay();
+            const badge = document.getElementById('chip-count-' + key);
+            if (badge) {
+                badge.classList.remove('hidden');
+                badge.innerText = rBets[betKey];
+            }
+            document.getElementById('roulette-status').innerText = `Placed ${rSelectedChip} pts on ${String(key).toUpperCase()}`;
+        }
+
+        function spinWheel() {
+            if (rSpinning) return;
+            const totalBet = Object.values(rBets).reduce((a, b) => a + b, 0);
+            if (totalBet === 0) {
+                document.getElementById('roulette-status').innerText = 'Place at least one bet first!';
+                return;
+            }
+            rSpinning = true;
+            document.getElementById('roulette-status').innerText = 'Spinning wheel...';
+            const winningIndex = Math.floor(Math.random() * numbersOrder.length);
+            const winningNumber = numbersOrder[winningIndex];
+            const spins = 6 + Math.random() * 3;
+            const sliceAngle = (Math.PI * 2) / numbersOrder.length;
+            const targetAngle = (Math.PI * 2) - (winningIndex * sliceAngle) - (sliceAngle / 2);
+            let start = null;
+
+            function animateSpin(timestamp) {
+                if (!start) start = timestamp;
+                const progress = (timestamp - start) / 3000;
+                if (progress < 1) {
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    rAngle = easeOut * (spins * Math.PI * 2 + targetAngle);
+                    drawWheel();
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    rAngle = targetAngle;
+                    drawWheel();
+                    rSpinning = false;
+                    let winnings = 0;
+                    Object.keys(rBets).forEach(key => {
+                        const amount = rBets[key];
+                        const parts = key.split('*');
+                        const type = parts[0];
+                        const val = parts[1];
+                        if (type === 'number' && parseInt(val) === winningNumber) winnings += amount * 36;
+                        else if (type === 'color' && val === 'red' && redNumbers.includes(winningNumber)) winnings += amount * 2;
+                        else if (type === 'color' && val === 'black' && !redNumbers.includes(winningNumber) && winningNumber !== 0) winnings += amount * 2;
+                        else if (type === 'parity' && val === 'even' && winningNumber !== 0 && winningNumber % 2 === 0) winnings += amount * 2;
+                        else if (type === 'parity' && val === 'odd' && winningNumber !== 0 && winningNumber % 2 !== 0) winnings += amount * 2;
+                        else if (type === 'dozen' && winningNumber !== 0) {
+                            const dozenNum = parseInt(val);
+                            if (dozenNum === 1 && winningNumber >= 1 && winningNumber <= 12) winnings += amount * 3;
+                            if (dozenNum === 2 && winningNumber >= 13 && winningNumber <= 24) winnings += amount * 3;
+                            if (dozenNum === 3 && winningNumber >= 25 && winningNumber <= 36) winnings += amount * 3;
+                        }
+                    });
+                    state.points += winnings;
+                    updatePointsDisplay();
+                    const isRed = redNumbers.includes(winningNumber);
+                    const colorName = winningNumber === 0 ? 'GREEN' : (isRed ? 'RED' : 'BLACK');
+                    document.getElementById('roulette-status').innerText = `Landed on ${winningNumber} (${colorName})! ${winnings > 0 ? 'Won ' + winnings + ' pts!' : 'No win.'}`;
+                }
+            }
+            requestAnimationFrame(animateSpin);
+        }
+
+        function clearBets() {
+            if (rSpinning) return;
+            const totalBet = Object.values(rBets).reduce((a, b) => a + b, 0);
+            state.points += totalBet;
+            rBets = {};
+            document.querySelectorAll('[id^="chip-count-"]').forEach(el => {
+                el.classList.add('hidden');
+                el.innerText = '';
+            });
+            updatePointsDisplay();
+            updateTotalBetDisplay();
+            document.getElementById('roulette-status').innerText = 'Bets refunded.';
+        }
+
+        window.onload = function() {
+            drawWheel();
+            updateTotalBetDisplay();
+        };
+    </script>
+</body>
+</html>
