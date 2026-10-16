@@ -1,0 +1,52 @@
+{
+  "horses": [
+    {
+      "id": "thunder_hoof",
+      "name": "Thunder Hoof",
+      "description": "A legendary black stallion known for explosive acceleration out of the starting gates and unmatched stamina down the final stretch.",
+      "odds": 2.5,
+      "baseColor": "#1e293b",
+      "imagePath": "data/horses/standard/1.png"
+    },
+    {
+      "id": "golden_galop",
+      "name": "Golden Galop",
+      "description": "A striking palomino favorite with a consistent, rhythmic stride that excels in medium-to-long distance sprints.",
+      "odds": 4.0,
+      "baseColor": "#f59e0b",
+      "imagePath": "data/horses/standard/2.png"
+    },
+    {
+      "id": "midnight_runner",
+      "name": "Midnight Runner",
+      "description": "A dark bay gelding that loves to pace behind the pack before unleashing a ferocious late-race charge.",
+      "odds": 5.5,
+      "baseColor": "#3b82f6",
+      "imagePath": "data/horses/standard/3.png"
+    },
+    {
+      "id": "crimson_dash",
+      "name": "Crimson Dash",
+      "description": "An aggressive chestnut filly with fiery speed, often setting a punishing early tempo for the rest of the field to chase.",
+      "odds": 8.0,
+      "baseColor": "#ef4444",
+      "imagePath": "data/horses/standard/4.png"
+    },
+    {
+      "id": "emerald_wind",
+      "name": "Emerald Wind",
+      "description": "A nimble grey thoroughbred that handles wet track conditions and tight turns with exceptional agility.",
+      "odds": 12.0,
+      "baseColor": "#10b981",
+      "imagePath": "data/horses/standard/5.png"
+    },
+    {
+      "id": "shadow_stride",
+      "name": "Shadow Stride",
+      "description": "A wild card dark roan who can be unpredictable out of the gate, but possesses a terrifying top-end gear when clear.",
+      "odds": 15.0,
+      "baseColor": "#8b5cf6",
+      "imagePath": "data/horses/standard/6.png"
+    }
+  ]
+}

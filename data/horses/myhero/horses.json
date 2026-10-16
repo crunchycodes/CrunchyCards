@@ -1,0 +1,52 @@
+{
+  "horses": [
+    {
+      "id": "deku",
+      "name": "Deku",
+      "description": "The ultimate underdog \"dark horse\" champion. He is the type of colt that wins the Triple Crown after starting his life completely overlooked.",
+      "odds": 2.5,
+      "baseColor": "#1e293b",
+      "imagePath": "data/horses/standard/1.png"
+    },
+    {
+      "id": "shoto",
+      "name": "Shoto",
+      "description": "A striking, dual-natured physical presence and a devastating, high-stamina running style.",
+      "odds": 4.0,
+      "baseColor": "#f59e0b",
+      "imagePath": "data/horses/standard/2.png"
+    },
+    {
+      "id": "great_explosion_murder_god_dynamight",
+      "name": "Great Explosion Murder God Dynamight",
+      "description": "An exceptionally talented but notoriously volatile colt.",
+      "odds": 5.5,
+      "baseColor": "#3b82f6",
+      "imagePath": "data/horses/standard/3.png"
+    },
+    {
+      "id": "froppy",
+      "name": "Froppy",
+      "description": "A standout, fan-favorite turf sprinter known for her exceptional agility, unusual physical quirks, and remarkable consistency in wet track conditions.",
+      "odds": 8.0,
+      "baseColor": "#ef4444",
+      "imagePath": "data/horses/standard/4.png"
+    },
+    {
+      "id": "uravity",
+      "name": "Uravity",
+      "description": "When she accelerates, railbirds swear her hooves barely touch the ground, moving with a fluid, gravity-defying grace that makes a grueling mile-and-a-half stretch look like a casual breeze.",
+      "odds": 12.0,
+      "baseColor": "#10b981",
+      "imagePath": "data/horses/standard/5.png"
+    },
+    {
+      "id": "creati",
+      "name": "Creati",
+      "description": "A regal, elite-class classic distance closer known for tactical brilliance, immense stamina reserves, and a highly specific nutritional regimen",
+      "odds": 15.0,
+      "baseColor": "#8b5cf6",
+      "imagePath": "data/horses/standard/6.png"
+    }
+  ]
+}
