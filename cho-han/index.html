@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCHYCARDS - Traditional Cho-Han</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Dice & Bowl Animation Styles */
+        .dice-container {
+            perspective: 600px;
+        }
+        .dice {
+            width: 56px;
+            height: 56px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: #1e293b;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+        }
+        .dot-red {
+            background: #dc2626 !important;
+        }
+        
+        /* Cup animation for shaking */
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-8px, 4px) rotate(-4deg); }
+            40% { transform: translate(8px, -4px) rotate(4deg); }
+            60% { transform: translate(-6px, -2px) rotate(-2deg); }
+            80% { transform: translate(6px, 2px) rotate(2deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .shaking {
+            animation: shake 0.4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Header matching CRUNCHYCARDS casino brand -->
+    <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
+                <p class="text-xs text-slate-400 font-medium">Standalone Cho-Han (丁半)</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="bg-slate-950/80 border border-amber-500/30 px-5 py-2 rounded-2xl flex items-center space-x-3 shadow-inner">
+                <div class="text-amber-400 font-bold"><i class="fa-solid fa-coins"></i></div>
+                <div>
+                    <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-widest">Bankroll</span>
+                    <span id="bankroll-display" class="text-base font-black text-amber-300">1,000 pts</span>
+                </div>
+            </div>
+            <button onclick="claimFreeChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-lg flex items-center space-x-2 cursor-pointer">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Free Chips</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col space-y-6">
+        <!-- Sub-header & navigation bar -->
+        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-dice text-amber-400 text-lg"></i>
+                <h2 class="text-sm font-bold uppercase tracking-wider text-slate-300">Traditional Japanese Dice Arena</h2>
+            </div>
+            <a href="./index.html" class="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center space-x-1 cursor-pointer">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back to Casino Lounge</span>
+            </a>
+        </div>
+
+        <!-- Main game container layout -->
+        <div class="flex-1 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row gap-6 items-center justify-center w-full max-w-5xl">
+                
+                <!-- Left Column: Dice Shaker & Control Panel -->
+                <div class="flex flex-col items-center space-y-4 bg-slate-950/80 p-5 rounded-2xl border border-slate-800 shadow-inner w-full lg:w-80">
+                    <!-- Shaker Bowl Arena -->
+                    <div id="shaker-arena" class="relative w-64 h-64 bg-gradient-to-b from-amber-950/40 to-emerald-950/80 rounded-2xl border-2 border-amber-600/50 flex flex-col items-center justify-center shadow-inner overflow-hidden">
+                        <!-- Hidden / Revealed Dice -->
+                        <div id="dice-reveal-container" class="flex space-x-4 items-center justify-center z-10 transition-all duration-300">
+                            <!-- Dice 1 -->
+                            <div id="dice-1" class="dice">
+                                <div class="dot center"></div>
+                            </div>
+                            <!-- Dice 2 -->
+                            <div id="dice-2" class="dice">
+                                <div class="dot top-left"></div>
+                                <div class="dot bottom-right"></div>
+                            </div>
+                        </div>
+
+                        <!-- Traditional Wooden Bowl Cover -->
+                        <div id="bowl-cover" class="absolute inset-0 bg-gradient-to-b from-amber-800 via-amber-900 to-amber-950 border-4 border-amber-600/80 rounded-2xl flex flex-col items-center justify-center cursor-pointer shadow-2xl transition-transform duration-500 z-20">
+                            <div class="w-16 h-6 bg-amber-950/80 rounded-full border border-amber-500/40 mb-3 shadow flex items-center justify-center text-amber-400 text-xs font-black tracking-widest">水野</div>
+                            <i class="fa-solid fa-bowl-food text-amber-500/60 text-4xl mb-1"></i>
+                            <span class="text-xs font-black text-amber-200 uppercase tracking-widest mt-1">Bamboo Cup</span>
+                            <span class="text-[10px] text-amber-400/80 mt-0.5">Hidden State</span>
+                        </div>
+                    </div>
+
+                    <div id="chohan-status" class="text-amber-400 font-bold text-sm text-center min-h-[2.5rem] flex items-center justify-center bg-slate-900/90 px-4 py-2 rounded-xl border border-slate-800 w-full">Select chip size and place your bets!</div>
+                    
+                    <div class="w-full space-y-2">
+                        <div class="flex justify-between items-center text-xs text-slate-400 font-bold uppercase">
+                            <span>Active Bets Total:</span>
+                            <span id="chohan-total-bet" class="text-amber-300 text-sm">0 pts</span>
+                        </div>
+                        <div class="flex space-x-2 w-full">
+                            <button onclick="rollDice()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl shadow transition text-xs uppercase tracking-wider cursor-pointer">Roll / Lift Cup</button>
+                            <button onclick="clearBets()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 px-4 rounded-xl transition text-xs uppercase tracking-wider cursor-pointer">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Cho-Han Betting Mat & Side Bets Layout -->
+                <div class="flex flex-col space-y-4 w-full flex-1">
+                    <!-- Chip Denomination Selector -->
+                    <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Chip Value:</span>
+                        <div class="flex space-x-2" id="chip-selector">
+                            <button onclick="setChip(10)" id="chip-10" class="chip-btn bg-amber-500 text-slate-950 font-black text-xs w-9 h-9 rounded-full ring-2 ring-amber-300 shadow-md cursor-pointer transition transform scale-110">10</button>
+                            <button onclick="setChip(50)" id="chip-50" class="chip-btn bg-blue-600 text-white font-black text-xs w-9 h-9 rounded-full opacity-70 hover:opacity-100 shadow-md cursor-pointer transition">50</button>
+                            <button onclick="setChip(100)" id="chip-100" class="chip-btn bg-purple-600 text-white font-black text-xs w-9 h-9 rounded-full opacity-70 hover:opacity-100 shadow-md cursor-pointer transition">100</button>
+                            <button onclick="setChip(500)" id="chip-500" class="chip-btn bg-emerald-600 text-white font-black text-xs w-9 h-9 rounded-full opacity-70 hover:opacity-100 shadow-md cursor-pointer transition">500</button>
+                        </div>
+                    </div>
+
+                    <!-- Traditional Emerald Betting Felt -->
+                    <div class="bg-emerald-950/80 p-5 rounded-2xl border-2 border-emerald-700/80 shadow-2xl flex flex-col space-y-4">
+                        <div class="text-center pb-1 border-b border-emerald-800/60">
+                            <h3 class="text-amber-400 font-black tracking-widest text-sm uppercase">丁 半 — Cho-Han Bakuto Mat</h3>
+                            <p class="text-[11px] text-emerald-300/80">Will the sum of the two dice be Even (Cho) or Odd (Han)?</p>
+                        </div>
+
+                        <!-- Main 50/50 Bets: Cho (Even) & Han (Odd) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Cho / Even Bet -->
+                            <div onclick="placeBet('main', 'cho')" id="bet-cho" class="relative bg-emerald-900 hover:bg-emerald-800 text-white p-6 rounded-2xl border-2 border-emerald-600 cursor-pointer shadow-xl transition flex flex-col items-center justify-center group">
+                                <span class="text-2xl font-black tracking-widest text-amber-300 group-hover:scale-105 transition">丁 CHO</span>
+                                <span class="text-xs font-semibold text-emerald-300 mt-1">EVEN SUM (2, 4, 6, 8, 10, 12) • Payout 1:1</span>
+                                <span id="chip-count-cho" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-6 h-6 flex items-center justify-center text-xs font-black shadow-lg"></span>
+                            </div>
+
+                            <!-- Han / Odd Bet -->
+                            <div onclick="placeBet('main', 'han')" id="bet-han" class="relative bg-emerald-900 hover:bg-emerald-800 text-white p-6 rounded-2xl border-2 border-emerald-600 cursor-pointer shadow-xl transition flex flex-col items-center justify-center group">
+                                <span class="text-2xl font-black tracking-widest text-amber-300 group-hover:scale-105 transition">半 HAN</span>
+                                <span class="text-xs font-semibold text-emerald-300 mt-1">ODD SUM (3, 5, 7, 9, 11) • Payout 1:1</span>
+                                <span id="chip-count-han" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-6 h-6 flex items-center justify-center text-xs font-black shadow-lg"></span>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Side Bets: Exact Sum or Pair Combos -->
+                        <div class="pt-2">
+                            <p class="text-[11px] font-bold text-emerald-400 uppercase tracking-widest mb-2">Advanced Side Bets (Exact Sums)</p>
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center font-bold text-xs">
+                                <button onclick="placeBet('sum', 2)" id="bet-sum-2" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition flex flex-col items-center justify-center">
+                                    <span class="text-amber-300">Sum 2</span>
+                                    <span class="text-[10px] text-emerald-400 font-normal">15:1</span>
+                                    <span id="chip-count-sum-2" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span>
+                                </button>
+                                <button onclick="placeBet('sum', 3)" id="bet-sum-3" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition flex flex-col items-center justify-center">
+                                    <span class="text-amber-300">Sum 3</span>
+                                    <span class="text-[10px] text-emerald-400 font-normal">8:1</span>
+                                    <span id="chip-count-sum-3" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span>
+                                </button>
+                                <button onclick="placeBet('sum', 7)" id="bet-sum-7" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition flex flex-col items-center justify-center">
+                                    <span class="text-amber-300">Sum 7</span>
+                                    <span class="text-[10px] text-emerald-400 font-normal">5:1</span>
+                                    <span id="chip-count-sum-7" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span>
+                                </button>
+                                <button onclick="placeBet('sum', 10)" id="bet-sum-10" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition flex flex-col items-center justify-center">
+                                    <span class="text-amber-300">Sum 10</span>
+                                    <span class="text-[10px] text-emerald-400 font-normal">6:1</span>
+                                    <span id="chip-count-sum-10" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span>
+                                </button>
+                                <button onclick="placeBet('sum', 11)" id="bet-sum-11" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition flex flex-col items-center justify-center">
+                                    <span class="text-amber-300">Sum 11</span>
+                                    <span class="text-[10px] text-emerald-400 font-normal">8:1</span>
+                                    <span id="chip-count-sum-11" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span>
+                                </button>
+                                <button onclick="placeBet('sum', 12)" id="bet-sum-12" class="relative bg-emerald-900 hover:bg-emerald-800 text-white py-3 rounded-xl border border-emerald-600/50 cursor-pointer shadow transition flex flex-col items-center justify-center">
+                                    <span class="text-amber-300">Sum 12</span>
+                                    <span class="text-[10px] text-emerald-400 font-normal">15:1</span>
+                                    <span id="chip-count-sum-12" class="hidden absolute -top-2 -right-2 bg-amber-400 text-slate-950 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black shadow"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Bankroll persistence using exact localStorage key from roulette app architecture
+        const savedBankroll = localStorage.getItem('crunchycards_bankroll');
+        const state = {
+            points: savedBankroll !== null ? parseInt(savedBankroll, 10) : 1000
+        };
+
+        function updatePointsDisplay() {
+            localStorage.setItem('crunchycards_bankroll', state.points);
+            const el = document.getElementById('bankroll-display');
+            if (el) el.innerText = state.points.toLocaleString() + ' pts';
+        }
+        updatePointsDisplay();
+
+        function claimFreeChips() {
+            state.points += 500;
+            updatePointsDisplay();
+            document.getElementById('chohan-status').innerText = 'Claimed +500 Free Chips!';
+        }
+
+        // Game state variables
+        let selectedChip = 10;
+        let activeBets = {};
+        let isRolling = false;
+        let bowlLifted = false;
+
+        // Chip selector logic matching roulette
+        function setChip(val) {
+            selectedChip = val;
+            document.querySelectorAll('.chip-btn').forEach(btn => {
+                btn.classList.remove('scale-110', 'ring-2', 'ring-amber-300', 'opacity-100');
+                btn.classList.add('opacity-70');
+            });
+            const activeBtn = document.getElementById('chip-' + val);
+            if (activeBtn) {
+                activeBtn.classList.add('scale-110', 'ring-2', 'ring-amber-300', 'opacity-100');
+                activeBtn.classList.remove('opacity-70');
+            }
+        }
+
+        function updateTotalBetDisplay() {
+            const total = Object.values(activeBets).reduce((a, b) => a + b, 0);
+            const totalEl = document.getElementById('chohan-total-bet');
+            if (totalEl) totalEl.innerText = total.toLocaleString() + ' pts';
+        }
+
+        // Place bet logic
+        function placeBet(type, key) {
+            if (isRolling) return;
+            const betKey = type + '*' + key;
+            if (state.points < selectedChip) {
+                document.getElementById('chohan-status').innerText = 'Insufficient bankroll!';
+                return;
+            }
+            state.points -= selectedChip;
+            activeBets[betKey] = (activeBets[betKey] || 0) + selectedChip;
+            updatePointsDisplay();
+            updateTotalBetDisplay();
+            
+            const badgeId = type === 'main' ? 'chip-count-' + key : 'chip-count-sum-' + key;
+            const badge = document.getElementById(badgeId);
+            if (badge) {
+                badge.classList.remove('hidden');
+                badge.innerText = activeBets[betKey];
+            }
+            document.getElementById('chohan-status').innerText = `Placed ${selectedChip} pts on ${String(key).toUpperCase()}`;
+        }
+
+        // Render die face dots dynamically
+        function renderDieFace(dieElement, value) {
+            dieElement.innerHTML = '';
+            const dotPositions = {
+                1: [{top: '50%', left: '50%'}],
+                2: [{top: '25%', left: '25%'}, {top: '75%', left: '75%'}],
+                3: [{top: '25%', left: '25%'}, {top: '50%', left: '50%'}, {top: '75%', left: '75%'}],
+                4: [{top: '25%', left: '25%'}, {top: '25%', left: '75%'}, {top: '75%', left: '25%'}, {top: '75%', left: '75%'}],
+                5: [{top: '25%', left: '25%'}, {top: '25%', left: '75%'}, {top: '50%', left: '50%'}, {top: '75%', left: '25%'}, {top: '75%', left: '75%'}],
+                6: [{top: '25%', left: '25%'}, {top: '25%', left: '75%'}, {top: '50%', left: '25%'}, {top: '50%', left: '75%'}, {top: '75%', left: '25%'}, {top: '75%', left: '75%'}]
+            };
+            
+            (dotPositions[value] || []).forEach(pos => {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                if (value === 1 || value === 4) dot.classList.add('dot-red');
+                dot.style.top = pos.top;
+                dot.style.left = pos.left;
+                dot.style.transform = 'translate(-50%, -50%)';
+                dieElement.appendChild(dot);
+            });
+        }
+
+        // Roll & Bowl Animation Logic
+        function rollDice() {
+            if (isRolling) return;
+            const totalBet = Object.values(activeBets).reduce((a, b) => a + b, 0);
+            if (totalBet === 0) {
+                document.getElementById('chohan-status').innerText = 'Place at least one bet first!';
+                return;
+            }
+
+            isRolling = true;
+            bowlLifted = false;
+            
+            // Cover the bowl down
+            const bowl = document.getElementById('bowl-cover');
+            bowl.style.transform = 'translateY(0) scale(1)';
+            bowl.style.opacity = '1';
+            
+            document.getElementById('chohan-status').innerText = 'Shaking the bamboo cup...';
+            
+            // Shake animation on shaker arena
+            const arena = document.getElementById('shaker-arena');
+            arena.classList.add('shaking');
+
+            // Generate random dice roll values (1 to 6)
+            const d1 = Math.floor(Math.random() * 6) + 1;
+            const d2 = Math.floor(Math.random() * 6) + 1;
+
+            // Pre-render dice faces
+            renderDieFace(document.getElementById('dice-1'), d1);
+            renderDieFace(document.getElementById('dice-2'), d2);
+
+            setTimeout(() => {
+                arena.classList.remove('shaking');
+                
+                // Lift the bowl cover with smooth transition
+                bowl.style.transform = 'translateY(-120px) scale(0.95)';
+                bowl.style.opacity = '0';
+                bowlLifted = true;
+
+                const sum = d1 + d2;
+                const isEven = sum % 2 === 0;
+                const resultType = isEven ? 'cho' : 'han';
+
+                // Calculate winnings
+                let winnings = 0;
+                Object.keys(activeBets).forEach(key => {
+                    const amount = activeBets[key];
+                    const parts = key.split('*');
+                    const type = parts[0];
+                    const val = parts[1];
+
+                    if (type === 'main') {
+                        if (val === resultType) winnings += amount * 2; // 1:1 payout returns stake + win
+                    } else if (type === 'sum') {
+                        const targetSum = parseInt(val, 10);
+                        if (sum === targetSum) {
+                            if (targetSum === 2 || targetSum === 12) winnings += amount * 16;
+                            else if (targetSum === 3 || targetSum === 11) winnings += amount * 9;
+                            else if (targetSum === 7) winnings += amount * 6;
+                            else if (targetSum === 10) winnings += amount * 7;
+                        }
+                    }
+                });
+
+                state.points += winnings;
+                updatePointsDisplay();
+
+                const outcomeName = isEven ? 'CHO (EVEN)' : 'HAN (ODD)';
+                document.getElementById('chohan-status').innerText = `Dice: ${d1} & ${d2} (Sum: ${sum} - ${outcomeName})! ${winnings > 0 ? 'Won ' + winnings + ' pts!' : 'No win.'}`;
+                isRolling = false;
+            }, 1200);
+        }
+
+        function clearBets() {
+            if (isRolling) return;
+            const totalBet = Object.values(activeBets).reduce((a, b) => a + b, 0);
+            state.points += totalBet;
+            activeBets = {};
+            document.querySelectorAll('[id^="chip-count-"]').forEach(el => {
+                el.classList.add('hidden');
+                el.innerText = '';
+            });
+            updatePointsDisplay();
+            updateTotalBetDisplay();
+            document.getElementById('chohan-status').innerText = 'Bets refunded.';
+        }
+
+        window.onload = function() {
+            renderDieFace(document.getElementById('dice-1'), 4);
+            renderDieFace(document.getElementById('dice-2'), 2);
+            updateTotalBetDisplay();
+        };
+    </script>
+</body>
+</html>
