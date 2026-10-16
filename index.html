@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUNCHYCARDS - Casino Lobby</title>
+    <title>CRUNCHYCARDS - Casino Games Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -14,82 +14,6 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
     <!-- Top Navigation Bar -->
-    <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-lg shadow-amber-500/10">
-                <i class="fa-solid fa-crown"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
-                <p class="text-xs text-slate-400 font-medium">Casino Game Lobby</p>
-            </div>
-        </div>
-        <div class="flex items-center space-x-4">
-            <div class="bg-slate-950/80 border border-amber-500/30 px-5 py-2 rounded-2xl flex items-center space-x-3 shadow-inner">
-                <div class="text-amber-400 font-bold"><i class="fa-solid fa-coins"></i></div>
-                <div>
-                    <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-widest">Bankroll</span>
-                    <span id="bankroll-display" class="text-base font-black text-amber-300">1,000 pts</span>
-                </div>
-            </div>
-            <button onclick="claimFreeChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-lg flex items-center space-x-2 cursor-pointer active:scale-95">
-                <i class="fa-solid fa-plus-circle"></i>
-                <span>Free Chips</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Content / Lobby -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 sm:p-8 flex flex-col space-y-8">
-        
-        <!-- Welcome Banner -->
-        <div class="relative bg-gradient-to-r from-slate-900 via-amber-950/30 to-slate-900 border border-amber-500/30 p-8 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="space-y-2 text-center md:text-left z-10">
-                <div class="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-widest">
-                    <i class="fa-solid fa-star text-[10px]"></i>
-                    <span>Welcome to the Floor</span>
-                </div>
-                <h2 class="text-3xl font-extrabold tracking-tight text-white">Select Your Game</h2>
-                <p class="text-sm text-slate-400 max-w-xl">Choose from our selection of casino favorites below. Your points carry over across all tables!</p>
-            </div>
-            <div class="z-10 flex items-center space-x-3 bg-slate-950/60 border border-slate-800 px-4 py-3 rounded-2xl">
-                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs font-semibold text-slate-300">7 Games Available</span>
-            </div>
-        </div>
-
-        <!-- Games Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <!-- Blackjack -->
-            <a href="https://crunchycodes.github.io/CrunchyCards/blackjack/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between hover:-translate-y-1">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
-                            <i class="fa-solid fa-spade"></i>
-                        </div>
-                        <span class="bg-emerald-500/10 border border-emerald-500/Here is the updated **HTML file for your CrunchyCards homepage**. 
-
-It keeps your exact top navigation bar (with bankroll tracking and "Free Chips" logic intact) while completely reworking the main content area into a sleek, casino-style lobby grid. Each card links directly to its respective game URL and displays badges indicating whether a game is **Fully Functioning**.
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUNCHYCARDS - Casino Lounge</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
-    <style>
-        @import url('[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap)');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
-
-    <!-- Top Navigation Bar (Preserved) -->
     <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-lg shadow-amber-500/10">
@@ -108,180 +32,186 @@ It keeps your exact top navigation bar (with bankroll tracking and "Free Chips" 
                     <span id="bankroll-display" class="text-base font-black text-amber-300">1,000 pts</span>
                 </div>
             </div>
-            <button onclick="claimFreeChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-lg flex items-center space-x-2 cursor-pointer">
+            <button onclick="claimFreeChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-lg flex items-center space-x-2 cursor-pointer active:scale-95">
                 <i class="fa-solid fa-plus-circle"></i>
                 <span>Free Chips</span>
             </button>
         </div>
     </header>
 
-    <!-- Main Casino Game Directory -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col space-y-8">
+    <!-- Main Content Grid -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8 flex flex-col space-y-8">
         
-        <!-- Hero Welcome Header -->
-        <div class="text-center space-y-2 py-4">
-            <h2 class="text-3xl font-black tracking-wide text-amber-400">Select Your Game</h2>
-            <p class="text-sm text-slate-400 max-w-md mx-auto">Choose a game below to get started. Your bankroll carries over across all CrunchyCards games!</p>
+        <!-- Welcome Hero Banner -->
+        <div class="relative bg-gradient-to-r from-slate-900 via-slate-900/90 to-amber-950/30 border border-slate-800 rounded-3xl p-8 overflow-hidden shadow-2xl">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-amber-400 text-9xl font-black pointer-events-none">
+                <i class="fa-solid fa-dice"></i>
+            </div>
+            <div class="relative z-10 max-w-2xl space-y-3">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                    <i class="fa-solid fa-fire"></i> Select Your Game
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-100 tracking-tight">
+                    Welcome to the Lounge
+                </h2>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Pick a game below to play. Your bankroll carries across all experiences in real-time.
+                </p>
+            </div>
         </div>
 
         <!-- Games Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <!-- Poker -->
-            <a href="[https://crunchycodes.github.io/CrunchyCards/poker/](https://crunchycodes.github.io/CrunchyCards/poker/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
-                            <i class="fa-solid fa-spade"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Poker</h3>
-                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Test your skill, strategy, and bluffing ability in Texas Hold'em style poker.</p>
-                    </div>
-                </div>
-                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
-                    <span>Play Now</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
-                </div>
-            </a>
-
             <!-- Roulette -->
-            <a href="[https://crunchycodes.github.io/CrunchyCards/roulette/](https://crunchycodes.github.io/CrunchyCards/roulette/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
-                            <i class="fa-solid fa-circle-notch"></i>
+            <a href="https://crunchycodes.github.io/CrunchyCards/roulette/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-[#1e1b4b]"></i> <i class="fa-solid fa-dharmachakra"></i>
                         </div>
-                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             Fully Functioning
                         </span>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Roulette</h3>
-                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Spin the wheel and place your bets on red, black, odds, or individual numbers.</p>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Roulette</h3>
+                    <p class="text-slate-400 text-xs mt-2 leading-relaxed">Place your bets on red, black, or numbers and spin the classic casino wheel.</p>
                 </div>
-                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
                     <span>Play Now</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </div>
             </a>
 
             <!-- Blackjack -->
-            <a href="[https://crunchycodes.github.io/CrunchyCards/blackjack/](https://crunchycodes.github.io/CrunchyCards/blackjack/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
-                            <i class="fa-solid fa-clone"></i>
+            <a href="https://crunchycodes.github.io/CrunchyCards/blackjack/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-spade"></i>
                         </div>
-                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             Fully Functioning
                         </span>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Blackjack</h3>
-                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Beat the dealer by getting as close to 21 as possible without going over.</p>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Blackjack</h3>
+                    <p class="text-slate-400 text-xs mt-2 leading-relaxed">Beat the dealer to 21 without going over in high-stakes card action.</p>
                 </div>
-                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
                     <span>Play Now</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </div>
             </a>
 
             <!-- Solitaire -->
-            <a href="[https://crunchycodes.github.io/CrunchyCards/solitaire/](https://crunchycodes.github.io/CrunchyCards/solitaire/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+            <a href="https://crunchycodes.github.io/CrunchyCards/solitaire/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-layer-group"></i>
                         </div>
-                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             Fully Functioning
                         </span>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Solitaire</h3>
-                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Classic card sorting challenge adapted for high stakes casino gameplay.</p>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Solitaire</h3>
+                    <p class="text-slate-400 text-xs mt-2 leading-relaxed">Classic card patience game converted into a casino-style skill challenge.</p>
                 </div>
-                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
                     <span>Play Now</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
-                </div>
-            </a>
-
-            <!-- Racing -->
-            <a href="[https://crunchycodes.github.io/CrunchyCards/racing/](https://crunchycodes.github.io/CrunchyCards/racing/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
-                            <i class="fa-solid fa-flag-checkered"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Racing</h3>
-                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Pick your runners and place wagers on high-speed track events.</p>
-                    </div>
-                </div>
-                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
-                    <span>Play Now</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
-                </div>
-            </a>
-
-            <!-- Cho-Han -->
-            <a href="[https://crunchycodes.github.io/CrunchyCards/cho-han/](https://crunchycodes.github.io/CrunchyCards/cho-han/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
-                            <i class="fa-solid fa-dice"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Cho-Han (丁半)</h3>
-                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Lay stakes and bet on whether the total sum of two upturned dice faces will be even (Cho) or odd (Han).</p>
-                    </div>
-                </div>
-                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
-                    <span>Play Now</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </div>
             </a>
 
             <!-- Minesweeper -->
-            <a href="[https://crunchycodes.github.io/CrunchyCards/minesweeper/](https://crunchycodes.github.io/CrunchyCards/minesweeper/)" class="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-3xl p-6 transition duration-300 transform hover:-translate-y-1 shadow-xl flex flex-col justify-between relative overflow-hidden">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+            <a href="https://crunchycodes.github.io/CrunchyCards/minesweeper/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-land-mine-on"></i>
                         </div>
-                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             Fully Functioning
                         </span>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-extrabold text-slate-100 group-hover:text-amber-300 transition">Minesweeper</h3>
-                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">Clear a grid of hidden tiles without clicking on any hidden mines to win the prize.</p>
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Minesweeper</h3>
+                    <p class="text-slate-400 text-xs mt-2 leading-relaxed">Clear the rectangular grid of hidden tiles without clicking on any hidden mines.</p>
                 </div>
-                <div class="mt-6 flex items-center justify-end text-xs font-bold text-amber-400 group-hover:translate-x-1 transition">
+                <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
                     <span>Play Now</span>
-                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- Poker -->
+            <a href="https://crunchycodes.github.io/CrunchyCards/poker/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                            In Development
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Poker</h3>
+                    <p class="text-slate-400 text-xs mt-2 leading-relaxed">Test your skills and strategy in classic hold'em poker showdowns.</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- Cho-Han -->
+            <a href="https://crunchycodes.github.io/CrunchyCards/cho-han/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-dice-two"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                            In Development
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Cho-Han</h3>
+                    <p class="text-slate-400 text-xs mt-2 leading-relaxed">Lay your stakes and bet on whether the total on the two dice will be even (Cho) or odd (Han).</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- Racing -->
+            <a href="https://crunchycodes.github.io/CrunchyCards/racing/" class="group relative bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                            In Development
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 group-hover:text-amber-300 transition-colors">Racing</h3>
+                    <p class="text-slate-400 text-xs mt-2 leading-relaxed">Place high-stakes bets on fast-paced racing action and track events.</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
+                    <span>Play Now</span>
+                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </div>
             </a>
 
         </div>
     </main>
 
-    <!-- Global Bankroll Script -->
+    <!-- Bankroll Management Script -->
     <script>
-        // Shared bankroll logic using localStorage key 'crunchycards_bankroll'
         const savedBankroll = localStorage.getItem('crunchycards_bankroll');
         const initialPoints = savedBankroll !== null ? parseInt(savedBankroll, 10) : 1000;
 
@@ -300,7 +230,7 @@ It keeps your exact top navigation bar (with bankroll tracking and "Free Chips" 
             updatePointsDisplay();
         }
 
-        // Initialize display on load
+        // Initialize bankroll on load
         updatePointsDisplay();
     </script>
 </body>
