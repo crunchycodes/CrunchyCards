@@ -1,16 +1,24 @@
 {
-"id": "chohan",
-"title": "Cho-Han (丁半)",
-"description": "Traditional Japanese dice game. Bet whether the total sum of two dice is Even (Cho) or Odd (Han).",
-"minBet": 50,
-"htmlLayout": "Choose Cho or Han",
-"actions": [
-{ "id": "cho", "label": "CHO (Even / 丁)", "class": "bg-red-700 hover:bg-red-600 text-white" },
-{ "id": "han", "label": "HAN (Odd / 半)", "class": "bg-blue-700 hover:bg-blue-600 text-white" }
-],
-"initScript": "",
-"actionHandlers": {
-"cho": "if (state.points < 50) return alert('Insufficient points'); state.points -= 50; const sum = Math.floor(Math.random()*6)+1 + Math.floor(Math.random()*6)+1; if (sum % 2 === 0) { state.points += 100; document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (EVEN)! You won 100 pts!'; } else { document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (ODD). House wins!'; } updatePointsDisplay();",
-"han": "if (state.points < 50) return alert('Insufficient points'); state.points -= 50; const sum = Math.floor(Math.random()*6)+1 + Math.floor(Math.random()*6)+1; if (sum % 2 !== 0) { state.points += 100; document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (ODD)! You won 100 pts!'; } else { document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (EVEN). House wins!'; } updatePointsDisplay();"
-}
+  "id": "chohan",
+  "title": "Cho-Han (丁半)",
+  "description": "Traditional Japanese dice game. Bet whether the total sum of two dice rolled under the bamboo cup is Even (Cho) or Odd (Han).",
+  "minBet": 50,
+  "htmlLayout": "<div class=\"flex flex-col items-center justify-center space-y-6 max-w-xl mx-auto w-full py-4\">\n  <div class=\"relative bg-slate-950/80 border-2 border-amber-600/40 p-8 rounded-3xl shadow-2xl flex flex-col items-center justify-center w-full overflow-hidden\">\n    <div class=\"absolute inset-0 bg-gradient-to-b from-emerald-950/30 to-slate-950 pointer-events-none\"></div>\n    <div id=\"chohan-cup\" class=\"relative z-10 w-36 h-36 rounded-full bg-slate-900 border-4 border-amber-500 shadow-2xl flex items-center justify-center transition-transform duration-700 mb-4\">\n      <div id=\"chohan-dice-preview\" class=\"text-4xl text-amber-400 font-black\">\n        <i class=\"fa-solid fa-dice\"></i>\n      </div>\n    </div>\n    <div id=\"chohan-res\" class=\"relative z-10 text-amber-300 text-base font-bold text-center min-h-[3rem] flex items-center justify-center bg-slate-900/90 px-6 py-2 rounded-2xl border border-slate-800 w-full shadow-inner\">\n      Place your bet: Choose Cho (Even) or Han (Odd)\n    </div>\n  </div>\n  <div class=\"grid grid-cols-2 gap-4 w-full\">\n    <button onclick=\"executeGameAction('cho')\" class=\"group relative bg-red-700 hover:bg-red-600 text-white font-black py-5 px-6 rounded-2xl shadow-xl transition transform active:scale-95 flex flex-col items-center justify-center border border-red-500/50 cursor-pointer\">\n      <span class=\"text-xl tracking-wider mb-1\">CHO (丁)</span>\n      <span class=\"text-xs text-red-200 font-semibold uppercase tracking-widest\">Even Sum (1:1 Payout)</span>\n    </button>\n    <button onclick=\"executeGameAction('han')\" class=\"group relative bg-blue-700 hover:bg-blue-600 text-white font-black py-5 px-6 rounded-2xl shadow-xl transition transform active:scale-95 flex flex-col items-center justify-center border border-blue-500/50 cursor-pointer\">\n      <span class=\"text-xl tracking-wider mb-1\">HAN (半)</span>\n      <span class=\"text-xs text-blue-200 font-semibold uppercase tracking-widest\">Odd Sum (1:1 Payout)</span>\n    </button>\n  </div>\n</div>\n",
+  "actions": [
+    {
+      "id": "cho",
+      "label": "CHO (Even)",
+      "class": "hidden"
+    },
+    {
+      "id": "han",
+      "label": "HAN (Odd)",
+      "class": "hidden"
+    }
+  ],
+  "initScript": "window.choHanInProgress = false;\nwindow.choHanPlay = function(guess) {\n  if (window.choHanInProgress) return;\n  const BET = 50;\n  const resEl = document.getElementById('chohan-res');\n  if (state.points < BET) { resEl.innerText = 'Insufficient points (Min bet: ' + BET + ' pts)!'; return; }\n  window.choHanInProgress = true;\n  state.points -= BET; updatePointsDisplay();\n  const cup = document.getElementById('chohan-cup');\n  resEl.innerText = 'The dealer is shaking the cup... 🎲';\n  cup.classList.add('animate-bounce');\n  setTimeout(function() {\n    cup.classList.remove('animate-bounce');\n    const d1 = Math.floor(Math.random() * 6) + 1;\n    const d2 = Math.floor(Math.random() * 6) + 1;\n    const sum = d1 + d2;\n    const resultIsEven = sum % 2 === 0;\n    const won = (guess === 'cho') === resultIsEven;\n    document.getElementById('chohan-dice-preview').innerHTML = '<span class=\"text-lg font-black tracking-widest\">[' + d1 + '] [' + d2 + ']</span>';\n    const label = resultIsEven ? '<span class=\"text-red-400\">CHO/EVEN</span>' : '<span class=\"text-blue-400\">HAN/ODD</span>';\n    const outcome = won ? '<span class=\"text-emerald-400\">You won ' + (BET * 2) + ' pts!</span>' : '<span class=\"text-red-400\">House wins!</span>';\n    if (won) state.points += BET * 2;\n    resEl.innerHTML = 'Cup lifted! Rolled <span class=\"text-amber-400 font-extrabold\">' + d1 + '</span> and <span class=\"text-amber-400 font-extrabold\">' + d2 + '</span> (Sum: <span class=\"text-white\">' + sum + '</span> - ' + label + '). ' + outcome;\n    updatePointsDisplay();\n    window.choHanInProgress = false;\n  }, 1200);\n};",
+  "actionHandlers": {
+    "cho": "window.choHanPlay('cho');",
+    "han": "window.choHanPlay('han');"
+  }
 }
