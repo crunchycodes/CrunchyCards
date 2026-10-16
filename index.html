@@ -1,248 +1,208 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrunchyCards - Casino Game Loader</title>
-    <!-- Tailwind CSS -->
+    <title>CRUNCHYCARDS - Dynamic JSON Casino Lounge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tone.js for optional audio -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .casino-title { font-family: 'Cinzel', serif; }
-        .felt-green { background: radial-gradient(circle, #064e3b 0%, #022c22 100%); }
-        .chip { transition: transform 0.1s ease, box-shadow 0.1s ease; }
-        .chip:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="h-full bg-slate-950 text-slate-100 flex flex-col overflow-x-hidden">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
-    <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center z-20 sticky top-0">
+    <header class="bg-slate-900/80 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 font-bold text-xl shadow-lg shadow-amber-500/10">
-                <i class="fa-solid fa-dice"></i>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-crown"></i>
             </div>
             <div>
-                <h1 class="casino-title text-xl md:text-2xl font-extrabold tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
+                <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
                 <p class="text-xs text-slate-400 font-medium">Dynamic JSON Casino Lounge</p>
             </div>
         </div>
-
-        <!-- Bankroll & Audio Controls -->
-        <div class="flex items-center space-x-4 mt-3 sm:mt-0">
-            <div class="bg-slate-950/80 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 shadow-inner">
-                <div class="w-7 h-7 rounded-full bg-amber-500 flex items-center justify-center text-slate-950 font-black text-xs shadow">
-                    <i class="fa-solid fa-coins"></i>
-                </div>
+        <div class="flex items-center space-x-4">
+            <div class="bg-slate-950/80 border border-amber-500/30 px-5 py-2 rounded-2xl flex items-center space-x-3 shadow-inner">
+                <div class="text-amber-400 font-bold"><i class="fa-solid fa-coins"></i></div>
                 <div>
-                    <span class="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Bankroll</span>
-                    <span id="shared-points" class="text-lg font-bold text-amber-400 tracking-wide">1,000</span>
+                    <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-widest">Bankroll</span>
+                    <span id="bankroll-display" class="text-base font-black text-amber-300">1,000 pts</span>
                 </div>
             </div>
-            <button onclick="claimBonusChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-900/30 flex items-center space-x-1.5 cursor-pointer">
+            <button onclick="claimFreeChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-lg flex items-center space-x-2 cursor-pointer">
                 <i class="fa-solid fa-plus-circle"></i>
                 <span>Free Chips</span>
-            </button>
-            <button onclick="toggleAudio()" id="audio-btn" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition border border-slate-700">
-                <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
             </button>
         </div>
     </header>
 
-    <nav class="bg-slate-900/40 border-b border-slate-800 px-6 py-3 flex flex-wrap items-center justify-between gap-4 z-10">
-        <div class="flex items-center space-x-3 w-full sm:w-auto">
-            <label for="game-selector" class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center space-x-2">
-                <i class="fa-solid fa-gamepad text-base"></i>
-                <span>Select Game JSON:</span>
-            </label>
-            <select id="game-selector" onchange="onGameSelected(this.value)" class="bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:outline-none flex-1 sm:w-64 cursor-pointer">
-                <option value="" disabled selected>Loading available games...</option>
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col space-y-6">
+        <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 w-full sm:w-auto">
+                <i class="fa-solid fa-gamepad text-amber-400 text-lg"></i>
+                <label for="game-selector" class="text-xs font-bold uppercase tracking-wider text-slate-300">Select Game JSON:</label>
+            </div>
+            <select id="game-selector" onchange="loadSelectedGame(this.value)" class="bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2.5 outline-none focus:border-amber-500 w-full sm:w-72 cursor-pointer font-medium">
+                <option value="">-- Select a Game from CrunchyCards --</option>
             </select>
+            <div class="text-xs text-slate-400 flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="games-status-text">Connected: Loading games...</span>
+            </div>
         </div>
 
-        <div class="flex items-center space-x-2 text-xs text-slate-400">
-            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="repo-status">Repository: GitHub main/games</span>
+        <div id="game-container" class="flex-1 bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="text-center space-y-3">
+                <div class="w-16 h-16 bg-slate-800/80 border border-slate-700 rounded-2xl flex items-center justify-center text-slate-500 text-2xl mx-auto">
+                    <i class="fa-solid fa-dice"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-300">No Game Selected</h3>
+                <p class="text-xs text-slate-500 max-w-sm">Choose a game from the selector above to load its immersive JSON layout and rules.</p>
+            </div>
         </div>
-    </nav>
-
-    <main class="flex-1 relative flex flex-col items-center justify-center p-4 sm:p-6 max-w-7xl mx-auto w-full">
-        <!-- Loader Spinner -->
-        <div id="game-loader" class="hidden flex-col items-center justify-center space-y-4 py-12">
-            <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-sm font-semibold text-slate-400">Fetching game definition from GitHub...</p>
-        </div>
-
-        <!-- Dynamic Game Mount Container -->
-        <div id="game-mount" class="w-full"></div>
     </main>
 
     <script>
-        const GITHUB_REPO_API = "https://api.github.com/repos/crunchycodes/CrunchyCards/contents/games";
-        const RAW_BASE_URL = "https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/games/";
+        const savedBankroll = localStorage.getItem('crunchycards_bankroll');
+        const initialPoints = savedBankroll !== null ? parseInt(savedBankroll, 10) : 1000;
 
-        let state = {
-            points: 1000,
-            soundEnabled: false,
-            currentGame: null
+        const state = {
+            points: initialPoints
         };
 
-        // Audio Helper
-        let synth = null;
-        function toggleAudio() {
-            state.soundEnabled = !state.soundEnabled;
-            const icon = document.getElementById('audio-icon');
-            if (state.soundEnabled) {
-                icon.className = "fa-solid fa-volume-high text-amber-400";
-            } else {
-                icon.className = "fa-solid fa-volume-xmark";
-            }
-        }
-
         function updatePointsDisplay() {
-            document.getElementById('shared-points').innerText = state.points.toLocaleString();
+            localStorage.setItem('crunchycards_bankroll', state.points);
+            const el = document.getElementById('bankroll-display');
+            if (el) el.innerText = state.points.toLocaleString() + ' pts';
         }
+        updatePointsDisplay();
 
-        function claimBonusChips() {
+        function claimFreeChips() {
             state.points += 500;
             updatePointsDisplay();
         }
 
-        async function fetchAvailableGames() {
+        const availableGames = [
+            { id: 'chohan', name: 'Cho-Han (丁半)', file: 'games/chohan.json' },
+            { id: 'holdem', name: "Heads-Up Texas Hold'em", file: 'games/holdem.json' },
+            { id: 'solitaire', name: 'Solitaire High Stakes', file: 'games/solitaire.json' },
+            { id: 'ceelo', name: 'Cee-Lo Street Dice', file: 'games/ceelo.json' }
+        ];
+
+        function initApp() {
             const selector = document.getElementById('game-selector');
-            const status = document.getElementById('repo-status');
-
-            try {
-                const response = await fetch(GITHUB_REPO_API);
-                if (!response.ok) throw new Error("Could not access repository games folder.");
-                
-                const files = await response.json();
-                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
-
-                selector.innerHTML = `<option value="" disabled selected>-- Select a Game from CrunchyCards --</option>`;
-
-                if (jsonFiles.length === 0) {
-                    selector.innerHTML = `<option value="" disabled>No .json games found in repo</option>`;
-                    return;
-                }
-
-                jsonFiles.forEach(file => {
-                    const option = document.createElement('option');
-                    option.value = file.download_url || (RAW_BASE_URL + file.name);
-                    option.innerText = file.name.replace('.json', '').toUpperCase();
-                    selector.appendChild(option);
-                });
-
-                status.innerText = `Connected: ${jsonFiles.length} games available`;
-            } catch (err) {
-                console.warn("GitHub API fetch fallback triggered:", err);
-                status.innerText = "Repo offline / fallback mode active";
-                
-                // Fallback options for default game files
-                const fallbackGames = ['roulette.json', 'blackjack.json', 'holdem.json', 'chohan.json', 'koikoi.json'];
-                selector.innerHTML = `<option value="" disabled selected>-- Select Fallback Game --</option>`;
-                fallbackGames.forEach(g => {
-                    const opt = document.createElement('option');
-                    opt.value = RAW_BASE_URL + g;
-                    opt.innerText = g.replace('.json', '').toUpperCase();
-                    selector.appendChild(opt);
-                });
-            }
+            selector.innerHTML = '<option value="">-- Select a Game from CrunchyCards --</option>';
+            availableGames.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g.id;
+                opt.innerText = g.name;
+                selector.appendChild(opt);
+            });
+            document.getElementById('games-status-text').innerText = 'Connected: ' + availableGames.length + ' games available';
         }
 
-        async function onGameSelected(url) {
-            const loader = document.getElementById('game-loader');
-            const mount = document.getElementById('game-mount');
-
-            loader.classList.remove('hidden');
-            loader.classList.add('flex');
-            mount.innerHTML = '';
-
-            try {
-                const res = await fetch(url);
-                if (!res.ok) throw new Error("Failed to load JSON file.");
-                const gameData = await res.json();
-                
-                state.currentGame = gameData;
-                renderJSONGame(gameData);
-            } catch (e) {
-                mount.innerHTML = `
-                    <div class="bg-red-950/80 border border-red-800 text-red-200 p-6 rounded-2xl text-center max-w-lg mx-auto">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
-                        <h3 class="font-bold text-lg">Failed to load game file</h3>
-                        <p class="text-xs mt-1">${e.message}</p>
+        async function loadSelectedGame(gameId) {
+            if (!gameId) {
+                document.getElementById('game-container').innerHTML = `
+                    <div class="text-center space-y-3">
+                        <div class="w-16 h-16 bg-slate-800/80 border border-slate-700 rounded-2xl flex items-center justify-center text-slate-500 text-2xl mx-auto">
+                            <i class="fa-solid fa-dice"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-300">No Game Selected</h3>
+                        <p class="text-xs text-slate-500 max-w-sm">Choose a game from the selector above to load its immersive JSON layout and rules.</p>
                     </div>
                 `;
-            } finally {
-                loader.classList.add('hidden');
-                loader.classList.remove('flex');
+                return;
+            }
+
+            const gameObj = availableGames.find(g => g.id === gameId);
+            if (!gameObj) return;
+
+            try {
+                const res = await fetch(gameObj.file);
+                if (!res.ok) throw new Error('Failed to load definition');
+                const data = await res.json();
+                renderGame(data);
+            } catch (err) {
+                // Fallback direct embedded definitions for local demo reliability
+                if (gameId === 'ceelo') {
+                    renderGame(ceeloDef);
+                } else if (gameId === 'chohan') {
+                    renderGame(chohanDef);
+                } else if (gameId === 'holdem') {
+                    renderGame(holdemDef);
+                } else if (gameId === 'solitaire') {
+                    renderGame(solitaireDef);
+                } else {
+                    document.getElementById('game-container').innerHTML = '<div class="text-red-400 font-bold">Error loading game definition.</div>';
+                }
             }
         }
 
-        function renderJSONGame(game) {
-            const mount = document.getElementById('game-mount');
-            
-            // Build dynamic UI layout from JSON schema
-            let html = `
-                <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur max-w-4xl mx-auto w-full flex flex-col space-y-6">
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-800">
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-amber-400">${game.title || 'Casino Game'}</h2>
-                            <p class="text-xs text-slate-400 mt-1">${game.description || ''}</p>
-                        </div>
-                        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-3 py-1 rounded-full font-bold">
-                            Min Bet: ${game.minBet || 10} pts
-                        </span>
-                    </div>
+        function renderGame(def) {
+            const container = document.getElementById('game-container');
+            let actionsHtml = '';
+            if (def.actions && def.actions.length > 0) {
+                actionsHtml = '<div class="flex flex-wrap gap-3 w-full max-w-xl justify-center mt-4">';
+                def.actions.forEach(act => {
+                    actionsHtml += `<button id="${act.id}" ${act.disabled ? 'disabled' : ''} onclick="executeGameAction('${act.id}')" class="${act.class || 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 px-6 rounded-2xl shadow-xl transition transform active:scale-95 cursor-pointer'}">${act.label}</button>`;
+                });
+                actionsHtml += '</div>';
+            }
 
-                    <!-- Custom HTML mount point provided by game JSON -->
-                    <div id="game-custom-ui" class="w-full">
-                        ${game.htmlLayout || '<div class="text-center py-8 text-slate-400">Standard table layout ready</div>'}
+            container.innerHTML = `
+                <div class="w-full flex flex-col items-center">
+                    <div class="mb-4 text-center">
+                        <h2 class="text-xl font-black text-amber-300 tracking-wide">${def.title}</h2>
+                        <p class="text-xs text-slate-400 mt-1">${def.description}</p>
                     </div>
-
-                    <!-- Dynamic Action Buttons -->
-                    <div id="game-controls" class="pt-4 border-t border-slate-800 flex flex-wrap gap-3 justify-center items-center">
-                        ${(game.actions || []).map(act => `
-                            <button onclick="executeGameAction('${act.id}')" class="${act.class || 'bg-amber-500 hover:bg-amber-400 text-slate-950'} font-bold px-5 py-2.5 rounded-xl shadow transition text-xs uppercase tracking-wider">
-                                ${act.label}
-                            </button>
-                        `).join('')}
-                    </div>
+                    ${def.htmlLayout}
+                    ${actionsHtml}
                 </div>
             `;
 
-            mount.innerHTML = html;
-
-            // Execute game init script if provided
-            if (game.initScript) {
+            if (def.initScript) {
                 try {
-                    const initFn = new Function('state', 'updatePointsDisplay', game.initScript);
-                    initFn(state, updatePointsDisplay);
-                } catch (err) {
-                    console.error("Error executing game script:", err);
-                }
+                    const fn = new Function(def.initScript);
+                    fn();
+                } catch(e) { console.error(e); }
             }
         }
 
-        function executeGameAction(actionId) {
-            if (state.currentGame && state.currentGame.actionHandlers && state.currentGame.actionHandlers[actionId]) {
+        window.executeGameAction = function(actionId) {
+            const currentSelected = document.getElementById('game-selector').value;
+            let handlers = {};
+            if (currentSelected === 'ceelo' && typeof ceeloDef !== 'undefined') handlers = ceeloDef.actionHandlers;
+            else if (currentSelected === 'chohan' && typeof chohanDef !== 'undefined') handlers = chohanDef.actionHandlers;
+            else if (currentSelected === 'holdem' && typeof holdemDef !== 'undefined') handlers = holdemDef.actionHandlers;
+            else if (currentSelected === 'solitaire' && typeof solitaireDef !== 'undefined') handlers = solitaireDef.actionHandlers;
+
+            if (handlers && handlers[actionId]) {
                 try {
-                    const handler = new Function('state', 'updatePointsDisplay', state.currentGame.actionHandlers[actionId]);
-                    handler(state, updatePointsDisplay);
-                } catch (err) {
-                    console.error("Action execution failed:", err);
-                }
+                    const fn = new Function(handlers[actionId]);
+                    fn();
+                } catch(e) { console.error(e); }
             }
-        }
+        };
+
+        // Embedded fallbacks for immediate offline/static preview support
+        const ceeloDef = {
+          "id": "ceelo",
+          "title": "Cee-Lo Street Dice",
+          "description": "Roll three dice. Score an automatic win with 4-5-6, an automatic loss with 1-2-3, or establish a point with a pair.",
+          "minBet": 20,
+          "htmlLayout": "<div class=\"flex flex-col items-center justify-center space-y-6 max-w-xl mx-auto w-full py-4\"><div class=\"relative bg-slate-950/80 border-2 border-amber-600/40 p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center justify-center w-full overflow-hidden\"><div class=\"absolute inset-0 bg-gradient-to-b from-emerald-950/40 to-slate-950 pointer-events-none\"></div><div class=\"relative z-10 flex items-center justify-between w-full mb-6 bg-slate-900/90 px-5 py-3 rounded-2xl border border-slate-800\"><div><span class=\"text-xs text-slate-400 block uppercase font-semibold\">Cee-Lo Status</span><span id=\"cl-status\" class=\"text-sm font-bold text-amber-300\">Select a stake and roll the dice!</span></div><div class=\"bg-amber-500/10 border border-amber-500/30 px-4 py-1.5 rounded-xl text-center\"><span class=\"text-xs text-amber-400 font-semibold uppercase\">Payout: </span><span id=\"cl-payout-preview\" class=\"text-sm font-black text-amber-300\">100 pts</span></div></div><div class=\"relative z-10 flex flex-col items-center justify-center w-full my-4\"><span class=\"text-xs text-amber-400 font-bold uppercase tracking-wider mb-3\">Dice Roll</span><div id=\"cl-dice-container\" class=\"flex space-x-3 sm:space-x-4 min-h-[5rem] items-center justify-center\"><div class=\"w-14 h-14 bg-slate-900 text-amber-400 rounded-2xl border-2 border-amber-500/40 flex items-center justify-center text-xl font-black shadow-lg\">🎲</div><div class=\"w-14 h-14 bg-slate-900 text-amber-400 rounded-2xl border-2 border-amber-500/40 flex items-center justify-center text-xl font-black shadow-lg\">🎲</div><div class=\"w-14 h-14 bg-slate-900 text-amber-400 rounded-2xl border-2 border-amber-500/40 flex items-center justify-center text-xl font-black shadow-lg\">🎲</div></div></div><div class=\"relative z-10 w-full mt-4 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex flex-col space-y-3\"><div class=\"flex justify-between items-center text-xs text-slate-400 font-bold uppercase\"><span>Select Stake Amount:</span><span id=\"cl-stake-display\" class=\"text-amber-300 text-sm font-black\">50 pts</span></div><div class=\"grid grid-cols-4 gap-2\"><button onclick=\"window.setCeeLoStake(20)\" id=\"cl-bet-20\" class=\"bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer\">20 pts</button><button onclick=\"window.setCeeLoStake(50)\" id=\"cl-bet-50\" class=\"bg-amber-500 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow cursor-pointer\">50 pts</button><button onclick=\"window.setCeeLoStake(100)\" id=\"cl-bet-100\" class=\"bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer\">100 pts</button><button onclick=\"window.setCeeLoStake(250)\" id=\"cl-bet-250\" class=\"bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer\">250 pts</button></div></div></div></div>",
+          "actions": [{ "id": "cl-roll", "label": "Roll Dice (Stake)", "class": "bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 px-6 rounded-2xl shadow-xl transition transform active:scale-95 cursor-pointer flex-1" }],
+          "initScript": "window.clGame = window.clGame || { stake: 50, rolling: false }; window.setCeeLoStake = function(amt) { if (window.clGame.rolling) return; window.clGame.stake = amt; document.getElementById('cl-stake-display').innerText = amt + ' pts'; document.getElementById('cl-payout-preview').innerText = (amt * 2) + ' pts'; document.querySelectorAll('[id^=\"cl-bet-\"]').forEach(b => b.className = 'bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs transition border border-slate-700 cursor-pointer'); const activeBtn = document.getElementById('cl-bet-' + amt); if (activeBtn) activeBtn.className = 'bg-amber-500 text-slate-950 font-black py-2 rounded-xl text-xs transition shadow cursor-pointer'; }; window.setCeeLoStake(50);",
+          "actionHandlers": {
+            "cl-roll": "if (window.clGame.rolling) return; const stake = window.clGame.stake; if (state.points < stake) { document.getElementById('cl-status').innerText = 'Insufficient points for this stake!'; return; } window.clGame.rolling = true; state.points -= stake; updatePointsDisplay(); const statusEl = document.getElementById('cl-status'); const container = document.getElementById('cl-dice-container'); statusEl.innerText = 'Rolling the dice... 🎲'; container.classList.add('animate-pulse'); setTimeout(() => { container.classList.remove('animate-pulse'); const d1 = Math.floor(Math.random() * 6) + 1; const d2 = Math.floor(Math.random() * 6) + 1; const d3 = Math.floor(Math.random() * 6) + 1; const roll = [d1, d2, d3].sort((a, b) => a - b); container.innerHTML = roll.map(d => '<div class=\"w-14 h-14 bg-slate-900 text-amber-300 rounded-2xl border-2 border-amber-500/60 flex items-center justify-center text-xl font-black shadow-lg\">' + d + '</div>').join(''); let outcome = ''; let won = false; let multiplier = 0; if (roll[0] === 4 && roll[1] === 5 && roll[2] === 6) { outcome = 'Automatic WIN! Rolled 4-5-6'; won = true; multiplier = 3; } else if (roll[0] === 1 && roll[1] === 2 && roll[2] === 3) { outcome = 'Automatic LOSS! Rolled 1-2-3'; won = false; } else if (roll[0] === roll[1] && roll[1] === roll[2]) { outcome = 'Triples!'; won = true; multiplier = 2; } else if (roll[0] === roll[1]) { outcome = 'Point score: ' + roll[2]; if (roll[2] >= 4) { won = true; multiplier = 1.5; } } else if (roll[1] === roll[2]) { outcome = 'Point score: ' + roll[0]; if (roll[0] >= 4) { won = true; multiplier = 1.5; } } else { outcome = 'No score'; won = false; } if (won) { const winnings = Math.floor(stake * multiplier); state.points += winnings; statusEl.innerHTML = '<span class=\"text-emerald-400 font-extrabold\">' + outcome + '! Won ' + winnings + ' pts</span>'; } else { statusEl.innerHTML = '<span class=\"text-red-400 font-extrabold\">' + outcome + '. House takes stake.</span>'; } updatePointsDisplay(); window.clGame.rolling = false; }, 1000);"
+          }
+        };
 
         window.onload = function() {
-            updatePointsDisplay();
-            fetchAvailableGames();
+            initApp();
         };
     </script>
 </body>
