@@ -1,0 +1,16 @@
+{
+"id": "roulette",
+"title": "European Roulette",
+"description": "Place bets on Red/Black, Even/Odd, or single numbers and spin the wheel.",
+"minBet": 10,
+"htmlLayout": "Place your bets!RED (1:1)BLACK (1:1)ZERO (35:1)",
+"actions": [
+{ "id": "spin", "label": "Spin Wheel", "class": "bg-amber-500 hover:bg-amber-400 text-slate-950" },
+{ "id": "clear", "label": "Clear Bets", "class": "bg-slate-800 hover:bg-slate-700 text-slate-300" }
+],
+"initScript": "window.currentBet = null; window.gameBet = function(type) { window.currentBet = type; document.getElementById('roulette-status').innerText = 'Selected Bet: ' + type.toUpperCase(); };",
+"actionHandlers": {
+"spin": "if (!window.currentBet) return alert('Select a bet spot first!'); if (state.points < 50) return alert('Not enough points'); state.points -= 50; const win = Math.random() > 0.5; if (win) { state.points += 100; document.getElementById('roulette-status').innerText = 'Winner! You earned 100 pts!'; } else { document.getElementById('roulette-status').innerText = 'No luck this time!'; } updatePointsDisplay();",
+"clear": "window.currentBet = null; document.getElementById('roulette-status').innerText = 'Bets Cleared'; "
+}
+}

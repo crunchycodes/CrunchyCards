@@ -1,0 +1,16 @@
+{
+"id": "chohan",
+"title": "Cho-Han (丁半)",
+"description": "Traditional Japanese dice game. Bet whether the total sum of two dice is Even (Cho) or Odd (Han).",
+"minBet": 50,
+"htmlLayout": "Choose Cho or Han",
+"actions": [
+{ "id": "cho", "label": "CHO (Even / 丁)", "class": "bg-red-700 hover:bg-red-600 text-white" },
+{ "id": "han", "label": "HAN (Odd / 半)", "class": "bg-blue-700 hover:bg-blue-600 text-white" }
+],
+"initScript": "",
+"actionHandlers": {
+"cho": "if (state.points < 50) return alert('Insufficient points'); state.points -= 50; const sum = Math.floor(Math.random()*6)+1 + Math.floor(Math.random()*6)+1; if (sum % 2 === 0) { state.points += 100; document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (EVEN)! You won 100 pts!'; } else { document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (ODD). House wins!'; } updatePointsDisplay();",
+"han": "if (state.points < 50) return alert('Insufficient points'); state.points -= 50; const sum = Math.floor(Math.random()*6)+1 + Math.floor(Math.random()*6)+1; if (sum % 2 !== 0) { state.points += 100; document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (ODD)! You won 100 pts!'; } else { document.getElementById('chohan-res').innerText = 'Sum is ' + sum + ' (EVEN). House wins!'; } updatePointsDisplay();"
+}
+}

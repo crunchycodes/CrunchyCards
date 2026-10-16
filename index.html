@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrunchyCards - Casino Game Loader</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tone.js for optional audio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .casino-title { font-family: 'Cinzel', serif; }
+        .felt-green { background: radial-gradient(circle, #064e3b 0%, #022c22 100%); }
+        .chip { transition: transform 0.1s ease, box-shadow 0.1s ease; }
+        .chip:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+    </style>
+</head>
+<body class="h-full bg-slate-950 text-slate-100 flex flex-col overflow-x-hidden">
+
+    <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center z-20 sticky top-0">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-amber-400 font-bold text-xl shadow-lg shadow-amber-500/10">
+                <i class="fa-solid fa-dice"></i>
+            </div>
+            <div>
+                <h1 class="casino-title text-xl md:text-2xl font-extrabold tracking-wider bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</h1>
+                <p class="text-xs text-slate-400 font-medium">Dynamic JSON Casino Lounge</p>
+            </div>
+        </div>
+
+        <!-- Bankroll & Audio Controls -->
+        <div class="flex items-center space-x-4 mt-3 sm:mt-0">
+            <div class="bg-slate-950/80 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 shadow-inner">
+                <div class="w-7 h-7 rounded-full bg-amber-500 flex items-center justify-center text-slate-950 font-black text-xs shadow">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Bankroll</span>
+                    <span id="shared-points" class="text-lg font-bold text-amber-400 tracking-wide">1,000</span>
+                </div>
+            </div>
+            <button onclick="claimBonusChips()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-900/30 flex items-center space-x-1.5 cursor-pointer">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Free Chips</span>
+            </button>
+            <button onclick="toggleAudio()" id="audio-btn" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition border border-slate-700">
+                <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <nav class="bg-slate-900/40 border-b border-slate-800 px-6 py-3 flex flex-wrap items-center justify-between gap-4 z-10">
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <label for="game-selector" class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center space-x-2">
+                <i class="fa-solid fa-gamepad text-base"></i>
+                <span>Select Game JSON:</span>
+            </label>
+            <select id="game-selector" onchange="onGameSelected(this.value)" class="bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-xl px-4 py-2 focus:ring-2 focus:ring-amber-500 focus:outline-none flex-1 sm:w-64 cursor-pointer">
+                <option value="" disabled selected>Loading available games...</option>
+            </select>
+        </div>
+
+        <div class="flex items-center space-x-2 text-xs text-slate-400">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="repo-status">Repository: GitHub main/games</span>
+        </div>
+    </nav>
+
+    <main class="flex-1 relative flex flex-col items-center justify-center p-4 sm:p-6 max-w-7xl mx-auto w-full">
+        <!-- Loader Spinner -->
+        <div id="game-loader" class="hidden flex-col items-center justify-center space-y-4 py-12">
+            <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-sm font-semibold text-slate-400">Fetching game definition from GitHub...</p>
+        </div>
+
+        <!-- Dynamic Game Mount Container -->
+        <div id="game-mount" class="w-full"></div>
+    </main>
+
+    <script>
+        const GITHUB_REPO_API = "https://api.github.com/repos/crunchycodes/CrunchyCards/contents/games";
+        const RAW_BASE_URL = "https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/games/";
+
+        let state = {
+            points: 1000,
+            soundEnabled: false,
+            currentGame: null
+        };
+
+        // Audio Helper
+        let synth = null;
+        function toggleAudio() {
+            state.soundEnabled = !state.soundEnabled;
+            const icon = document.getElementById('audio-icon');
+            if (state.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-amber-400";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        function updatePointsDisplay() {
+            document.getElementById('shared-points').innerText = state.points.toLocaleString();
+        }
+
+        function claimBonusChips() {
+            state.points += 500;
+            updatePointsDisplay();
+        }
+
+        async function fetchAvailableGames() {
+            const selector = document.getElementById('game-selector');
+            const status = document.getElementById('repo-status');
+
+            try {
+                const response = await fetch(GITHUB_REPO_API);
+                if (!response.ok) throw new Error("Could not access repository games folder.");
+                
+                const files = await response.json();
+                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+
+                selector.innerHTML = `<option value="" disabled selected>-- Select a Game from CrunchyCards --</option>`;
+
+                if (jsonFiles.length === 0) {
+                    selector.innerHTML = `<option value="" disabled>No .json games found in repo</option>`;
+                    return;
+                }
+
+                jsonFiles.forEach(file => {
+                    const option = document.createElement('option');
+                    option.value = file.download_url || (RAW_BASE_URL + file.name);
+                    option.innerText = file.name.replace('.json', '').toUpperCase();
+                    selector.appendChild(option);
+                });
+
+                status.innerText = `Connected: ${jsonFiles.length} games available`;
+            } catch (err) {
+                console.warn("GitHub API fetch fallback triggered:", err);
+                status.innerText = "Repo offline / fallback mode active";
+                
+                // Fallback options for default game files
+                const fallbackGames = ['roulette.json', 'blackjack.json', 'holdem.json', 'chohan.json', 'koikoi.json'];
+                selector.innerHTML = `<option value="" disabled selected>-- Select Fallback Game --</option>`;
+                fallbackGames.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = RAW_BASE_URL + g;
+                    opt.innerText = g.replace('.json', '').toUpperCase();
+                    selector.appendChild(opt);
+                });
+            }
+        }
+
+        async function onGameSelected(url) {
+            const loader = document.getElementById('game-loader');
+            const mount = document.getElementById('game-mount');
+
+            loader.classList.remove('hidden');
+            loader.classList.add('flex');
+            mount.innerHTML = '';
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("Failed to load JSON file.");
+                const gameData = await res.json();
+                
+                state.currentGame = gameData;
+                renderJSONGame(gameData);
+            } catch (e) {
+                mount.innerHTML = `
+                    <div class="bg-red-950/80 border border-red-800 text-red-200 p-6 rounded-2xl text-center max-w-lg mx-auto">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
+                        <h3 class="font-bold text-lg">Failed to load game file</h3>
+                        <p class="text-xs mt-1">${e.message}</p>
+                    </div>
+                `;
+            } finally {
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+            }
+        }
+
+        function renderJSONGame(game) {
+            const mount = document.getElementById('game-mount');
+            
+            // Build dynamic UI layout from JSON schema
+            let html = `
+                <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur max-w-4xl mx-auto w-full flex flex-col space-y-6">
+                    <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-amber-400">${game.title || 'Casino Game'}</h2>
+                            <p class="text-xs text-slate-400 mt-1">${game.description || ''}</p>
+                        </div>
+                        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-3 py-1 rounded-full font-bold">
+                            Min Bet: ${game.minBet || 10} pts
+                        </span>
+                    </div>
+
+                    <!-- Custom HTML mount point provided by game JSON -->
+                    <div id="game-custom-ui" class="w-full">
+                        ${game.htmlLayout || '<div class="text-center py-8 text-slate-400">Standard table layout ready</div>'}
+                    </div>
+
+                    <!-- Dynamic Action Buttons -->
+                    <div id="game-controls" class="pt-4 border-t border-slate-800 flex flex-wrap gap-3 justify-center items-center">
+                        ${(game.actions || []).map(act => `
+                            <button onclick="executeGameAction('${act.id}')" class="${act.class || 'bg-amber-500 hover:bg-amber-400 text-slate-950'} font-bold px-5 py-2.5 rounded-xl shadow transition text-xs uppercase tracking-wider">
+                                ${act.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            mount.innerHTML = html;
+
+            // Execute game init script if provided
+            if (game.initScript) {
+                try {
+                    const initFn = new Function('state', 'updatePointsDisplay', game.initScript);
+                    initFn(state, updatePointsDisplay);
+                } catch (err) {
+                    console.error("Error executing game script:", err);
+                }
+            }
+        }
+
+        function executeGameAction(actionId) {
+            if (state.currentGame && state.currentGame.actionHandlers && state.currentGame.actionHandlers[actionId]) {
+                try {
+                    const handler = new Function('state', 'updatePointsDisplay', state.currentGame.actionHandlers[actionId]);
+                    handler(state, updatePointsDisplay);
+                } catch (err) {
+                    console.error("Action execution failed:", err);
+                }
+            }
+        }
+
+        window.onload = function() {
+            updatePointsDisplay();
+            fetchAvailableGames();
+        };
+    </script>
+</body>
+</html>

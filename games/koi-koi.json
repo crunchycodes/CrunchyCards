@@ -1,0 +1,14 @@
+{
+"id": "koikoi",
+"title": "Koi-Koi (Hanafuda)",
+"description": "Hanafuda card matching game. Score Yaku points for bankroll payouts.",
+"minBet": 100,
+"htmlLayout": "Match cards to score Yaku points!",
+"actions": [
+{ "id": "play", "label": "Play Round (100 pts)", "class": "bg-amber-500 hover:bg-amber-400 text-slate-950" }
+],
+"initScript": "",
+"actionHandlers": {
+"play": "if (state.points < 100) return alert('Need 100 points'); state.points -= 100; const score = Math.floor(Math.random() * 4); const win = score * 50; state.points += win; document.getElementById('kk-info').innerText = 'Scored ' + score + ' Yaku points! Earned ' + win + ' pts.'; updatePointsDisplay();"
+}
+}

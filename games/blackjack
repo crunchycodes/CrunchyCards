@@ -1,0 +1,18 @@
+{
+"id": "blackjack",
+"title": "Blackjack High Stakes",
+"description": "Beat the dealer's hand score without busting over 21. Standard 3:2 payout.",
+"minBet": 50,
+"htmlLayout": "Dealer Score: ?Place bet and click DealPlayer Score: 0",
+"actions": [
+{ "id": "deal", "label": "Deal (50 pts)", "class": "bg-amber-500 hover:bg-amber-400 text-slate-950" },
+{ "id": "hit", "label": "Hit", "class": "bg-blue-600 hover:bg-blue-500 text-white" },
+{ "id": "stand", "label": "Stand", "class": "bg-emerald-600 hover:bg-emerald-500 text-white" }
+],
+"initScript": "window.bjScore = 0;",
+"actionHandlers": {
+"deal": "if (state.points < 50) return alert('Insufficient points'); state.points -= 50; window.bjScore = Math.floor(Math.random() * 10) + 12; document.getElementById('player-score').innerText = window.bjScore; document.getElementById('bj-message').innerText = 'Hit or Stand?'; updatePointsDisplay();",
+"hit": "if (!window.bjScore) return; window.bjScore += Math.floor(Math.random() * 10) + 1; document.getElementById('player-score').innerText = window.bjScore; if (window.bjScore > 21) { document.getElementById('bj-message').innerText = 'Bust! Dealer Wins.'; window.bjScore = 0; }",
+"stand": "if (!window.bjScore) return; const dScore = Math.floor(Math.random() * 6) + 16; document.getElementById('dealer-score').innerText = dScore; if (dScore > 21 || window.bjScore > dScore) { state.points += 100; document.getElementById('bj-message').innerText = 'You Win 100 pts!'; } else { document.getElementById('bj-message').innerText = 'Dealer Wins!'; } window.bjScore = 0; updatePointsDisplay();"
+}
+}
