@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCHYCARDS - Royal Turf Horse Racing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+        }
+
+        .turf-pattern {
+            background-color: #064e3b;
+            background-image: repeating-linear-gradient(
+                90deg,
+                rgba(6, 78, 59, 0.8),
+                rgba(6, 78, 59, 0.8) 40px,
+                rgba(4, 120, 87, 0.8) 40px,
+                rgba(4, 120, 87, 0.8) 80px
+            );
+        }
+
+        .finish-line-pattern {
+            background-image: repeating-linear-gradient(
+                45deg,
+                #ffffff 0, #ffffff 10px,
+                #000000 10px, #000000 20px
+            );
+        }
+
+        .horse-runner {
+            transition: left 0.1s linear;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        .ambient-glow {
+            animation: pulseGlow 6s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <i class="fa-solid fa-horse text-slate-950 text-xl font-bold"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYDERBY</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">CRUNCHYCARDS Turf Club</span>
+                </div>
+            </div>
+
+            <!-- Bankroll & Quick Links -->
+            <div class="flex items-center space-x-4">
+                <div class="bg-slate-950/80 border border-amber-500/40 rounded-2xl px-4 py-2 flex items-center space-x-3 shadow-inner">
+                    <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i class="fa-solid fa-coins text-xs"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Bankroll</div>
+                        <div id="bankrollDisplay" class="text-base font-bold text-amber-400">1,000 pts</div>
+                    </div>
+                </div>
+
+                <a href="../blackjack/" class="hidden sm:inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl font-medium text-sm transition border border-slate-700">
+                    <i class="fa-solid fa-diamond"></i>
+                    <span>Blackjack Table</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Game Table Container -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden mb-8">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none ambient-glow"></div>
+
+            <!-- Header Title -->
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-6 pb-4 border-b border-slate-800 gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
+                        <i class="fa-solid fa-trophy text-amber-400"></i>
+                        <span>Grand Championship Stakes</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Pick your stallion, place your wager, and watch the live race fold out on the turf!</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="resetBankrollIfLow()" class="flex items-center space-x-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 px-3 py-2 rounded-2xl text-xs text-slate-400 hover:text-amber-400 transition cursor-pointer">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Refill Points</span>
+                    </button>
+                    <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
+                        <span class="text-slate-400">Track:</span>
+                        <span class="text-emerald-400 font-bold uppercase">Emerald Downs (Fast)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Box -->
+            <div id="messageBox" class="hidden mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-2xl text-sm flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i id="messageIcon" class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
+                    <span id="messageText">Notification message here</span>
+                </div>
+                <button onclick="hideMessage()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Live Race Track Viewport -->
+            <div class="relative bg-slate-950 border border-slate-800 rounded-3xl p-4 sm:p-6 mb-8 shadow-inner overflow-hidden">
+                
+                <!-- Track Status & Live Commentary Header -->
+                <div class="flex flex-col sm:flex-row items-center justify-between bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-3 mb-4 gap-3">
+                    <div class="flex items-center space-x-3">
+                        <span class="relative flex h-3 w-3">
+                            <span id="livePulse" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-500 opacity-75"></span>
+                            <span id="liveDot" class="relative inline-flex rounded-full h-3 w-3 bg-slate-500"></span>
+                        </span>
+                        <span id="raceStatusBadge" class="text-xs font-bold uppercase tracking-wider text-slate-400">Status: Waiting for Bets</span>
+                    </div>
+                    <div class="text-xs sm:text-sm font-semibold text-amber-400 text-center sm:text-right flex items-center space-x-2">
+                        <i class="fa-solid fa-bullhorn text-amber-500"></i>
+                        <span id="commentaryText">Welcome to CrunchyDerby! Place your bets on the horses below.</span>
+                    </div>
+                </div>
+
+                <!-- Turf Lanes Container -->
+                <div class="turf-pattern rounded-2xl p-3 sm:p-4 border-2 border-emerald-900/80 relative shadow-2xl overflow-hidden">
+                    
+                    <!-- Finish Line Banner -->
+                    <div class="absolute right-12 top-0 bottom-0 w-4 finish-line-pattern z-10 opacity-80 border-x border-amber-500/40"></div>
+                    <div class="absolute right-2 top-2 text-[10px] font-black text-amber-400 uppercase tracking-widest bg-slate-950/80 px-1.5 py-0.5 rounded border border-amber-500/30 z-20">
+                        FINISH
+                    </div>
+
+                    <!-- Lanes Rendered Dynamically -->
+                    <div id="trackLanesContainer" class="space-y-2 relative z-0">
+                        <!-- Dynamic content filled via JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Interactive Controls Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Horse Selection List (Left 2 Columns) -->
+                <div class="lg:col-span-2 space-y-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-lg font-extrabold text-white flex items-center space-x-2">
+                            <i class="fa-solid fa-horse-head text-amber-400"></i>
+                            <span>Select Your Stallion</span>
+                        </h3>
+                        <span class="text-xs text-slate-400">Odds reflect probability & payout multipliers</span>
+                    </div>
+
+                    <div id="horsesList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Horse Cards injected here -->
+                    </div>
+                </div>
+
+                <!-- Wager Panel & Race Action (Right Column) -->
+                <div class="bg-slate-950/80 border border-amber-500/30 rounded-3xl p-6 flex flex-col justify-between shadow-xl relative">
+                    <div>
+                        <h3 class="text-lg font-extrabold text-amber-400 flex items-center space-x-2 mb-4">
+                            <i class="fa-solid fa-ticket"></i>
+                            <span>Betting Slip</span>
+                        </h3>
+
+                        <!-- Selected Horse Summary -->
+                        <div id="selectedHorseCard" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 mb-5">
+                            <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Chosen Runner</div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div id="selectedHorseBadge" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-slate-950 bg-slate-700">
+                                        ?
+                                    </div>
+                                    <div>
+                                        <div id="selectedHorseName" class="font-bold text-white text-base">Select a Horse</div>
+                                        <div id="selectedHorseOdds" class="text-xs text-amber-400 font-semibold">Odds: -</div>
+                                    </div>
+                                </div>
+                                <div id="potentialPayoutDisplay" class="text-right">
+                                    <div class="text-[10px] text-slate-400 uppercase">Est. Payout</div>
+                                    <div class="text-sm font-extrabold text-emerald-400">0 pts</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wager Input -->
+                        <div class="space-y-3 mb-6">
+                            <label for="wagerInput" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                                Wager Amount (pts)
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-amber-400 font-bold">
+                                    <i class="fa-solid fa-coins text-sm"></i>
+                                </div>
+                                <input type="number" id="wagerInput" min="10" max="100000" step="10" value="50" oninput="updatePayoutEstimate()" class="bg-slate-900 border border-slate-700 rounded-2xl pl-10 pr-4 py-3 text-amber-400 font-bold text-lg w-full focus:outline-none focus:border-amber-500 transition">
+                            </div>
+
+                            <!-- Quick Bet Buttons -->
+                            <div class="grid grid-cols-4 gap-2 pt-1">
+                                <button onclick="setQuickWager(25)" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 py-2 rounded-xl transition">25</button>
+                                <button onclick="setQuickWager(50)" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 py-2 rounded-xl transition">50</button>
+                                <button onclick="setQuickWager(100)" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-slate-300 py-2 rounded-xl transition">100</button>
+                                <button onclick="setQuickWager('max')" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold text-amber-400 py-2 rounded-xl transition">MAX</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start Race Action Button -->
+                    <div>
+                        <button id="startRaceBtn" onclick="startRace()" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black py-4 rounded-2xl text-base tracking-wider uppercase transition shadow-lg shadow-amber-500/20 cursor-pointer flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-flag-checkered text-lg"></i>
+                            <span>Start Race</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Race Log & History Stats -->
+            <div class="mt-8 pt-6 border-t border-slate-800">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-extrabold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+                        <i class="fa-solid fa-clock-rotate-left text-amber-500"></i>
+                        <span>Recent Turf History</span>
+                    </h3>
+                    <button onclick="clearHistory()" class="text-xs text-slate-500 hover:text-slate-300 transition">Clear Log</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-[11px] font-bold text-slate-400 uppercase border-b border-slate-800">
+                                <th class="py-2 px-3">Race #</th>
+                                <th class="py-2 px-3">Winner</th>
+                                <th class="py-2 px-3">Odds</th>
+                                <th class="py-2 px-3">Your Bet</th>
+                                <th class="py-2 px-3 text-right">Net Return</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="text-xs divide-y divide-slate-800/60 font-medium">
+                            <tr>
+                                <td colspan="5" class="py-4 text-center text-slate-500">No race history recorded yet. Place a bet and start the race!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 CRUNCHYCARDS Turf Club. Synced with your central casino bankroll.</p>
+    </footer>
+
+    <script>
+        const BANKROLL_KEY = 'crunchycards_bankroll';
+        const HISTORY_KEY = 'crunchycards_derby_history';
+
+        // Horse Roster Configuration
+        const HORSES = [
+            { id: 1, name: 'Crunchy Comet', odds: 2.0, label: '2:1', color: 'bg-amber-500', textColor: 'text-amber-500', hex: '#f59e0b', jockey: '#020617', weight: 40 },
+            { id: 2, name: 'Midnight Dash', odds: 3.5, label: '7:2', color: 'bg-purple-500', textColor: 'text-purple-400', hex: '#a855f7', jockey: '#ffffff', weight: 28 },
+            { id: 3, name: 'Thunder Bolt', odds: 5.0, label: '5:1', color: 'bg-blue-500', textColor: 'text-blue-400', hex: '#3b82f6', jockey: '#ffffff', weight: 18 },
+            { id: 4, name: 'Lucky Velvet', odds: 8.0, label: '8:1', color: 'bg-rose-500', textColor: 'text-rose-400', hex: '#f43f5e', jockey: '#ffffff', weight: 10 },
+            { id: 5, name: 'Salty Biscuit', odds: 12.0, label: '12:1', color: 'bg-emerald-500', textColor: 'text-emerald-400', hex: '#10b981', jockey: '#020617', weight: 6 },
+            { id: 6, name: 'Golden Gallop', odds: 20.0, label: '20:1', color: 'bg-yellow-400', textColor: 'text-yellow-300', hex: '#facc15', jockey: '#020617', weight: 3 }
+        ];
+
+        let selectedHorseId = 1;
+        let raceInProgress = false;
+        let raceInterval = null;
+        let raceNumber = 1;
+        let horsePositions = {};
+
+        // Bankroll Sync
+        function getBankroll() {
+            const val = localStorage.getItem(BANKROLL_KEY);
+            if (val === null) {
+                localStorage.setItem(BANKROLL_KEY, '1000');
+                return 1000;
+            }
+            return parseInt(val, 10) || 0;
+        }
+
+        function setBankroll(amount) {
+            localStorage.setItem(BANKROLL_KEY, amount.toString());
+            updateBankrollDisplay();
+        }
+
+        function updateBankrollDisplay() {
+            const pts = getBankroll();
+            const el = document.getElementById('bankrollDisplay');
+            if (el) el.innerText = pts.toLocaleString() + ' pts';
+        }
+
+        function resetBankrollIfLow() {
+            const current = getBankroll();
+            if (current < 10) {
+                setBankroll(1000);
+                showMessage('Bankroll topped up with 1,000 points!', 'success');
+            } else {
+                showMessage('You still have active points in your bankroll.', 'info');
+            }
+        }
+
+        // Messaging
+        function showMessage(msg, type = 'info') {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            const icon = document.getElementById('messageIcon');
+            if (!box || !text) return;
+
+            text.innerText = msg;
+            box.classList.remove('hidden');
+
+            if (type === 'error') {
+                box.className = 'mb-6 bg-rose-500/10 border border-rose-500/30 text-rose-300 px-4 py-3 rounded-2xl text-sm flex items-center justify-between';
+                icon.className = 'fa-solid fa-triangle-exclamation text-rose-400 text-lg';
+            } else if (type === 'success') {
+                box.className = 'mb-6 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-3 rounded-2xl text-sm flex items-center justify-between';
+                icon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg';
+            } else {
+                box.className = 'mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-2xl text-sm flex items-center justify-between';
+                icon.className = 'fa-solid fa-circle-info text-amber-400 text-lg';
+            }
+        }
+
+        function hideMessage() {
+            const box = document.getElementById('messageBox');
+            if (box) box.classList.add('hidden');
+        }
+
+        // Render Initial Track Lanes & Horse Pick Cards
+        function initUI() {
+            renderHorseSelectionCards();
+            renderTrackLanes();
+            selectHorse(1);
+            updateBankrollDisplay();
+            loadHistory();
+        }
+
+        function renderHorseSelectionCards() {
+            const container = document.getElementById('horsesList');
+            container.innerHTML = '';
+
+            HORSES.forEach(horse => {
+                const isSelected = horse.id === selectedHorseId;
+                const card = document.createElement('div');
+                card.id = `horseCard-${horse.id}`;
+                card.onclick = () => selectHorse(horse.id);
+                card.className = `p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                    isSelected 
+                    ? 'bg-slate-900 border-amber-500 shadow-lg shadow-amber-500/10' 
+                    : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/40'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-xl ${horse.color} flex items-center justify-center font-black text-slate-950 shadow">
+                            #${horse.id}
+                        </div>
+                        <div>
+                            <div class="font-bold text-white text-sm">${horse.name}</div>
+                            <div class="text-[11px] text-slate-400">Favored Runner</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-extrabold ${horse.textColor}">${horse.label}</div>
+                        <div class="text-[10px] text-slate-500 uppercase">Payout Multiplier</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderTrackLanes() {
+            const container = document.getElementById('trackLanesContainer');
+            container.innerHTML = '';
+
+            HORSES.forEach(horse => {
+                horsePositions[horse.id] = 0;
+                const lane = document.createElement('div');
+                lane.className = 'relative h-10 bg-slate-950/60 rounded-xl border border-emerald-800/40 flex items-center px-2 overflow-hidden';
+                
+                lane.innerHTML = `
+                    <!-- Lane Number Badge -->
+                    <div class="w-6 h-6 rounded-lg ${horse.color} flex items-center justify-center text-[10px] font-bold text-slate-950 shadow z-10 shrink-0">
+                        ${horse.id}
+                    </div>
+
+                    <!-- Track Progress Lane Bar -->
+                    <div class="relative flex-grow h-full mx-2">
+                        <!-- Horse Runner Avatar -->
+                        <div id="runner-${horse.id}" class="horse-runner absolute top-1/2 -translate-y-1/2 left-0 flex items-center space-x-1 transition-all duration-100 z-20">
+                            <div class="w-7 h-7 rounded-full ${horse.color} border border-slate-900 flex items-center justify-center text-slate-950 text-xs shadow-md">
+                                <i class="fa-solid fa-horse"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(lane);
+            });
+        }
+
+        function selectHorse(id) {
+            if (raceInProgress) return;
+            selectedHorseId = id;
+            const horse = HORSES.find(h => h.id === id);
+
+            // Update UI card borders
+            HORSES.forEach(h => {
+                const el = document.getElementById(`horseCard-${h.id}`);
+                if (el) {
+                    if (h.id === id) {
+                        el.className = 'p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between bg-slate-900 border-amber-500 shadow-lg shadow-amber-500/10';
+                    } else {
+                        el.className = 'p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between bg-slate-950/60 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/40';
+                    }
+                }
+            });
+
+            // Update Slip
+            const badge = document.getElementById('selectedHorseBadge');
+            badge.className = `w-8 h-8 rounded-full flex items-center justify-center font-bold text-slate-950 ${horse.color}`;
+            badge.innerText = `#${horse.id}`;
+
+            document.getElementById('selectedHorseName').innerText = horse.name;
+            document.getElementById('selectedHorseOdds').innerText = `Odds: ${horse.label} (${horse.odds}x)`;
+
+            updatePayoutEstimate();
+        }
+
+        function setQuickWager(val) {
+            if (raceInProgress) return;
+            const wagerInput = document.getElementById('wagerInput');
+            if (val === 'max') {
+                wagerInput.value = Math.max(10, getBankroll());
+            } else {
+                wagerInput.value = val;
+            }
+            updatePayoutEstimate();
+        }
+
+        function updatePayoutEstimate() {
+            const wager = parseInt(document.getElementById('wagerInput').value, 10) || 0;
+            const horse = HORSES.find(h => h.id === selectedHorseId);
+            const estPayout = Math.floor(wager * horse.odds);
+            document.getElementById('potentialPayoutDisplay').innerHTML = `
+                <div class="text-[10px] text-slate-400 uppercase">Est. Payout</div>
+                <div class="text-sm font-extrabold text-emerald-400">${estPayout.toLocaleString()} pts</div>
+            `;
+        }
+
+        // Simulation Engine
+        function startRace() {
+            if (raceInProgress) return;
+
+            const wagerInput = document.getElementById('wagerInput');
+            const wager = parseInt(wagerInput.value, 10);
+            const bankroll = getBankroll();
+
+            if (isNaN(wager) || wager < 10) {
+                showMessage('Minimum wager is 10 points.', 'error');
+                return;
+            }
+            if (wager > bankroll) {
+                showMessage('Insufficient bankroll points for this wager!', 'error');
+                return;
+            }
+
+            hideMessage();
+            raceInProgress = true;
+
+            // Deduct Wager
+            setBankroll(bankroll - wager);
+
+            // Update UI State for Racing Mode
+            document.getElementById('startRaceBtn').disabled = true;
+            document.getElementById('startRaceBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            
+            const livePulse = document.getElementById('livePulse');
+            const liveDot = document.getElementById('liveDot');
+            livePulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75';
+            liveDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500';
+            document.getElementById('raceStatusBadge').innerText = 'Status: Live Race in Progress';
+            document.getElementById('raceStatusBadge').className = 'text-xs font-bold uppercase tracking-wider text-emerald-400';
+
+            // Reset Positions
+            HORSES.forEach(h => {
+                horsePositions[h.id] = 0;
+                const runner = document.getElementById(`runner-${h.id}`);
+                if (runner) runner.style.left = '0%';
+            });
+
+            updateCommentary('And they\'re off at Emerald Downs!');
+
+            // Start Race Animation Loop
+            const trackLength = 88; // Max % width before finish
+            let finishedHorses = [];
+
+            raceInterval = setInterval(() => {
+                let leadingHorse = null;
+                let maxPos = -1;
+
+                HORSES.forEach(horse => {
+                    if (horsePositions[horse.id] < trackLength) {
+                        // Weighted speed logic based on odds: lower odds = slightly higher average speed bias
+                        const speedBias = (1 / horse.odds) * 1.8;
+                        const randomFactor = Math.random() * 2.5;
+                        const boost = Math.random() < 0.08 ? 2.5 : 0; // Random burst
+                        const move = speedBias + randomFactor + boost;
+
+                        horsePositions[horse.id] += move;
+                        if (horsePositions[horse.id] >= trackLength) {
+                            horsePositions[horse.id] = trackLength;
+                            if (!finishedHorses.includes(horse.id)) {
+                                finishedHorses.push(horse.id);
+                            }
+                        }
+
+                        const runner = document.getElementById(`runner-${horse.id}`);
+                        if (runner) {
+                            runner.style.left = `${horsePositions[horse.id]}%`;
+                        }
+                    }
+
+                    if (horsePositions[horse.id] > maxPos) {
+                        maxPos = horsePositions[horse.id];
+                        leadingHorse = horse;
+                    }
+                });
+
+                // Commentary updates
+                if (finishedHorses.length === 0 && leadingHorse) {
+                    if (maxPos > 60 && maxPos < 70) {
+                        updateCommentary(`${leadingHorse.name} leads as they reach the final turn!`);
+                    } else if (maxPos >= 70) {
+                        updateCommentary(`It's a sprint down the stretch! ${leadingHorse.name} in front!`);
+                    }
+                }
+
+                // Race Finished
+                if (finishedHorses.length > 0) {
+                    clearInterval(raceInterval);
+                    finishRace(finishedHorses[0], wager);
+                }
+
+            }, 120);
+        }
+
+        function updateCommentary(text) {
+            document.getElementById('commentaryText').innerText = text;
+        }
+
+        function finishRace(winnerId, wager) {
+            const winner = HORSES.find(h => h.id === winnerId);
+            const userHorse = HORSES.find(h => h.id === selectedHorseId);
+            const won = winnerId === selectedHorseId;
+            let netReturn = -wager;
+
+            if (won) {
+                const payout = Math.floor(wager * winner.odds);
+                netReturn = payout - wager;
+                setBankroll(getBankroll() + payout);
+                showMessage(`VICTORY! ${winner.name} won the race! You won ${payout.toLocaleString()} pts!`, 'success');
+                updateCommentary(`PHOTO FINISH! ${winner.name} takes 1st place! What an incredible run!`);
+            } else {
+                showMessage(`RACE OVER: #${winner.id} ${winner.name} won 1st place. Better luck next time!`, 'error');
+                updateCommentary(`${winner.name} crosses the finish line first for the win!`);
+            }
+
+            // Reset Live Indicators
+            const livePulse = document.getElementById('livePulse');
+            const liveDot = document.getElementById('liveDot');
+            livePulse.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-500 opacity-75';
+            liveDot.className = 'relative inline-flex rounded-full h-3 w-3 bg-slate-500';
+            document.getElementById('raceStatusBadge').innerText = 'Status: Official Results';
+            document.getElementById('raceStatusBadge').className = 'text-xs font-bold uppercase tracking-wider text-slate-400';
+
+            // Reset Button
+            document.getElementById('startRaceBtn').disabled = false;
+            document.getElementById('startRaceBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+            raceInProgress = false;
+
+            // Record History
+            addHistoryRecord(raceNumber++, winner, userHorse, wager, netReturn);
+        }
+
+        // History Management
+        function addHistoryRecord(raceNo, winner, userHorse, wager, netReturn) {
+            let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            const record = {
+                raceNo,
+                winnerName: winner.name,
+                winnerOdds: winner.label,
+                userHorseName: userHorse.name,
+                wager,
+                netReturn
+            };
+
+            history.unshift(record);
+            if (history.length > 10) history = history.slice(0, 10);
+
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            renderHistoryTable(history);
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            renderHistoryTable(history);
+        }
+
+        function renderHistoryTable(history) {
+            const tbody = document.getElementById('historyTableBody');
+            if (!tbody) return;
+
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">No race history recorded yet. Place a bet and start the race!</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = history.map(item => {
+                const isWin = item.netReturn > 0;
+                const returnClass = isWin ? 'text-emerald-400 font-bold' : 'text-slate-400';
+                const returnText = isWin ? `+${item.netReturn.toLocaleString()} pts` : `${item.netReturn.toLocaleString()} pts`;
+
+                return `
+                    <tr class="hover:bg-slate-900/50 transition">
+                        <td class="py-2.5 px-3 font-mono text-slate-400">#${item.raceNo}</td>
+                        <td class="py-2.5 px-3 font-bold text-white">${item.winnerName}</td>
+                        <td class="py-2.5 px-3 text-amber-400 font-semibold">${item.winnerOdds}</td>
+                        <td class="py-2.5 px-3 text-slate-300">${item.userHorseName} (${item.wager} pts)</td>
+                        <td class="py-2.5 px-3 text-right ${returnClass}">${returnText}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function clearHistory() {
+            localStorage.removeItem(HISTORY_KEY);
+            renderHistoryTable([]);
+        }
+
+        window.onload = function() {
+            initUI();
+        };
+    </script>
+</body>
+</html>
