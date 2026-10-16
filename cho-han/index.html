@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUNCHYCARDS - Cho-Han</title>
+    <title>CRUNCHYCARDS - Cho-Han Table</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,6 +21,17 @@
         .animate-fade-in {
             animation: fadeIn 0.25s ease-out forwards;
         }
+        @keyframes cupShake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-10px, -6px) rotate(-8deg); }
+            40% { transform: translate(10px, 6px) rotate(8deg); }
+            60% { transform: translate(-8px, 6px) rotate(-6deg); }
+            80% { transform: translate(8px, -6px) rotate(6deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .shaking {
+            animation: cupShake 0.12s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-full flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
@@ -32,124 +43,149 @@
                     <i class="fa-solid fa-dice text-slate-950 text-xl font-bold"></i>
                 </div>
                 <div>
-                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCARDS</span>
-                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">Cho-Han Table</span>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">CHO-HAN</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">Japanese Dice Room</span>
                 </div>
             </div>
 
             <!-- Bankroll & Navigation -->
-            <div class="flex items-center space-x-4 sm:space-x-6">
-                <div class="bg-slate-950/80 border border-amber-500/40 rounded-2xl px-4 sm:px-5 py-2 flex items-center space-x-3 shadow-inner">
-                    <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 text-sm">
-                        <i class="fa-solid fa-coins"></i>
+            <div class="flex items-center space-x-4">
+                <div class="bg-slate-950/80 border border-amber-500/40 rounded-2xl px-4 py-2 flex items-center space-x-3 shadow-inner">
+                    <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i class="fa-solid fa-coins text-xs"></i>
                     </div>
                     <div>
                         <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Bankroll</div>
-                        <div id="bankrollDisplay" class="text-base sm:text-lg font-bold text-amber-400">1,000 pts</div>
+                        <div id="bankrollDisplay" class="text-base font-bold text-amber-400">1,000 pts</div>
                     </div>
                 </div>
 
-                <a href="../shop/" class="hidden sm:inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-medium text-sm transition border border-slate-700">
-                    <i class="fa-solid fa-store text-amber-400"></i>
+                <a href="../shop/" class="hidden sm:inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl font-medium text-sm transition border border-slate-700">
+                    <i class="fa-solid fa-store"></i>
                     <span>Item Shop</span>
                 </a>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow max-w-4xl mx-auto px-4 py-8 w-full flex flex-col justify-center items-center">
+    <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         
-        <!-- Game Table Container -->
-        <div class="w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-            <div class="absolute -right-20 -top-20 w-72 h-72 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <!-- Game Table Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden mb-8">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-            <!-- Table Header / Info -->
-            <div class="text-center mb-8">
-                <div id="equippedDiceBadge" class="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 px-4 py-1.5 rounded-full text-xs font-semibold mb-3">
-                    <i class="fa-solid fa-dice"></i>
-                    <span>Equipped Dice: Standard Style</span>
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-8 pb-6 border-b border-slate-800 gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
+                        <span>Traditional Cho-Han</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Predict whether the sum of two rolled dice will be Cho (Even) or Han (Odd).</p>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Traditional Japanese Dice Game</h1>
-                <p class="text-slate-400 text-sm mt-1">Guess whether the sum of the two hidden dice is Cho (Even) or Han (Odd).</p>
+                <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
+                    <span class="text-slate-400">Equipped Style:</span>
+                    <span id="equippedDiceBadge" class="text-amber-400 font-bold uppercase">Standard White</span>
+                </div>
             </div>
 
-            <!-- Dice Shake Area -->
-            <div class="bg-slate-950/80 border border-slate-800 rounded-3xl p-8 mb-8 text-center relative min-h-[220px] flex flex-col items-center justify-center shadow-inner">
-                <div id="cupContainer" class="transition-transform duration-500 w-full flex flex-col items-center">
-                    <div id="cupStatus" class="text-slate-400 text-sm font-medium mb-4">Place your bet and roll the cup!</div>
-                    
+            <!-- Notification Toast / Message Box -->
+            <div id="messageBox" class="hidden mb-6 bg-rose-500/10 border border-rose-500/30 text-rose-300 px-4 py-3 rounded-2xl text-sm flex items-center space-x-3">
+                <i class="fa-solid fa-triangle-exclamation text-rose-400 text-lg"></i>
+                <span id="messageText">Please select a bet!</span>
+            </div>
+
+            <!-- Dice Area & Animated Cup -->
+            <div class="bg-slate-950/80 border border-slate-800 rounded-3xl p-8 mb-8 text-center relative min-h-[280px] flex flex-col items-center justify-center shadow-inner overflow-hidden">
+                <div id="cupStatus" class="text-slate-400 text-sm font-medium mb-4">Place your bet and roll the cup!</div>
+                
+                <!-- Cup and Dice Container -->
+                <div id="cupContainer" class="relative w-40 h-40 flex items-center justify-center mb-6">
+                    <!-- SVG Styled Dice Cup -->
+                    <div id="cupWrapper" class="absolute inset-0 flex items-center justify-center z-25 transition-all duration-300">
+                        <svg viewBox="0 0 120 120" class="w-36 h-36 filter drop-shadow-2xl">
+                            <!-- Cup Body -->
+                            <path d="M 20,20 L 100,20 L 90,105 C 90,112 80,115 60,115 C 40,115 30,112 30,105 Z" fill="url(#cupGrad)" stroke="#d97706" stroke-width="3"/>
+                            <!-- Cup Rim -->
+                            <ellipse cx="60" cy="20" rx="40" ry="10" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+                            <!-- Decorative Ribbon -->
+                            <path d="M 25,50 L 95,50 L 93,65 L 27,65 Z" fill="#b45309" opacity="0.6"/>
+                            <defs>
+                                <linearGradient id="cupGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#475569" />
+                                    <stop offset="50%" stop-color="#1e293b" />
+                                    <stop offset="100%" stop-color="#0f172a" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+
                     <!-- Dice Display -->
-                    <div id="diceDisplay" class="flex items-center justify-center space-x-6">
-                        <div class="w-20 h-20 bg-slate-900 border border-slate-700 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden p-2">
-                            <span class="text-slate-600 font-bold text-xl">?</span>
-                        </div>
-                        <div class="w-20 h-20 bg-slate-900 border border-slate-700 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden p-2">
-                            <span class="text-slate-600 font-bold text-xl">?</span>
-                        </div>
+                    <div id="diceDisplay" class="absolute inset-0 flex items-center justify-center space-x-4 z-10">
+                        <div class="w-16 h-16 bg-slate-900 border border-slate-700 rounded-2xl flex items-center justify-center shadow-lg text-slate-500 font-bold text-lg">?</div>
+                        <div class="w-16 h-16 bg-slate-900 border border-slate-700 rounded-2xl flex items-center justify-center shadow-lg text-slate-500 font-bold text-lg">?</div>
                     </div>
                 </div>
 
-                <!-- Result Overlay Banner -->
-                <div id="resultBanner" class="hidden absolute inset-0 bg-slate-950/95 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center z-20 animate-fade-in p-6 text-center">
-                    <div id="resultTitle" class="text-2xl sm:text-3xl font-extrabold mb-2">CHO (EVEN)!</div>
-                    <div id="resultSub" class="text-slate-300 text-sm">You won points!</div>
+                <!-- Result Banner Beneath Dice -->
+                <div id="resultBanner" class="hidden w-full max-w-md bg-slate-900/90 border border-slate-700 rounded-2xl p-4 text-center shadow-lg animate-fade-in z-20">
+                    <div id="resultTitle" class="text-lg font-extrabold mb-1">CHO (EVEN)!</div>
+                    <div id="resultSub" class="text-slate-300 text-xs">You won points!</div>
                 </div>
             </div>
 
-            <!-- Betting Controls -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <!-- Choice Selection -->
-                <div class="bg-slate-950/50 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
-                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Select Your Prediction</label>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button type="button" onclick="setChoice('cho')" id="btnCho" class="py-4 px-6 rounded-xl border border-slate-700 bg-slate-900 hover:border-amber-500 text-white font-bold transition flex flex-col items-center space-y-1 cursor-pointer">
-                            <span class="text-lg">CHO</span>
-                            <span class="text-[10px] text-slate-400 font-normal">Even Sum (2, 4, 6, 8, 10, 12)</span>
-                        </button>
-                        <button type="button" onclick="setChoice('han')" id="btnHan" class="py-4 px-6 rounded-xl border border-slate-700 bg-slate-900 hover:border-amber-500 text-white font-bold transition flex flex-col items-center space-y-1 cursor-pointer">
-                            <span class="text-lg">HAN</span>
-                            <span class="text-[10px] text-slate-400 font-normal">Odd Sum (3, 5, 7, 9, 11)</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Wager Amount -->
-                <div class="bg-slate-950/50 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Wager Amount</label>
-                            <span class="text-xs text-amber-500 font-semibold">Payout: 2:1</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <input type="number" id="wagerInput" min="10" value="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold focus:outline-none focus:border-amber-500 text-lg">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-2 mt-4">
-                        <button type="button" onclick="adjustWager(50)" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-bold py-2 rounded-lg text-slate-300 transition">+50</button>
-                        <button type="button" onclick="adjustWager(100)" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-bold py-2 rounded-lg text-slate-300 transition">+100</button>
-                        <button type="button" onclick="adjustWager(500)" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-bold py-2 rounded-lg text-slate-300 transition">+500</button>
-                        <button type="button" onclick="setMaxWager()" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-bold py-2 rounded-lg text-amber-400 transition">MAX</button>
-                    </div>
-                </div>
+            <!-- Betting Mode Selection Tabs -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <button onclick="setBetType('chohan')" id="tab_chohan" class="py-3 px-4 rounded-2xl font-bold text-xs transition border bg-amber-500 border-amber-400 text-slate-950 shadow-lg shadow-amber-500/20 cursor-pointer">
+                    Cho / Han (Even/Odd)
+                </button>
+                <button onclick="setBetType('sum')" id="tab_sum" class="py-3 px-4 rounded-2xl font-bold text-xs transition border bg-slate-950 border-slate-800 text-slate-400 hover:text-white cursor-pointer">
+                    Exact Sum (2-12)
+                </button>
+                <button onclick="setBetType('singledie')" id="tab_singledie" class="py-3 px-4 rounded-2xl font-bold text-xs transition border bg-slate-950 border-slate-800 text-slate-400 hover:text-white cursor-pointer">
+                    Single Die Guess
+                </button>
+                <button onclick="setBetType('exactpair')" id="tab_exactpair" class="py-3 px-4 rounded-2xl font-bold text-xs transition border bg-slate-950 border-slate-800 text-slate-400 hover:text-white cursor-pointer">
+                    Exact Pair (35x)
+                </button>
             </div>
 
-            <!-- Roll Button -->
-            <button type="button" onclick="rollDice()" id="rollButton" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold py-4 px-8 rounded-2xl transition shadow-xl shadow-amber-500/20 text-lg cursor-pointer flex items-center justify-center space-x-3">
-                <i class="fa-solid fa-dice text-xl"></i>
-                <span>Roll Dice & Reveal</span>
-            </button>
+            <!-- Dynamic Bet Options Container -->
+            <div id="betOptionsContainer" class="mb-8 bg-slate-950/60 border border-slate-800 rounded-2xl p-5">
+                <!-- Injected dynamically -->
+            </div>
+
+            <!-- Wager Amount & Roll Button -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-800">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <span class="text-slate-400 text-sm font-medium">Wager:</span>
+                    <div class="flex items-center bg-slate-950 border border-slate-700 rounded-xl overflow-hidden">
+                        <button onclick="adjustWager(-50)" class="px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800 transition text-xs font-bold">-50</button>
+                        <input type="number" id="wagerInput" value="50" min="10" class="w-20 bg-transparent text-center text-amber-400 font-bold focus:outline-none py-2 text-sm">
+                        <button onclick="adjustWager(50)" class="px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800 transition text-xs font-bold">+50</button>
+                    </div>
+                    <button onclick="setMaxWager()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2.5 rounded-xl border border-slate-700 transition">MAX</button>
+                </div>
+
+                <button id="rollButton" onclick="rollDice()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-8 py-4 rounded-2xl transition shadow-xl shadow-amber-500/20 flex items-center justify-center space-x-3 text-base cursor-pointer">
+                    <i class="fa-solid fa-dice text-lg"></i>
+                    <span>ROLL THE CUP</span>
+                </button>
+            </div>
         </div>
+
     </main>
 
     <footer class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 CRUNCHYCARDS Casino. Dice styles synchronized automatically from Item Shop.</p>
+        <p>&copy; 2026 CRUNCHYCARDS Casino. Fully synced with your vault and equipment styles.</p>
     </footer>
 
     <script>
         const BANKROLL_KEY = 'crunchycards_bankroll';
         const DICE_SELECTION_KEY = 'crunchycards_selected_dice';
 
-        let selectedChoice = null; // 'cho' or 'han'
+        let currentBetType = 'chohan';
+        let selectedChoice = 'cho';
+        let selectedSum = 7;
+        let selectedSingleDie = 3;
 
         function getBankroll() {
             const val = localStorage.getItem(BANKROLL_KEY);
@@ -175,39 +211,142 @@
             return localStorage.getItem(DICE_SELECTION_KEY) || 'standard';
         }
 
-        function getDiceImageUrl(styleId, faceNum) {
-            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/${styleId}/${faceNum}.png`;
-        }
-
         function updateDiceBadge() {
             const style = getEquippedDiceStyle();
             const badge = document.getElementById('equippedDiceBadge');
             if (badge) {
-                badge.innerHTML = `<i class="fa-solid fa-dice"></i><span>Equipped Dice: ${style.charAt(0).toUpperCase() + style.slice(1)} Style</span>`;
+                badge.innerText = style === 'eggplant' ? 'Eggplant Royal' : 'Standard White';
             }
         }
 
-        function setChoice(choice) {
-            selectedChoice = choice;
-            const btnCho = document.getElementById('btnCho');
-            const btnHan = document.getElementById('btnHan');
+        function showMessage(msg) {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            if (!box || !text) return;
+            text.innerText = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 4000);
+        }
 
-            if (!btnCho || !btnHan) return;
+        function setBetType(type) {
+            currentBetType = type;
+            ['chohan', 'sum', 'singledie', 'exactpair'].forEach(t => {
+                const btn = document.getElementById(`tab_${t}`);
+                if (!btn) return;
+                if (t === type) {
+                    btn.className = 'py-3 px-4 rounded-2xl font-bold text-xs transition border bg-amber-500 border-amber-400 text-slate-950 shadow-lg shadow-amber-500/20 cursor-pointer';
+                } else {
+                    btn.className = 'py-3 px-4 rounded-2xl font-bold text-xs transition border bg-slate-950 border-slate-800 text-slate-400 hover:text-white cursor-pointer';
+                }
+            });
+            renderBetOptions();
+        }
 
-            if (choice === 'cho') {
-                btnCho.className = 'py-4 px-6 rounded-xl border-2 border-amber-500 bg-amber-500/10 text-white font-bold transition flex flex-col items-center space-y-1 cursor-pointer';
-                btnHan.className = 'py-4 px-6 rounded-xl border border-slate-700 bg-slate-900 hover:border-amber-500 text-white font-bold transition flex flex-col items-center space-y-1 cursor-pointer';
-            } else {
-                btnHan.className = 'py-4 px-6 rounded-xl border-2 border-amber-500 bg-amber-500/10 text-white font-bold transition flex flex-col items-center space-y-1 cursor-pointer';
-                btnCho.className = 'py-4 px-6 rounded-xl border border-slate-700 bg-slate-900 hover:border-amber-500 text-white font-bold transition flex flex-col items-center space-y-1 cursor-pointer';
+        function renderBetOptions() {
+            const container = document.getElementById('betOptionsContainer');
+            if (!container) return;
+
+            if (currentBetType === 'chohan') {
+                container.innerHTML = `
+                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Choose Even (Cho) or Odd (Han) Sum (Payout 2x)</div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="selectChoHan('cho')" id="btn_cho" class="py-4 px-6 rounded-2xl font-bold text-sm transition border ${selectedChoice === 'cho' ? 'bg-blue-600/30 border-blue-500 text-blue-400 ring-2 ring-blue-500/50' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'} flex flex-col items-center justify-center space-y-1 cursor-pointer">
+                            <span class="text-lg">CHO (Even)</span>
+                            <span class="text-[10px] text-slate-400 font-normal">Sum of 2 dice is even (2, 4, 6, 8, 10, 12)</span>
+                        </button>
+                        <button onclick="selectChoHan('han')" id="btn_han" class="py-4 px-6 rounded-2xl font-bold text-sm transition border ${selectedChoice === 'han' ? 'bg-rose-600/30 border-rose-500 text-rose-400 ring-2 ring-rose-500/50' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'} flex flex-col items-center justify-center space-y-1 cursor-pointer">
+                            <span class="text-lg">HAN (Odd)</span>
+                            <span class="text-[10px] text-slate-400 font-normal">Sum of 2 dice is odd (3, 5, 7, 9, 11)</span>
+                        </button>
+                    </div>
+                `;
+            } else if (currentBetType === 'sum') {
+                let buttonsHtml = '';
+                for (let s = 2; s <= 12; s++) {
+                    const isSelected = selectedSum === s;
+                    buttonsHtml += `
+                        <button onclick="selectSum(${s})" class="py-3 rounded-xl font-bold text-sm transition border ${isSelected ? 'bg-amber-500 border-amber-400 text-slate-950' : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'} cursor-pointer">
+                            ${s} <span class="block text-[10px] font-normal opacity-80">${getSumPayout(s)}x</span>
+                        </button>
+                    `;
+                }
+                container.innerHTML = `
+                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Select Exact Sum (2 through 12)</div>
+                    <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                        ${buttonsHtml}
+                    </div>
+                `;
+            } else if (currentBetType === 'singledie') {
+                let dieButtons = '';
+                for (let d = 1; d <= 6; d++) {
+                    const isSelected = selectedSingleDie === d;
+                    dieButtons += `
+                        <button onclick="selectSingleDie(${d})" class="py-4 rounded-xl font-bold text-lg transition border ${isSelected ? 'bg-amber-500/20 border-amber-500 text-amber-400 gold-glow' : 'bg-slate-900 border-slate-800 text-slate-300'} flex flex-col items-center justify-center cursor-pointer">
+                            <i class="fa-solid fa-dice-${d === 1 ? 'one' : d === 2 ? 'two' : d === 3 ? 'three' : d === 4 ? 'four' : d === 5 ? 'five' : 'six'} text-xl mb-1"></i>
+                            <span>Die ${d}</span>
+                        </button>
+                    `;
+                }
+                container.innerHTML = `
+                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Guess a Number (Appears on at least 1 die - Payout 2x)</div>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                        ${dieButtons}
+                    </div>
+                `;
+            } else if (currentBetType === 'exactpair') {
+                container.innerHTML = `
+                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Exact Pair Guess (Payout 35x)</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex items-center space-x-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                            <span class="text-sm font-bold text-slate-300">First Die:</span>
+                            <select id="exactDie1" class="bg-slate-950 border border-slate-700 text-amber-400 font-bold px-4 py-2 rounded-xl focus:outline-none">
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                            <span class="text-sm font-bold text-slate-300">Second Die:</span>
+                            <select id="exactDie2" class="bg-slate-950 border border-slate-700 text-amber-400 font-bold px-4 py-2 rounded-xl focus:outline-none">
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6" selected>6</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
             }
+        }
+
+        function selectChoHan(choice) {
+            selectedChoice = choice;
+            renderBetOptions();
+        }
+
+        function selectSum(s) {
+            selectedSum = s;
+            renderBetOptions();
+        }
+
+        function selectSingleDie(d) {
+            selectedSingleDie = d;
+            renderBetOptions();
+        }
+
+        function getSumPayout(sum) {
+            if (sum === 2 || sum === 12) return 36;
+            if (sum === 3 || sum === 11) return 18;
+            if (sum === 4 || sum === 10) return 12;
+            if (sum === 5 || sum === 9) return 9;
+            if (sum === 6 || sum === 8) return 7;
+            return 6;
         }
 
         function adjustWager(amount) {
             const input = document.getElementById('wagerInput');
             if (!input) return;
-            const current = parseInt(input.value, 10) || 0;
-            input.value = Math.max(10, current + amount);
+            let current = parseInt(input.value, 10) || 0;
+            current += amount;
+            if (current < 10) current = 10;
+            input.value = current;
         }
 
         function setMaxWager() {
@@ -216,39 +355,53 @@
             input.value = getBankroll();
         }
 
-        function rollDice() {
-            if (!selectedChoice) {
-                alert('Please select either Cho (Even) or Han (Odd) before rolling!');
-                return;
-            }
+        function getDiceImageUrl(style, face) {
+            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/${style}/${face}.png`;
+        }
 
+        function rollDice() {
             const wagerInput = document.getElementById('wagerInput');
             const wager = parseInt(wagerInput.value, 10);
             const bankroll = getBankroll();
 
             if (isNaN(wager) || wager <= 0) {
-                alert('Please enter a valid wager amount.');
+                showMessage('Please enter a valid wager amount.');
                 return;
             }
 
             if (wager > bankroll) {
-                alert('Insufficient points in your bankroll for this wager!');
+                showMessage('Insufficient points in your bankroll for this wager!');
                 return;
             }
 
-            // Deduct wager
             setBankroll(bankroll - wager);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
             const rollButton = document.getElementById('rollButton');
             if (rollButton) rollButton.disabled = true;
 
-            const cupContainer = document.getElementById('cupContainer');
-            cupContainer.classList.add('animate-pulse');
+            const cupWrapper = document.getElementById('cupWrapper');
             const cupStatus = document.getElementById('cupStatus');
+            const banner = document.getElementById('resultBanner');
+            if (banner) banner.classList.add('hidden');
+
+            const diceDisplay = document.getElementById('diceDisplay');
+            if (diceDisplay) {
+                diceDisplay.innerHTML = `
+                    <div class="w-16 h-16 bg-slate-900 border border-slate-700 rounded-2xl flex items-center justify-center shadow-lg text-slate-500 font-bold text-lg">?</div>
+                    <div class="w-16 h-16 bg-slate-900 border border-slate-700 rounded-2xl flex items-center justify-center shadow-lg text-slate-500 font-bold text-lg">?</div>
+                `;
+            }
+
+            if (cupWrapper) {
+                cupWrapper.style.opacity = '1';
+                cupWrapper.classList.add('shaking');
+            }
             if (cupStatus) cupStatus.innerText = 'Rolling the dice cup...';
 
             setTimeout(() => {
-                cupContainer.classList.remove('animate-pulse');
+                if (cupWrapper) cupWrapper.classList.remove('shaking');
+                if (rollButton) rollButton.disabled = false;
 
                 const d1 = Math.floor(Math.random() * 6) + 1;
                 const d2 = Math.floor(Math.random() * 6) + 1;
@@ -260,53 +413,73 @@
                 const img1 = getDiceImageUrl(style, d1);
                 const img2 = getDiceImageUrl(style, d2);
 
-                const diceDisplay = document.getElementById('diceDisplay');
                 if (diceDisplay) {
                     diceDisplay.innerHTML = `
-                        <div class="w-20 h-20 bg-slate-950 border border-amber-500/50 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden p-2">
+                        <div class="w-16 h-16 bg-slate-950 border border-amber-500/50 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden p-1.5 animate-fade-in">
                             <img src="${img1}" alt="Dice ${d1}" class="max-h-full object-contain filter drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/60x60/1e293b/f59e0b?text=${d1}';">
                         </div>
-                        <div class="w-20 h-20 bg-slate-950 border border-amber-500/50 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden p-2">
+                        <div class="w-16 h-16 bg-slate-950 border border-amber-500/50 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden p-1.5 animate-fade-in">
                             <img src="${img2}" alt="Dice ${d2}" class="max-h-full object-contain filter drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/60x60/1e293b/f59e0b?text=${d2}';">
                         </div>
                     `;
                 }
 
-                const didWin = selectedChoice === resultOutcome;
-                const banner = document.getElementById('resultBanner');
+                if (cupWrapper) {
+                    cupWrapper.style.opacity = '0.15';
+                }
+
+                let didWin = false;
+                let winnings = 0;
+                let outcomeDescription = '';
+
+                if (currentBetType === 'chohan') {
+                    didWin = selectedChoice === resultOutcome;
+                    winnings = wager * 2;
+                    outcomeDescription = `${resultOutcome.toUpperCase()} (${sum === resultOutcome ? '' : 'Sum: ' + sum})`;
+                } else if (currentBetType === 'sum') {
+                    didWin = selectedSum === sum;
+                    const mult = getSumPayout(sum);
+                    winnings = wager * mult;
+                    outcomeDescription = `Sum ${sum}`;
+                } else if (currentBetType === 'singledie') {
+                    didWin = (d1 === selectedSingleDie || d2 === selectedSingleDie);
+                    winnings = wager * 2;
+                    outcomeDescription = `Rolled [${d1}, ${d2}]`;
+                } else if (currentBetType === 'exactpair') {
+                    const guess1 = parseInt(document.getElementById('exactDie1').value, 10);
+                    const guess2 = parseInt(document.getElementById('exactDie2').value, 10);
+                    didWin = (d1 === guess1 && d2 === guess2) || (d1 === guess2 && d2 === guess1);
+                    winnings = wager * 35;
+                    outcomeDescription = `Pair [${d1}, ${d2}]`;
+                }
+
                 const titleEl = document.getElementById('resultTitle');
                 const subEl = document.getElementById('resultSub');
 
                 if (didWin) {
-                    const winnings = wager * 2;
                     setBankroll(getBankroll() + winnings);
                     if (titleEl) {
-                        titleEl.innerText = `${resultOutcome.toUpperCase()} (${sum}) - YOU WIN!`;
-                        titleEl.className = 'text-2xl sm:text-3xl font-extrabold text-amber-400 mb-2';
+                        titleEl.innerText = `${outcomeDescription} - YOU WIN!`;
+                        titleEl.className = 'text-lg font-extrabold text-amber-400 mb-1';
                     }
-                    if (subEl) subEl.innerText = `Correct prediction! Collected ${winnings.toLocaleString()} points.`;
+                    if (subEl) subEl.innerText = `Correct! Collected ${winnings.toLocaleString()} points.`;
                 } else {
                     if (titleEl) {
-                        titleEl.innerText = `${resultOutcome.toUpperCase()} (${sum}) - YOU LOST!`;
-                        titleEl.className = 'text-2xl sm:text-3xl font-extrabold text-rose-400 mb-2';
+                        titleEl.innerText = `${outcomeDescription} - YOU LOST!`;
+                        titleEl.className = 'text-lg font-extrabold text-rose-400 mb-1';
                     }
                     if (subEl) subEl.innerText = `Incorrect prediction. Lost ${wager.toLocaleString()} points.`;
                 }
 
                 if (banner) banner.classList.remove('hidden');
-
-                setTimeout(() => {
-                    if (banner) banner.classList.add('hidden');
-                    if (rollButton) rollButton.disabled = false;
-                    if (cupStatus) cupStatus.innerText = 'Place your next bet and roll the cup!';
-                }, 3500);
-
-            }, 1200);
+                if (cupStatus) cupStatus.innerText = 'Roll complete!';
+            }, 1000);
         }
 
         window.onload = function() {
             updateBankrollDisplay();
             updateDiceBadge();
+            renderBetOptions();
         };
     </script>
 </body>

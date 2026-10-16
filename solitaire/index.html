@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCHYCARDS - Classic Solitaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+        }
+        /* Custom card styling and transitions */
+        .solitaire-card {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            user-select: none;
+        }
+        .solitaire-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                    <i class="fa-solid fa-clone text-slate-950 text-xl font-bold"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">SOLITAIRE</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">CRUNCHYCARDS Deck Room</span>
+                </div>
+            </div>
+
+            <!-- Bankroll & Navigation -->
+            <div class="flex items-center space-x-4">
+                <div class="bg-slate-950/80 border border-amber-500/40 rounded-2xl px-4 py-2 flex items-center space-x-3 shadow-inner">
+                    <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400">
+                        <i class="fa-solid fa-coins text-xs"></i>
+                    </div>
+                    <div>
+                        <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Bankroll</div>
+                        <div id="bankrollDisplay" class="text-base font-bold text-amber-400">1,000 pts</div>
+                    </div>
+                </div>
+
+                <a href="../shop/" class="hidden sm:inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl font-medium text-sm transition border border-slate-700">
+                    <i class="fa-solid fa-store"></i>
+                    <span>Item Shop</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Game Table Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden mb-8">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-6 pb-4 border-b border-slate-800 gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
+                        <span>Classic Klondike Solitaire</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Uses your equipped card deck style from the Item Shop.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
+                        <span class="text-slate-400">Equipped Deck:</span>
+                        <span id="equippedDeckBadge" class="text-amber-400 font-bold uppercase">Standard Deck</span>
+                    </div>
+                    <button onclick="startNewGame()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>New Game</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Modal / Notification Box -->
+            <div id="messageBox" class="hidden mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-2xl text-sm flex items-center space-x-3">
+                <i class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
+                <span id="messageText">Notification message here</span>
+            </div>
+
+            <!-- Solitaire Board Layout -->
+            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-3xl p-6 mb-4 min-h-[500px] flex flex-col justify-between shadow-inner relative overflow-x-auto">
+                
+                <!-- Top Row: Stock, Waste, and Foundations -->
+                <div class="grid grid-cols-7 gap-3 mb-8">
+                    <!-- Stock Pile -->
+                    <div id="pileStock" onclick="handleStockClick()" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center cursor-pointer relative shadow">
+                        <span class="text-emerald-600/70 text-xs font-bold">STOCK</span>
+                    </div>
+                    <!-- Waste Pile -->
+                    <div id="pileWaste" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
+                        <span class="text-emerald-600/70 text-xs font-bold">WASTE</span>
+                    </div>
+                    <!-- Spacer -->
+                    <div></div>
+                    <!-- 4 Foundations -->
+                    <div id="foundation_0" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
+                        <i class="fa-solid fa-heart text-emerald-800/50 text-xl"></i>
+                    </div>
+                    <div id="foundation_1" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
+                        <i class="fa-solid fa-diamond text-emerald-800/50 text-xl"></i>
+                    </div>
+                    <div id="foundation_2" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
+                        <i class="fa-solid fa-club text-emerald-800/50 text-xl"></i>
+                    </div>
+                    <div id="foundation_3" class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center relative shadow">
+                        <i class="fa-solid fa-spade text-emerald-800/50 text-xl"></i>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: 7 Tableau Piles -->
+                <div class="grid grid-cols-7 gap-3 min-h-[300px]">
+                    <div id="tableau_0" class="relative min-h-[250px]"></div>
+                    <div id="tableau_1" class="relative min-h-[250px]"></div>
+                    <div id="tableau_2" class="relative min-h-[250px]"></div>
+                    <div id="tableau_3" class="relative min-h-[250px]"></div>
+                    <div id="tableau_4" class="relative min-h-[250px]"></div>
+                    <div id="tableau_5" class="relative min-h-[250px]"></div>
+                    <div id="tableau_6" class="relative min-h-[250px]"></div>
+                </div>
+
+            </div>
+
+            <!-- Game Stats Bar -->
+            <div class="flex items-center justify-between text-xs text-slate-400 px-2">
+                <div>Score: <span id="scoreDisplay" class="text-amber-400 font-bold">0</span></div>
+                <div>Moves: <span id="movesDisplay" class="text-white font-bold">0</span></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <header class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 CRUNCHYCARDS Casino. Fully synced with your vault and deck equipment.</p>
+    </header>
+
+    <script>
+        const BANKROLL_KEY = 'crunchycards_bankroll';
+        const CARDS_SELECTION_KEY = 'crunchycards_selected_cards';
+
+        let bankroll = 1000;
+        let score = 0;
+        let moves = 0;
+
+        // Solitaire state
+        let stock = [];
+        let waste = [];
+        let foundations = [[], [], [], []];
+        let tableau = [[], [], [], [], [], [], []];
+        let selectedCard = null; // { pileType, pileIndex, cardIndex }
+
+        function getBankroll() {
+            const val = localStorage.getItem(BANKROLL_KEY);
+            if (val === null) {
+                localStorage.setItem(BANKROLL_KEY, '1000');
+                return 1000;
+            }
+            return parseInt(val, 10) || 0;
+        }
+
+        function setBankroll(amount) {
+            localStorage.setItem(BANKROLL_KEY, amount.toString());
+            updateBankrollDisplay();
+        }
+
+        function updateBankrollDisplay() {
+            const pts = getBankroll();
+            const el = document.getElementById('bankrollDisplay');
+            if (el) el.innerText = pts.toLocaleString() + ' pts';
+        }
+
+        function getEquippedDeckStyle() {
+            return localStorage.getItem(CARDS_SELECTION_KEY) || 'standard';
+        }
+
+        function updateDeckBadge() {
+            const style = getEquippedDeckStyle();
+            const badge = document.getElementById('equippedDeckBadge');
+            if (badge) {
+                badge.innerText = style === 'alice' ? 'Alice Wonderland' : 'Standard Deck';
+            }
+        }
+
+        function showMessage(msg) {
+            const box = document.getElementById('messageBox');
+            const text = document.getElementById('messageText');
+            if (!box || !text) return;
+            text.innerText = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 4000);
+        }
+
+        function getCardImageUrl(suit, rank) {
+            const style = getEquippedDeckStyle();
+            // e.g. https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/spades/a.png
+            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/${suit}/${rank}.png`;
+        }
+
+        function getCardBackUrl() {
+            const style = getEquippedDeckStyle();
+            return `https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/${style}/back.png`;
+        }
+
+        // Initialize and shuffle standard 52 deck
+        function startNewGame() {
+            score = 0;
+            moves = 0;
+            stock = [];
+            waste = [];
+            foundations = [[], [], [], []];
+            tableau = [[], [], [], [], [], [], []];
+            selectedCard = null;
+
+            const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
+            const ranks = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
+            
+            let deck = [];
+            for (let s of suits) {
+                for (let r of ranks) {
+                    deck.push({
+                        suit: s,
+                        rank: r,
+                        color: (s === 'hearts' || s === 'diamonds') ? 'red' : 'black',
+                        faceUp: false
+                    });
+                }
+            }
+
+            // Shuffle deck
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+
+            // Deal tableau
+            for (let i = 0; i < 7; i++) {
+                for (let j = i; j < 7; j++) {
+                    let card = deck.pop();
+                    if (i === j) card.faceUp = true;
+                    tableau[j].push(card);
+                }
+            }
+
+            // Remaining cards go to stock
+            stock = deck;
+            renderBoard();
+            showMessage('New Solitaire game started!');
+        }
+
+        function handleStockClick() {
+            if (stock.length === 0) {
+                // Recycle waste back to stock
+                if (waste.length > 0) {
+                    stock = waste.reverse().map(c => ({ ...c, faceUp: false }));
+                    waste = [];
+                    moves++;
+                }
+            } else {
+                let card = stock.pop();
+                card.faceUp = true;
+                waste.push(card);
+                moves++;
+            }
+            renderBoard();
+        }
+
+        function renderBoard() {
+            document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('movesDisplay').innerText = moves;
+
+            // Render Stock
+            const stockEl = document.getElementById('pileStock');
+            if (stock.length > 0) {
+                stockEl.innerHTML = `<img src="${getCardBackUrl()}" alt="Stock" class="w-full h-full object-cover rounded-xl shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=Back';">`;
+            } else {
+                stockEl.innerHTML = `<span class="text-emerald-600/70 text-xs font-bold"><i class="fa-solid fa-rotate-left"></i></span>`;
+            }
+
+            // Render Waste
+            const wasteEl = document.getElementById('pileWaste');
+            if (waste.length > 0) {
+                const topWaste = waste[waste.length - 1];
+                wasteEl.innerHTML = `
+                    <img src="${getCardImageUrl(topWaste.suit, topWaste.rank)}" alt="${topWaste.rank} of ${topWaste.suit}" 
+                         class="w-full h-full object-cover rounded-xl shadow solitaire-card cursor-pointer"
+                         onclick="selectWasteCard()"
+                         onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${topWaste.rank.toUpperCase()}';">
+                `;
+            } else {
+                wasteEl.innerHTML = `<span class="text-emerald-600/70 text-xs font-bold">WASTE</span>`;
+            }
+
+            // Render Foundations
+            for (let f = 0; f < 4; f++) {
+                const fEl = document.getElementById(`foundation_${f}`);
+                const pile = foundations[f];
+                if (pile.length > 0) {
+                    const topF = pile[pile.length - 1];
+                    fEl.innerHTML = `
+                        <img src="${getCardImageUrl(topF.suit, topF.rank)}" alt="${topF.rank}" 
+                             class="w-full h-full object-cover rounded-xl shadow"
+                             onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${topF.rank.toUpperCase()}';">
+                    `;
+                } else {
+                    fEl.innerHTML = `<i class="fa-solid fa-${f === 0 || f === 1 ? 'heart text-red-800/40' : 'club text-slate-800/40'} text-xl"></i>`;
+                }
+            }
+
+            // Render Tableau
+            for (let t = 0; t < 7; t++) {
+                const tEl = document.getElementById(`tableau_${t}`);
+                const pile = tableau[t];
+                let html = '';
+                if (pile.length === 0) {
+                    html = `<div class="w-20 h-28 border-2 border-dashed border-emerald-800/40 rounded-xl cursor-pointer" onclick="moveToTableau(${t})"></div>`;
+                } else {
+                    pile.forEach((card, idx) => {
+                        const topOffset = idx * 28;
+                        if (card.faceUp) {
+                            html += `
+                                <div style="top: ${topOffset}px;" class="absolute w-20 h-28 solitaire-card cursor-pointer" onclick="selectTableauCard(${t}, ${idx})">
+                                    <img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank}" class="w-full h-full object-cover rounded-xl shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';">
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div style="top: ${topOffset}px;" class="absolute w-20 h-28">
+                                    <img src="${getCardBackUrl()}" alt="Back" class="w-full h-full object-cover rounded-xl shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=Back';">
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                tEl.innerHTML = html;
+            }
+        }
+
+        function selectWasteCard() {
+            if (waste.length === 0) return;
+            const card = waste[waste.length - 1];
+            // Try auto moving to foundation or toggle selection
+            for (let f = 0; f < 4; f++) {
+                if (canMoveToFoundation(card, foundations[f])) {
+                    foundations[f].push(waste.pop());
+                    score += 10;
+                    moves++;
+                    renderBoard();
+                    checkWin();
+                    return;
+                }
+            }
+            showMessage(`Selected waste card: ${card.rank.toUpperCase()} of ${card.suit}`);
+        }
+
+        function selectTableauCard(tIdx, cIdx) {
+            const card = tableau[tIdx][cIdx];
+            if (!card.faceUp) {
+                // Flip face down card if it's the top card
+                if (cIdx === tableau[tIdx].length - 1) {
+                    card.faceUp = true;
+                    score += 5;
+                    moves++;
+                    renderBoard();
+                }
+                return;
+            }
+
+            // Try auto move to foundation if top card
+            if (cIdx === tableau[tIdx].length - 1) {
+                for (let f = 0; f < 4; f++) {
+                    if (canMoveToFoundation(card, foundations[f])) {
+                        foundations[f].push(tableau[tIdx].pop());
+                        if (tableau[tIdx].length > 0) tableau[tIdx][tableau[tIdx].length - 1].faceUp = true;
+                        score += 15;
+                        moves++;
+                        renderBoard();
+                        checkWin();
+                        return;
+                    }
+                }
+            }
+
+            showMessage(`Selected tableau card: ${card.rank.toUpperCase()} of ${card.suit}`);
+        }
+
+        function canMoveToFoundation(card, foundationPile) {
+            const rankOrder = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
+            if (foundationPile.length === 0) {
+                return card.rank === 'a';
+            }
+            const topCard = foundationPile[foundationPile.length - 1];
+            if (topCard.suit !== card.suit) return false;
+            return rankOrder.indexOf(card.rank) === rankOrder.indexOf(topCard.rank) + 1;
+        }
+
+        function checkWin() {
+            let totalFoundations = foundations.reduce((acc, pile) => acc + pile.length, 0);
+            if (totalFoundations === 52) {
+                let reward = 250;
+                setBankroll(getBankroll() + reward);
+                showMessage(`Congratulations! You won Solitaire and collected ${reward} bonus points!`);
+            }
+        }
+
+        window.onload = function() {
+            updateBankrollDisplay();
+            updateDeckBadge();
+            startNewGame();
+        };
+    </script>
+</body>
+</html>
