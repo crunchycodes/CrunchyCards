@@ -59,10 +59,14 @@
         <div class="mb-10 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 border border-slate-800 rounded-3xl p-8 relative overflow-hidden shadow-2xl">
             <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
             <div class="mb-6 sm:mb-0 z-10">
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">Customization Emporium</h1>
-                <p class="text-slate-400 max-w-xl text-sm sm:text-base">Upgrade your table aesthetics! Select your favorite dice, card skins, and horse companions sourced directly from GitHub. Your choices sync globally across all Crunchycards games instantly.</p>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2">Dynamic Customization Emporium</h1>
+                <p class="text-slate-400 max-w-xl text-sm sm:text-base">Automatically scanning GitHub JSON manifests (<code class="text-amber-400">cards.json</code>, <code class="text-amber-400">racers.json</code>, <code class="text-amber-400">dice.json</code>) to detect available customization sets across all CrunchyCards games.</p>
             </div>
             <div class="z-10 flex flex-wrap gap-3">
+                <button onclick="refreshCatalogFromJSON()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 font-bold px-4 py-3 rounded-xl transition shadow flex items-center space-x-2 text-sm cursor-pointer">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>Re-Scan JSON</span>
+                </button>
                 <button onclick="addBonusPoints()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-3 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center space-x-2 text-sm cursor-pointer">
                     <i class="fa-solid fa-gift"></i>
                     <span>Claim Daily +500 pts</span>
@@ -84,7 +88,7 @@
                         <i class="fa-solid fa-dice text-amber-500"></i>
                         <span>Dice Styles</span>
                     </h2>
-                    <p class="text-slate-400 text-sm">Choose the physical appearance of dice rolled across games. Fully rendered across faces 1 through 6.</p>
+                    <p class="text-slate-400 text-sm">Discovered from <code class="text-amber-400/80">data/dice/dice.json</code>.</p>
                 </div>
             </div>
 
@@ -101,7 +105,7 @@
                         <i class="fa-solid fa-clone text-amber-500"></i>
                         <span>Card Deck Styles</span>
                     </h2>
-                    <p class="text-slate-400 text-sm">Choose between Standard and Alice card deck assets including suit subfolders (clubs, diamonds, hearts, spades) and jokers.</p>
+                    <p class="text-slate-400 text-sm">Discovered from <code class="text-amber-400/80">data/cards/cards.json</code>.</p>
                 </div>
             </div>
 
@@ -110,15 +114,15 @@
             </div>
         </section>
 
-        <!-- Section 3: Horse Styles -->
+        <!-- Section 3: Horse Companions -->
         <section class="mb-10">
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
                         <i class="fa-solid fa-horse text-amber-500"></i>
-                        <span>Horse Companions</span>
+                        <span>Horse Companions & Racers</span>
                     </h2>
-                    <p class="text-slate-400 text-sm">Choose your trusty steed style! Standard horses are free, while My Hero legendary steeds are available for 300 pts.</p>
+                    <p class="text-slate-400 text-sm">Discovered from <code class="text-amber-400/80">data/horses/racers.json</code>.</p>
                 </div>
             </div>
 
@@ -130,7 +134,7 @@
     </main>
 
     <footer class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 CRUNCHYCARDS Casino. All styles sync automatically to localStorage (`crunchycards_bankroll`, `crunchycards_selected_dice`, `crunchycards_selected_cards`, `crunchycards_selected_horses`).</p>
+        <p>&copy; 2026 CRUNCHYCARDS Casino. Dynamic asset scanning enabled.</p>
     </footer>
 
     <script>
@@ -142,100 +146,173 @@
         const UNLOCKED_CARDS_KEY = 'crunchycards_owned_cards';
         const UNLOCKED_HORSES_KEY = 'crunchycards_owned_horses';
 
-        const diceCatalog = [
+        // GitHub Raw URLs for JSON manifests
+        const RAW_BASE = 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/';
+        const CARDS_MANIFEST_URL = RAW_BASE + 'data/cards/cards.json';
+        const RACERS_MANIFEST_URL = RAW_BASE + 'data/horses/racers.json';
+        const DICE_MANIFEST_URL = RAW_BASE + 'data/dice/dice.json';
+
+        // Catalogs populated dynamically by scanning
+        let diceCatalog = [];
+        let cardsCatalog = [];
+        let horsesCatalog = [];
+
+        // Fallback default definitions in case raw JSON is unavailable or pending update
+        const defaultDice = [
             {
                 id: 'standard',
                 name: 'Standard White Dice',
-                description: 'Classic high-contrast dotted casino dice.',
+                description: 'Classic high-contrast dotted casino dice from the standard folder.',
                 price: 0,
-                previewImages: [
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/standard/1.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/standard/2.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/standard/3.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/standard/4.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/standard/5.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/standard/6.png'
-                ],
-                badge: 'Default'
+                badge: 'Default',
+                previewImages: Array.from({length: 6}, (_, i) => `${RAW_BASE}data/dice/standard/${i + 1}.png`)
             },
             {
                 id: 'eggplant',
                 name: 'Eggplant Royal Dice',
-                description: 'Exotic purple dice.',
+                description: 'Exotic purple dice fetched directly from the eggplant assets folder.',
                 price: 100,
-                previewImages: [
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/eggplant/1.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/eggplant/2.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/eggplant/3.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/eggplant/4.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/eggplant/5.png',
-                    'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/dice/eggplant/6.png'
-                ],
-                badge: 'Special Edition'
+                badge: 'Special Edition',
+                previewImages: Array.from({length: 6}, (_, i) => `${RAW_BASE}data/dice/eggplant/${i + 1}.png`)
             }
         ];
 
-        const cardsCatalog = [
+        const defaultCards = [
             {
                 id: 'standard',
                 name: 'Standard Card Set',
-                description: 'Traditional standard card illustrations.',
+                description: 'Traditional standard card illustrations including suits and jokers.',
                 price: 0,
                 badge: 'Default',
-                folderPath: 'standard',
                 previewItems: [
-                    { name: 'Card Back', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/back.png' },
-                    { name: 'Ace of Spades', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/spades/a.png' },
-                    { name: 'King of Hearts', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/hearts/k.png' },
-                    { name: 'Queen of Diamonds', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/diamonds/q.png' },
-                    { name: 'Jack of Clubs', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/clubs/j.png' },
-                    { name: 'Red Joker', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/standard/joker/r.png' }
+                    { name: 'Card Back', url: `${RAW_BASE}data/cards/standard/back.png` },
+                    { name: 'Ace of Spades', url: `${RAW_BASE}data/cards/standard/spades/a.png` },
+                    { name: 'King of Hearts', url: `${RAW_BASE}data/cards/standard/hearts/k.png` },
+                    { name: 'Queen of Diamonds', url: `${RAW_BASE}data/cards/standard/diamonds/q.png` },
+                    { name: 'Jack of Clubs', url: `${RAW_BASE}data/cards/standard/clubs/j.png` },
+                    { name: 'Red Joker', url: `${RAW_BASE}data/cards/standard/joker/r.png` }
                 ]
             },
             {
                 id: 'alice',
-                name: 'Alice',
-                description: 'Whimsical Alice themed card illustrations.',
+                name: 'Alice Wonderland Cards',
+                description: 'Whimsical Alice themed card illustrations across all 4 suits.',
                 price: 150,
                 badge: 'Themed Deck',
-                folderPath: 'alice',
                 previewItems: [
-                    { name: 'Card Back', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/back.png' },
-                    { name: 'Ace of Spades', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/spades/a.png' },
-                    { name: 'King of Hearts', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/hearts/k.png' },
-                    { name: 'Queen of Diamonds', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/diamonds/q.png' },
-                    { name: 'Jack of Clubs', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/clubs/j.png' },
-                    { name: 'Red Joker', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/cards/alice/joker/r.png' }
+                    { name: 'Card Back', url: `${RAW_BASE}data/cards/alice/back.png` },
+                    { name: 'Ace of Spades', url: `${RAW_BASE}data/cards/alice/spades/a.png` },
+                    { name: 'King of Hearts', url: `${RAW_BASE}data/cards/alice/hearts/k.png` },
+                    { name: 'Queen of Diamonds', url: `${RAW_BASE}data/cards/alice/diamonds/q.png` },
+                    { name: 'Jack of Clubs', url: `${RAW_BASE}data/cards/alice/clubs/j.png` },
+                    { name: 'Red Joker', url: `${RAW_BASE}data/cards/alice/joker/r.png` }
                 ]
             }
         ];
 
-        const horsesCatalog = [
+        const defaultHorses = [
             {
                 id: 'standard',
                 name: 'Standard Horses',
-                description: 'Reliable classic horses.',
+                description: 'Reliable classic steeds.',
                 price: 0,
                 badge: 'Default',
                 previewItems: [
-                    { name: 'Thunder Hoof', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/standard/1.png' },
-                    { name: 'Golden Galop', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/standard/2.png' },
-                    { name: 'Midnight Runner', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/standard/3.png' }
+                    { name: 'Thunder Hoof', url: `${RAW_BASE}data/horses/standard/1.png` },
+                    { name: 'Golden Galop', url: `${RAW_BASE}data/horses/standard/2.png` },
+                    { name: 'Midnight Runner', url: `${RAW_BASE}data/horses/standard/3.png` }
                 ]
             },
             {
                 id: 'myhero',
                 name: 'My Hero Horses',
-                description: 'Legendary hero horses.',
+                description: 'Legendary hero steeds available for 300 pts.',
                 price: 300,
                 badge: 'Legendary',
                 previewItems: [
-                    { name: 'Deku', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/1.png' },
-                    { name: 'Shoto', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/2.png' },
-                    { name: 'Great Explosion Murder God Dynamight', url: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/3.png' }
+                    { name: 'Deku', url: `${RAW_BASE}data/horses/myhero/1.png` },
+                    { name: 'Shoto', url: `${RAW_BASE}data/horses/myhero/2.png` },
+                    { name: 'Dynamight', url: `${RAW_BASE}data/horses/myhero/3.png` }
                 ]
             }
         ];
+
+        async function fetchManifest(url) {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return await res.json();
+            } catch (err) {
+                console.warn(`Could not load asset manifest from ${url}:`, err);
+                return null;
+            }
+        }
+
+        function normalizeCardsManifest(data) {
+            if (!data) return defaultCards;
+            // Accepts array or object structure from cards.json
+            const items = Array.isArray(data) ? data : (data.sets || data.cards || [data]);
+            return items.map((item, index) => {
+                const id = item.id || item.key || (item.name ? item.name.toLowerCase().replace(/\s+/g, '') : `set-${index}`);
+                const basePath = item.path ? (item.path.startsWith('http') ? item.path : `${RAW_BASE}${item.path}`) : `${RAW_BASE}data/cards/${id}`;
+                return {
+                    id: id,
+                    name: item.name || item.title || `${id.charAt(0).toUpperCase() + id.slice(1)} Set`,
+                    description: item.description || `Card set scanned from cards.json (${id}).`,
+                    price: item.price !== undefined ? item.price : (id === 'standard' ? 0 : 150),
+                    badge: item.badge || (id === 'standard' ? 'Default' : 'Discovered'),
+                    previewItems: item.previewItems || [
+                        { name: 'Card Back', url: `${basePath}/back.png` },
+                        { name: 'Ace of Spades', url: `${basePath}/spades/a.png` },
+                        { name: 'King of Hearts', url: `${basePath}/hearts/k.png` },
+                        { name: 'Queen of Diamonds', url: `${basePath}/diamonds/q.png` },
+                        { name: 'Jack of Clubs', url: `${basePath}/clubs/j.png` },
+                        { name: 'Red Joker', url: `${basePath}/joker/r.png` }
+                    ]
+                };
+            });
+        }
+
+        function normalizeRacersManifest(data) {
+            if (!data) return defaultHorses;
+            // Accepts array or object structure from racers.json
+            const items = Array.isArray(data) ? data : (data.racers || data.horses || [data]);
+            return items.map((item, index) => {
+                const id = item.id || item.key || (item.name ? item.name.toLowerCase().replace(/\s+/g, '') : `racer-${index}`);
+                const basePath = item.path ? (item.path.startsWith('http') ? item.path : `${RAW_BASE}${item.path}`) : `${RAW_BASE}data/horses/${id}`;
+                const price = item.price !== undefined ? item.price : (id === 'myhero' ? 300 : (id === 'standard' ? 0 : 200));
+                return {
+                    id: id,
+                    name: item.name || item.title || `${id.charAt(0).toUpperCase() + id.slice(1)} Racers`,
+                    description: item.description || `Racers and steeds scanned from racers.json (${id}).`,
+                    price: price,
+                    badge: item.badge || (price === 0 ? 'Default' : 'Scanned'),
+                    previewItems: item.previewItems || [
+                        { name: 'Racer 1', url: `${basePath}/1.png` },
+                        { name: 'Racer 2', url: `${basePath}/2.png` },
+                        { name: 'Racer 3', url: `${basePath}/3.png` }
+                    ]
+                };
+            });
+        }
+
+        function normalizeDiceManifest(data) {
+            if (!data) return defaultDice;
+            // Accepts array or object structure from dice.json
+            const items = Array.isArray(data) ? data : (data.dice || data.styles || [data]);
+            return items.map((item, index) => {
+                const id = item.id || item.key || (item.name ? item.name.toLowerCase().replace(/\s+/g, '') : `dice-${index}`);
+                const basePath = item.path ? (item.path.startsWith('http') ? item.path : `${RAW_BASE}${item.path}`) : `${RAW_BASE}data/dice/${id}`;
+                return {
+                    id: id,
+                    name: item.name || item.title || `${id.charAt(0).toUpperCase() + id.slice(1)} Dice`,
+                    description: item.description || `Dice style scanned from dice.json (${id}).`,
+                    price: item.price !== undefined ? item.price : (id === 'standard' ? 0 : 100),
+                    badge: item.badge || (id === 'standard' ? 'Default' : 'Scanned'),
+                    previewImages: item.previewImages || Array.from({length: 6}, (_, i) => `${basePath}/${i + 1}.png`)
+                };
+            });
+        }
 
         function getBankroll() {
             const val = localStorage.getItem(BANKROLL_KEY);
@@ -251,41 +328,31 @@
             updateBankrollDisplay();
         }
 
-        function getSelectedDice() {
-            return localStorage.getItem(DICE_SELECTION_KEY) || 'standard';
-        }
-
+        function getSelectedDice() { return localStorage.getItem(DICE_SELECTION_KEY) || 'standard'; }
         function setSelectedDice(id) {
             localStorage.setItem(DICE_SELECTION_KEY, id);
             renderShop();
-            showToast('Dice style updated globally!');
+            showToast('Dice style equipped and synced globally!');
         }
 
-        function getSelectedCards() {
-            return localStorage.getItem(CARDS_SELECTION_KEY) || 'standard';
-        }
-
+        function getSelectedCards() { return localStorage.getItem(CARDS_SELECTION_KEY) || 'standard'; }
         function setSelectedCards(id) {
             localStorage.setItem(CARDS_SELECTION_KEY, id);
             renderShop();
-            showToast('Card deck style updated globally!');
+            showToast('Card deck equipped and synced globally!');
         }
 
-        function getSelectedHorses() {
-            return localStorage.getItem(HORSES_SELECTION_KEY) || 'standard';
-        }
-
+        function getSelectedHorses() { return localStorage.getItem(HORSES_SELECTION_KEY) || 'standard'; }
         function setSelectedHorses(id) {
             localStorage.setItem(HORSES_SELECTION_KEY, id);
             renderShop();
-            showToast('Horse style updated globally!');
+            showToast('Horse set equipped and synced globally!');
         }
 
         function getUnlockedDice() {
             const stored = localStorage.getItem(UNLOCKED_DICE_KEY);
             return stored ? JSON.parse(stored) : ['standard'];
         }
-
         function unlockDice(id) {
             const unlocked = getUnlockedDice();
             if (!unlocked.includes(id)) {
@@ -298,7 +365,6 @@
             const stored = localStorage.getItem(UNLOCKED_CARDS_KEY);
             return stored ? JSON.parse(stored) : ['standard'];
         }
-
         function unlockCards(id) {
             const unlocked = getUnlockedCards();
             if (!unlocked.includes(id)) {
@@ -311,7 +377,6 @@
             const stored = localStorage.getItem(UNLOCKED_HORSES_KEY);
             return stored ? JSON.parse(stored) : ['standard'];
         }
-
         function unlockHorses(id) {
             const unlocked = getUnlockedHorses();
             if (!unlocked.includes(id)) {
@@ -358,7 +423,6 @@
         function handleDiceAction(id, price) {
             const unlocked = getUnlockedDice();
             const currentBankroll = getBankroll();
-
             if (unlocked.includes(id)) {
                 setSelectedDice(id);
             } else {
@@ -366,9 +430,9 @@
                     setBankroll(currentBankroll - price);
                     unlockDice(id);
                     setSelectedDice(id);
-                    showToast(`Successfully purchased and equipped ${id} dice!`);
+                    showToast(`Purchased and equipped ${id} dice!`);
                 } else {
-                    showToast('Insufficient points in your bankroll!', true);
+                    showToast('Insufficient bankroll points!', true);
                 }
             }
         }
@@ -376,7 +440,6 @@
         function handleCardsAction(id, price) {
             const unlocked = getUnlockedCards();
             const currentBankroll = getBankroll();
-
             if (unlocked.includes(id)) {
                 setSelectedCards(id);
             } else {
@@ -384,9 +447,9 @@
                     setBankroll(currentBankroll - price);
                     unlockCards(id);
                     setSelectedCards(id);
-                    showToast(`Successfully purchased and equipped ${id} cards!`);
+                    showToast(`Purchased and equipped ${id} card set!`);
                 } else {
-                    showToast('Insufficient points in your bankroll!', true);
+                    showToast('Insufficient bankroll points!', true);
                 }
             }
         }
@@ -394,7 +457,6 @@
         function handleHorsesAction(id, price) {
             const unlocked = getUnlockedHorses();
             const currentBankroll = getBankroll();
-
             if (unlocked.includes(id)) {
                 setSelectedHorses(id);
             } else {
@@ -402,9 +464,9 @@
                     setBankroll(currentBankroll - price);
                     unlockHorses(id);
                     setSelectedHorses(id);
-                    showToast(`Successfully purchased and equipped ${id} horses!`);
+                    showToast(`Purchased and equipped ${id} steed set!`);
                 } else {
-                    showToast('Insufficient points in your bankroll!', true);
+                    showToast('Insufficient bankroll points!', true);
                 }
             }
         }
@@ -412,7 +474,7 @@
         function renderShop() {
             updateBankrollDisplay();
 
-            // Dice Grid
+            // 1. Dice Grid
             const selectedDice = getSelectedDice();
             const unlockedDice = getUnlockedDice();
             const diceContainer = document.getElementById('diceGrid');
@@ -448,9 +510,7 @@
                                 <p class="text-slate-400 text-sm mb-6">${item.description}</p>
                                 <div class="mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                                     <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Faces Preview (1-6)</div>
-                                    <div class="grid grid-cols-6 gap-2">
-                                        ${facesHtml}
-                                    </div>
+                                    <div class="grid grid-cols-6 gap-2">${facesHtml}</div>
                                 </div>
                             </div>
                             <div>${actionButton}</div>
@@ -459,7 +519,7 @@
                 }).join('');
             }
 
-            // Cards Grid
+            // 2. Cards Grid
             const selectedCards = getSelectedCards();
             const unlockedCards = getUnlockedCards();
             const cardsContainer = document.getElementById('cardsGrid');
@@ -494,10 +554,8 @@
                                 <h3 class="text-xl font-bold text-white mb-1">${item.name}</h3>
                                 <p class="text-slate-400 text-sm mb-6">${item.description}</p>
                                 <div class="mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Card Asset Previews (Back & Suits)</div>
-                                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                                        ${cardPreviewsHtml}
-                                    </div>
+                                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Card Asset Previews</div>
+                                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">${cardPreviewsHtml}</div>
                                 </div>
                             </div>
                             <div>${actionButton}</div>
@@ -506,7 +564,7 @@
                 }).join('');
             }
 
-            // Horses Grid
+            // 3. Horses Grid
             const selectedHorses = getSelectedHorses();
             const unlockedHorses = getUnlockedHorses();
             const horsesContainer = document.getElementById('horsesGrid');
@@ -520,7 +578,7 @@
                     if (isSelected) {
                         actionButton = `<button disabled class="w-full bg-amber-500/20 border border-amber-500/50 text-amber-400 font-bold py-3 px-4 rounded-xl cursor-default flex items-center justify-center space-x-2"><i class="fa-solid fa-check"></i><span>Currently Equipped</span></button>`;
                     } else if (isUnlocked) {
-                        actionButton = `<button onclick="handleHorsesAction('${item.id}', ${item.price})" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 font-bold py-3 px-4 rounded-xl transition shadow cursor-pointer">Equip Horses</button>`;
+                        actionButton = `<button onclick="handleHorsesAction('${item.id}', ${item.price})" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 font-bold py-3 px-4 rounded-xl transition shadow cursor-pointer">Equip Steed Set</button>`;
                     } else {
                         actionButton = `<button onclick="handleHorsesAction('${item.id}', ${item.price})" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold py-3 px-4 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer"><span>Unlock for ${item.price} pts</span></button>`;
                     }
@@ -528,7 +586,7 @@
                     const horsePreviewsHtml = item.previewItems.map(horse => `
                         <div class="text-center">
                             <div class="h-32 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden mb-1 p-2">
-                                <img src="${horse.url}" alt="${horse.name}" class="max-h-full object-contain filter drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/100x120/1e293b/f59e0b?text=Horse';">
+                                <img src="${horse.url}" alt="${horse.name}" class="max-h-full object-contain filter drop-shadow" onerror="this.onerror=null; this.src='https://placehold.co/100x120/1e293b/f59e0b?text=Steed';">
                             </div>
                             <span class="text-[10px] text-slate-400 font-medium truncate block">${horse.name}</span>
                         </div>
@@ -541,10 +599,8 @@
                                 <h3 class="text-xl font-bold text-white mb-1">${item.name}</h3>
                                 <p class="text-slate-400 text-sm mb-6">${item.description}</p>
                                 <div class="mb-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-                                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Horse Companion Previews (1-3)</div>
-                                    <div class="grid grid-cols-3 gap-2">
-                                        ${horsePreviewsHtml}
-                                    </div>
+                                    <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Horse Companions Preview</div>
+                                    <div class="grid grid-cols-3 gap-2">${horsePreviewsHtml}</div>
                                 </div>
                             </div>
                             <div>${actionButton}</div>
@@ -554,8 +610,24 @@
             }
         }
 
-        window.onload = function() {
+        async function refreshCatalogFromJSON() {
+            showToast('Scanning GitHub manifest files...');
+            const [rawCards, rawRacers, rawDice] = await Promise.all([
+                fetchManifest(CARDS_MANIFEST_URL),
+                fetchManifest(RACERS_MANIFEST_URL),
+                fetchManifest(DICE_MANIFEST_URL)
+            ]);
+
+            cardsCatalog = normalizeCardsManifest(rawCards);
+            horsesCatalog = normalizeRacersManifest(rawRacers);
+            diceCatalog = normalizeDiceManifest(rawDice);
+
             renderShop();
+            showToast('Item Shop catalogue updated from manifest files!');
+        }
+
+        window.onload = async function() {
+            await refreshCatalogFromJSON();
         };
     </script>
 </body>
