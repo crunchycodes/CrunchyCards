@@ -1,0 +1,24 @@
+{
+  "cards": [
+    {
+      "id": "standard",
+      "name": "Standard Deck",
+      "description": "Classic playing cards.",
+      "imagePath": "data/cards/standard/"
+    },
+    {
+      "id": "alice",
+      "name": "Alice",
+      "description": "Wonderland-themed playing cards.",
+      "imagePath": "data/cards/alice/",
+      "unlockCost": 500
+    },
+    {
+      "id": "cloisters",
+      "name": "Cloisters Deck",
+      "description": "Cloisters playing cards.",
+      "imagePath": "data/cards/cloisters/",
+      "unlockCost": 500
+    }
+  ]
+}
