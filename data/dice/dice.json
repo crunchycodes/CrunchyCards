@@ -1,0 +1,17 @@
+{
+  "dice": [
+    {
+      "id": "standard",
+      "name": "Standard",
+      "description": "Standard dice.",
+      "imagePath": "data/dice/standard/"
+    },
+    {
+      "id": "eggplant",
+      "name": "Eggplant",
+      "description": "Eggplant-themed dice.",
+      "imagePath": "data/dice/eggplant/",
+      "unlockCost": 500
+    }
+  ]
+}

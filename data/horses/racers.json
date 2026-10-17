@@ -1,0 +1,17 @@
+{
+  "horses": [
+    {
+      "id": "standard",
+      "name": "Standard",
+      "description": "Standard colored horses.",
+      "imagePath": "data/horses/standard/"
+    },
+    {
+      "id": "myhero",
+      "name": "My Hero",
+      "description": "MHA-themed racers.",
+      "imagePath": "data/horses/myhero/",
+      "unlockCost": 500
+    }
+  ]
+}
