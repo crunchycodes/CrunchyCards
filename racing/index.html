@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUNCHYCARDS - Royal Turf Horse Racing</title>
+    <title>CRUNCHYCASINO - Turf Racing</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -78,7 +78,7 @@
                 </div>
                 <div>
                     <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYDERBY</span>
-                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">CRUNCHYCARDS Turf Club</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">CRUNCHYCASINO Turf Club</span>
                 </div>
             </div>
 
@@ -119,10 +119,6 @@
                     <p class="text-slate-400 text-sm mt-1">Pick your stallion, place your wager, and watch the live race unfold on the turf!</p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <button onclick="resetBankrollIfLow()" class="flex items-center space-x-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 px-3 py-2 rounded-2xl text-xs text-slate-400 hover:text-amber-400 transition cursor-pointer">
-                        <i class="fa-solid fa-rotate-left"></i>
-                        <span>Refill Points</span>
-                    </button>
                     <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
                         <span class="text-slate-400">Equipped Set:</span>
                         <span id="equippedSetBadge" class="text-amber-400 font-bold uppercase">Standard</span>
@@ -155,7 +151,7 @@
                     </div>
                     <div class="text-xs sm:text-sm font-semibold text-amber-400 text-center sm:text-right flex items-center space-x-2">
                         <i class="fa-solid fa-bullhorn text-amber-500"></i>
-                        <span id="commentaryText">Welcome to CrunchyDerby! Place your bets on the horses below.</span>
+                        <span id="commentaryText">Welcome to CrunchyDerby! Place your bets on the racers below.</span>
                     </div>
                 </div>
 
@@ -272,7 +268,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-sm font-extrabold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
                         <i class="fa-solid fa-clock-rotate-left text-amber-500"></i>
-                        <span>Recent Turf History</span>
+                        <span>Recent Race History</span>
                     </h3>
                     <button onclick="clearHistory()" class="text-xs text-slate-500 hover:text-slate-300 transition">Clear Log</button>
                 </div>
@@ -325,9 +321,9 @@
                 { id: 1, name: 'Deku', odds: 2.0, label: '2:1', color: 'bg-emerald-500', textColor: 'text-emerald-400', icon: 'fa-bolt', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/1.png', description: 'Powered by One For All! High agility and determination with relentless momentum.' },
                 { id: 2, name: 'Shoto', odds: 3.5, label: '7:2', color: 'bg-cyan-500', textColor: 'text-cyan-400', icon: 'fa-snowflake', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/2.png', description: 'Half-Cold Half-Hot. Blends icy precision on corners with blazing speed.' },
                 { id: 3, name: 'Great Explosion Murder God Dynamight', odds: 5.0, label: '5:1', color: 'bg-amber-500', textColor: 'text-amber-400', icon: 'fa-fire', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/3.png', description: 'Explosive acceleration that dominates the middle lanes with pure intensity.' },
-                { id: 4, name: 'Uravity', odds: 8.0, label: '8:1', color: 'bg-pink-500', textColor: 'text-pink-400', icon: 'fa-hand-sparkles', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/4.png', description: 'Zero-Gravity stride that glides effortlessly over the emerald track.' },
-                { id: 5, name: 'Ingenium', odds: 12.0, label: '12:1', color: 'bg-blue-500', textColor: 'text-blue-400', icon: 'fa-gauge-high', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/5.png', description: 'Turbo-engine boosted runner designed for pure linear velocity.' },
-                { id: 6, name: 'All Might', odds: 20.0, label: '20:1', color: 'bg-yellow-400', textColor: 'text-yellow-300', icon: 'fa-shield-halved', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/6.png', description: 'The Symbol of Peace! A legendary longshot delivering heroic comeback wins.' }
+                { id: 4, name: 'Froppy', odds: 8.0, label: '8:1', color: 'bg-pink-500', textColor: 'text-pink-400', icon: 'fa-hand-sparkles', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/4.png', description: 'A standout, fan-favorite turf sprinter known for her exceptional agility, unusual physical quirks, and remarkable consistency in wet track conditions.' },
+                { id: 5, name: 'Uravity', odds: 12.0, label: '12:1', color: 'bg-blue-500', textColor: 'text-blue-400', icon: 'fa-gauge-high', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/5.png', description: 'Zero-Gravity stride that glides effortlessly over the emerald track.' },
+                { id: 6, name: 'Creati', odds: 20.0, label: '20:1', color: 'bg-yellow-400', textColor: 'text-yellow-300', icon: 'fa-shield-halved', img: 'https://raw.githubusercontent.com/crunchycodes/CrunchyCards/main/data/horses/myhero/6.png', description: 'A regal, elite-class classic distance closer known for tactical brilliance, immense stamina reserves, and a highly specific nutritional regimen.' }
             ]
         };
 
