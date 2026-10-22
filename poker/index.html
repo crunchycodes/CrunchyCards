@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUNCHYCARDS - 1v1 Texas Hold'em</title>
+    <title>CRUNCHYCASINO - Heads-Up Texas Hold 'Em</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,13 +22,18 @@
             border-radius: 0.75rem;
         }
         .poker-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
             animation: cardDeal 0.3s ease-out forwards;
+        }
+        .winning-card {
+            box-shadow: 0 0 15px #f59e0b, 0 0 30px #f59e0b;
+            transform: scale(1.08) translateY(-4px);
+            border: 2px solid #f59e0b;
         }
         @keyframes cardDeal {
             from {
                 opacity: 0;
-                transform: translateY(-20px) scale(0.95);
+                transform: translateY(-20px) scale(0.9);
             }
             to {
                 opacity: 1;
@@ -43,11 +48,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                    <i class="fa-solid fa-crown text-slate-950 text-xl font-bold"></i>
+                    <i class="fa-solid fa-spade text-slate-950 text-xl font-bold"></i>
                 </div>
                 <div>
-                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">TEXAS HOLD'EM</span>
-                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">CRUNCHYCARDS Casino</span>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCASINO</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">Texas Hold 'Em Poker</span>
                 </div>
             </div>
 
@@ -72,16 +77,16 @@
     </header>
 
     <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        
+
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden mb-8">
             <div class="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
             <div class="flex flex-col sm:flex-row items-center justify-between mb-6 pb-4 border-b border-slate-800 gap-4">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
-                        <span>Heads-Up Texas Hold'em (1v1)</span>
+                        <span>Heads-Up Texas Hold 'Em</span>
                     </h1>
-                    <p class="text-slate-400 text-sm mt-1">Play heads-up poker against the dealer bot. Make the best 5-card hand!</p>
+                    <p class="text-slate-400 text-sm mt-1">Outplay the AI dealer or form the best 5-card poker hand!</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <div class="flex items-center space-x-2 bg-slate-950 border border-slate-800 px-4 py-2 rounded-2xl text-xs">
@@ -92,57 +97,70 @@
             </div>
 
             <!-- Custom Notification Box -->
-            <div id="messageBox" class="hidden mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-2xl text-sm flex items-center space-x-3">
-                <i class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
-                <span id="messageText">Notification message here</span>
+            <div id="messageBox" class="hidden mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-4 py-3 rounded-2xl text-sm flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-circle-info text-amber-400 text-lg"></i>
+                    <span id="messageText">Notification message here</span>
+                </div>
+                <button onclick="hideMessage()" class="text-amber-400 hover:text-amber-200"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- Buy-in / Betting Section -->
+            <!-- Pre-Game / Buy-in Setup Controls -->
             <div id="bettingSection" class="mb-8 bg-slate-950/80 border border-amber-500/40 rounded-2xl p-6 backdrop-blur flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
                 <div>
                     <h3 class="text-lg font-extrabold text-amber-400 flex items-center space-x-2">
                         <i class="fa-solid fa-coins"></i>
-                        <span>Post Blinds & Buy-In</span>
+                        <span>Start New Hand</span>
                     </h3>
-                    <p class="text-slate-400 text-xs mt-1">Small blind is 10 pts, Big blind (your buy-in) is 20 pts to start pre-flop.</p>
+                    <p class="text-slate-400 text-xs mt-1">Post Small Blind (10 pts) and Big Blind (20 pts) to deal.</p>
                 </div>
                 <div class="flex items-center space-x-3 w-full sm:w-auto">
-                    <button onclick="startHoldemHand()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-amber-500/20 cursor-pointer whitespace-nowrap">
-                        Deal New Hand
+                    <button onclick="startNewHand()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-8 py-3 rounded-xl text-sm transition shadow-lg shadow-amber-500/20 cursor-pointer whitespace-nowrap">
+                        Deal Hand (20 pts BB)
                     </button>
                 </div>
             </div>
 
-            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-3xl p-6 sm:p-8 mb-6 min-h-[480px] flex flex-col justify-between shadow-inner relative">
-                
-                <!-- Dealer Bot Section -->
+            <!-- Poker Felt Table -->
+            <div class="bg-emerald-950/40 border border-emerald-900/50 rounded-3xl p-6 sm:p-8 mb-6 min-h-[500px] flex flex-col justify-between shadow-inner relative">
+
+                <!-- Dealer / Opponent Section -->
                 <div>
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase flex items-center space-x-2">
                             <i class="fa-solid fa-robot"></i>
-                            <span>Dealer Bot</span>
+                            <span>Opponent (Dealer)</span>
                         </span>
-                        <div class="flex items-center space-x-2">
-                            <span id="dealerStatus" class="text-xs text-slate-300 bg-emerald-900/60 px-2.5 py-1 rounded-lg">Waiting</span>
-                            <span id="dealerChips" class="text-xs font-extrabold text-amber-400 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Chips: 500</span>
-                        </div>
+                        <span id="opponentStatus" class="text-xs font-bold text-slate-300 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Waiting</span>
                     </div>
-                    <div id="dealerCards" class="flex flex-wrap gap-3 min-h-[112px]">
+                    <div id="opponentCards" class="flex flex-wrap gap-3 min-h-[112px]">
                         <div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>
                     </div>
                 </div>
 
-                <!-- Community Cards & Pot -->
-                <div class="my-6 py-4 border-y border-emerald-900/40 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
-                    <div>
-                        <div class="text-[10px] uppercase font-bold text-emerald-400/80 mb-2">Community Cards (<span id="handStage" class="text-amber-400">Pre-Flop</span>)</div>
-                        <div id="communityCards" class="flex flex-wrap gap-2.5 min-h-[96px]">
-                            <div class="w-16 h-24 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-[10px]">None</div>
+                <!-- Community Cards & Pot Info -->
+                <div class="my-6 py-4 border-y border-emerald-900/40 flex flex-col items-center justify-center gap-4">
+                    <div class="flex items-center justify-between w-full px-2 text-xs">
+                        <div class="flex items-center space-x-2 text-emerald-400/80">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span id="phaseDisplay" class="font-bold text-amber-400 uppercase tracking-wider">PRE-FLOP</span>
+                        </div>
+                        <div class="bg-slate-950/90 border border-amber-500/50 px-4 py-1.5 rounded-full shadow-lg">
+                            <span class="text-slate-400 font-medium">TOTAL POT: </span>
+                            <span id="potDisplay" class="text-amber-400 font-extrabold text-sm">0 pts</span>
+                        </div>
+                        <div class="text-emerald-400/80">
+                            Current Bet: <span id="currentBetDisplay" class="text-amber-400 font-bold">0 pts</span>
                         </div>
                     </div>
-                    <div class="bg-emerald-900/40 border border-emerald-800/60 rounded-2xl px-5 py-3 text-center shadow-inner">
-                        <div class="text-[10px] uppercase font-bold text-emerald-300">Pot Total</div>
-                        <div id="potDisplay" class="text-xl font-extrabold text-amber-400">0 pts</div>
+
+                    <!-- Community Cards Slot -->
+                    <div id="communityCards" class="flex flex-wrap justify-center gap-3 min-h-[112px]">
+                        <div class="w-20 h-28 bg-emerald-900/20 border border-emerald-800/40 rounded-xl flex items-center justify-center text-emerald-700/40 text-xs">Flop</div>
+                        <div class="w-20 h-28 bg-emerald-900/20 border border-emerald-800/40 rounded-xl flex items-center justify-center text-emerald-700/40 text-xs">Flop</div>
+                        <div class="w-20 h-28 bg-emerald-900/20 border border-emerald-800/40 rounded-xl flex items-center justify-center text-emerald-700/40 text-xs">Flop</div>
+                        <div class="w-20 h-28 bg-emerald-900/20 border border-emerald-800/40 rounded-xl flex items-center justify-center text-emerald-700/40 text-xs">Turn</div>
+                        <div class="w-20 h-28 bg-emerald-900/20 border border-emerald-800/40 rounded-xl flex items-center justify-center text-emerald-700/40 text-xs">River</div>
                     </div>
                 </div>
 
@@ -153,10 +171,7 @@
                             <i class="fa-solid fa-user"></i>
                             <span>Your Hand</span>
                         </span>
-                        <div class="flex items-center space-x-2">
-                            <span id="playerBestHand" class="text-xs font-bold text-amber-300 bg-emerald-900/60 px-2.5 py-1 rounded-lg">Hand: -</span>
-                            <span id="playerChips" class="text-xs font-extrabold text-amber-400 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Chips: 500</span>
-                        </div>
+                        <span id="playerHandRank" class="text-xs font-extrabold text-amber-400 bg-emerald-900/40 px-3 py-1 rounded-xl border border-emerald-800/60">Hand: -</span>
                     </div>
                     <div id="playerCards" class="flex flex-wrap gap-3 min-h-[112px]">
                         <div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>
@@ -165,19 +180,24 @@
 
             </div>
 
-            <div id="actionControls" class="hidden flex flex-wrap items-center justify-center gap-3">
-                <button onclick="playerFold()" class="bg-red-900/80 hover:bg-red-800 text-red-200 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer border border-red-700">
-                    <i class="fa-solid fa-flag"></i>
-                    <span>Fold</span>
-                </button>
-                <button id="checkCallBtn" onclick="playerCheckOrCall()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer">
-                    <i class="fa-solid fa-check"></i>
-                    <span id="checkCallLabel">Call 10 pts</span>
-                </button>
-                <button onclick="playerRaise()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer border border-amber-500/40">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                    <span>Raise (+20 pts)</span>
-                </button>
+            <!-- In-Game Action Controls -->
+            <div id="actionControls" class="hidden flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <button id="foldBtn" onclick="playerFold()" class="flex-1 sm:flex-none bg-rose-950/80 hover:bg-rose-900 border border-rose-800/60 text-rose-300 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg cursor-pointer">
+                        Fold
+                    </button>
+                    <button id="checkCallBtn" onclick="playerCheckCall()" class="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-6 py-3 rounded-2xl text-sm transition shadow-lg cursor-pointer border border-slate-700">
+                        Check / Call
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <input type="number" id="raiseAmountInput" min="20" step="10" class="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-amber-400 font-bold text-sm w-28 focus:outline-none focus:border-amber-500">
+                    <button id="raiseBtn" onclick="playerRaise()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-6 py-3 rounded-2xl text-sm transition shadow-lg flex items-center space-x-2 cursor-pointer whitespace-nowrap">
+                        <i class="fa-solid fa-arrow-up"></i>
+                        <span id="raiseBtnText">Raise</span>
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -192,18 +212,23 @@
         const BANKROLL_KEY = 'crunchycards_bankroll';
         const CARDS_SELECTION_KEY = 'crunchycards_selected_cards';
 
+        const SMALL_BLIND = 10;
+        const BIG_BLIND = 20;
+
         let deck = [];
         let playerHand = [];
-        let dealerHand = [];
+        let opponentHand = [];
         let communityCards = [];
-        
-        let pot = 0;
-        let currentBet = 0; // Current bet to match in this betting round
-        let playerCurrentBet = 0;
-        let dealerCurrentBet = 0;
-        let gameStage = 'preflop'; // preflop, flop, turn, river, showdown
-        let handInProgress = false;
 
+        let pot = 0;
+        let currentBet = 0;
+        let playerInPot = 0;
+        let opponentInPot = 0;
+
+        let gamePhase = 'IDLE'; // 'PRE-FLOP', 'FLOP', 'TURN', 'RIVER', 'SHOWDOWN'
+        let gameInProgress = false;
+
+        // --- Bankroll & Asset Utilities ---
         function getBankroll() {
             const val = localStorage.getItem(BANKROLL_KEY);
             if (val === null) {
@@ -214,7 +239,7 @@
         }
 
         function setBankroll(amount) {
-            localStorage.setItem(BANKROLL_KEY, amount.toString());
+            localStorage.setItem(BANKROLL_KEY, Math.max(0, amount).toString());
             updateBankrollDisplay();
         }
 
@@ -232,7 +257,7 @@
             const style = getEquippedDeckStyle();
             const badge = document.getElementById('equippedDeckBadge');
             if (badge) {
-                badge.innerText = style === 'alice' ? 'Alice Wonderland' : 'Standard Deck';
+                badge.innerText = style === 'alice' ? 'Alice' : 'Standard Deck';
             }
         }
 
@@ -261,14 +286,13 @@
 
         function createDeck() {
             const suits = ['spades', 'hearts', 'diamonds', 'clubs'];
-            const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k', 'a'];
+            const ranks = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
             let newDeck = [];
             for (let s of suits) {
                 for (let r of ranks) {
                     newDeck.push({ suit: s, rank: r });
                 }
             }
-            // Shuffle
             for (let i = newDeck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [newDeck[i], newDeck[j]] = [newDeck[j], newDeck[i]];
@@ -276,257 +300,323 @@
             return newDeck;
         }
 
-        function startHoldemHand() {
+        function getRankValue(rank) {
+            switch (rank) {
+                case 'a': return 14;
+                case 'k': return 13;
+                case 'q': return 12;
+                case 'j': return 11;
+                default: return parseInt(rank, 10);
+            }
+        }
+
+        // Simplified Texas Hold 'Em Hand Evaluator
+        function evaluateHand(cards) {
+            if (cards.length < 5) return { score: 0, name: 'High Card' };
+
+            // Generate all combinations of 5 cards
+            function getCombinations(arr, k) {
+                if (k === 0) return [[]];
+                if (arr.length === 0) return [];
+                const head = arr[0];
+                const tail = arr.slice(1);
+                const withHead = getCombinations(tail, k - 1).map(c => [head, ...c]);
+                const withoutHead = getCombinations(tail, k);
+                return [...withHead, ...withoutHead];
+            }
+
+            const combos = getCombinations(cards, 5);
+            let bestScore = -1;
+            let bestName = 'High Card';
+
+            for (let combo of combos) {
+                const evalRes = evaluate5CardHand(combo);
+                if (evalRes.score > bestScore) {
+                    bestScore = evalRes.score;
+                    bestName = evalRes.name;
+                }
+            }
+
+            return { score: bestScore, name: bestName };
+        }
+
+        function evaluate5CardHand(hand) {
+            const ranks = hand.map(c => getRankValue(c.rank)).sort((a, b) => b - a);
+            const suits = hand.map(c => c.suit);
+
+            const isFlush = suits.every(s => s === suits[0]);
+            
+            let isStraight = false;
+            let straightHigh = 0;
+            if (new Set(ranks).size === 5) {
+                if (ranks[0] - ranks[4] === 4) {
+                    isStraight = true;
+                    straightHigh = ranks[0];
+                } else if (ranks[0] === 14 && ranks[1] === 5 && ranks[2] === 4 && ranks[3] === 3 && ranks[4] === 2) {
+                    isStraight = true;
+                    straightHigh = 5;
+                }
+            }
+
+            const counts = {};
+            ranks.forEach(r => counts[r] = (counts[r] || 0) + 1);
+            const countValues = Object.values(counts).sort((a, b) => b - a);
+
+            let score = 0;
+            let name = 'High Card';
+
+            if (isStraight && isFlush) {
+                name = straightHigh === 14 ? 'Royal Flush' : 'Straight Flush';
+                score = 8000000 + straightHigh;
+            } else if (countValues[0] === 4) {
+                name = 'Four of a Kind';
+                const fourRank = parseInt(Object.keys(counts).find(k => counts[k] === 4));
+                score = 7000000 + fourRank * 1000;
+            } else if (countValues[0] === 3 && countValues[1] === 2) {
+                name = 'Full House';
+                const threeRank = parseInt(Object.keys(counts).find(k => counts[k] === 3));
+                score = 6000000 + threeRank * 1000;
+            } else if (isFlush) {
+                name = 'Flush';
+                score = 5000000 + ranks[0] * 100 + ranks[1];
+            } else if (isStraight) {
+                name = 'Straight';
+                score = 4000000 + straightHigh;
+            } else if (countValues[0] === 3) {
+                name = 'Three of a Kind';
+                const threeRank = parseInt(Object.keys(counts).find(k => counts[k] === 3));
+                score = 3000000 + threeRank * 1000;
+            } else if (countValues[0] === 2 && countValues[1] === 2) {
+                name = 'Two Pair';
+                const pairs = Object.keys(counts).filter(k => counts[k] === 2).map(Number).sort((a,b)=>b-a);
+                score = 2000000 + pairs[0] * 1000 + pairs[1] * 10;
+            } else if (countValues[0] === 2) {
+                name = 'One Pair';
+                const pairRank = parseInt(Object.keys(counts).find(k => counts[k] === 2));
+                score = 1000000 + pairRank * 1000;
+            } else {
+                score = ranks[0] * 10000 + ranks[1] * 1000 + ranks[2] * 100 + ranks[3] * 10 + ranks[4];
+            }
+
+            return { score, name };
+        }
+
+        function startNewHand() {
             const bank = getBankroll();
-            if (bank < 30) {
-                showMessage('You need at least 30 points in your bankroll to post blinds and play!');
+            if (bank < BIG_BLIND) {
+                showMessage('You do not have enough points for the Big Blind (20 pts)!');
                 return;
             }
 
             hideMessage();
-            setBankroll(bank - 20); // Buy-in / Big blind from bankroll
-
             deck = createDeck();
             playerHand = [deck.pop(), deck.pop()];
-            dealerHand = [deck.pop(), deck.pop()];
+            opponentHand = [deck.pop(), deck.pop()];
             communityCards = [];
 
-            pot = 30; // Small blind (10) + Big blind (20)
-            currentBet = 20;
-            playerCurrentBet = 20;
-            dealerCurrentBet = 10;
-            gameStage = 'preflop';
-            handInProgress = true;
+            playerInPot = BIG_BLIND;
+            opponentInPot = SMALL_BLIND;
+            pot = playerInPot + opponentInPot;
+            currentBet = BIG_BLIND;
+
+            setBankroll(bank - BIG_BLIND);
+
+            gamePhase = 'PRE-FLOP';
+            gameInProgress = true;
 
             document.getElementById('bettingSection').classList.add('hidden');
             document.getElementById('actionControls').classList.remove('hidden');
-            document.getElementById('handStage').innerText = 'Pre-Flop';
-            document.getElementById('dealerStatus').innerText = 'Posted SB (10)';
+            document.getElementById('opponentStatus').innerText = 'In Hand';
 
-            renderTable(false);
-            updateActionButtons();
-        }
-
-        function playerCheckOrCall() {
-            if (!handInProgress) return;
-            const callAmount = currentBet - playerCurrentBet;
-            const bank = getBankroll();
-
-            if (callAmount > 0) {
-                if (bank < callAmount) {
-                    showMessage('Not enough points in bankroll to call!');
-                    return;
-                }
-                setBankroll(bank - callAmount);
-                pot += callAmount;
-                playerCurrentBet = currentBet;
-            }
-
-            advanceGameStage();
-        }
-
-        function playerRaise() {
-            if (!handInProgress) return;
-            const raiseAmt = 20;
-            const callAmount = currentBet - playerCurrentBet;
-            const totalCost = callAmount + raiseAmt;
-            const bank = getBankroll();
-
-            if (bank < totalCost) {
-                showMessage('Not enough points to raise!');
-                return;
-            }
-
-            setBankroll(bank - totalCost);
-            pot += totalCost;
-            currentBet += raiseAmt;
-            playerCurrentBet = currentBet;
-
-            document.getElementById('dealerStatus').innerText = 'Player Raised!';
-            advanceGameStage();
-        }
-
-        function playerFold() {
-            if (!handInProgress) return;
-            handInProgress = false;
-            document.getElementById('actionControls').classList.add('hidden');
-            document.getElementById('bettingSection').classList.remove('hidden');
-            renderTable(true);
-            showMessage('You folded. Dealer Bot wins the pot of ' + pot.toLocaleString() + ' pts!');
-        }
-
-        function advanceGameStage() {
-            // Dealer bot simple AI check/call
-            dealerCurrentBet = currentBet;
-
-            if (gameStage === 'preflop') {
-                gameStage = 'flop';
-                communityCards.push(deck.pop(), deck.pop(), deck.pop());
-                document.getElementById('handStage').innerText = 'Flop';
-                document.getElementById('dealerStatus').innerText = 'Checked / Called';
-            } else if (gameStage === 'flop') {
-                gameStage = 'turn';
-                communityCards.push(deck.pop());
-                document.getElementById('handStage').innerText = 'Turn';
-                document.getElementById('dealerStatus').innerText = 'Checked / Called';
-            } else if (gameStage === 'turn') {
-                gameStage = 'river';
-                communityCards.push(deck.pop());
-                document.getElementById('handStage').innerText = 'River';
-                document.getElementById('dealerStatus').innerText = 'Checked / Called';
-            } else if (gameStage === 'river') {
-                gameStage = 'showdown';
-                finishShowdown();
-                return;
-            }
-
-            currentBet = 0;
-            playerCurrentBet = 0;
-            dealerCurrentBet = 0;
             renderTable(false);
             updateActionButtons();
         }
 
         function updateActionButtons() {
-            const callAmount = currentBet - playerCurrentBet;
-            const label = document.getElementById('checkCallLabel');
+            const callAmount = currentBet - playerInPot;
+            const checkCallBtn = document.getElementById('checkCallBtn');
+            const raiseBtnText = document.getElementById('raiseBtnText');
+            const raiseInput = document.getElementById('raiseAmountInput');
+
             if (callAmount === 0) {
-                label.innerText = 'Check';
+                checkCallBtn.innerText = 'Check';
             } else {
-                label.innerText = `Call ${callAmount} pts`;
+                checkCallBtn.innerText = `Call (${callAmount} pts)`;
+            }
+
+            const minRaise = currentBet + BIG_BLIND;
+            raiseInput.min = minRaise;
+            raiseInput.value = minRaise;
+            raiseBtnText.innerText = `Raise to`;
+        }
+
+        function playerCheckCall() {
+            if (!gameInProgress) return;
+            const callAmount = currentBet - playerInPot;
+            const bank = getBankroll();
+
+            if (callAmount > bank) {
+                showMessage('Not enough points to call!');
+                return;
+            }
+
+            if (callAmount > 0) {
+                setBankroll(bank - callAmount);
+                playerInPot += callAmount;
+                pot += callAmount;
+            }
+
+            advanceGamePhase();
+        }
+
+        function playerRaise() {
+            if (!gameInProgress) return;
+            const raiseInput = document.getElementById('raiseAmountInput');
+            const targetBet = parseInt(raiseInput.value, 10);
+            const addedAmount = targetBet - playerInPot;
+            const bank = getBankroll();
+
+            if (isNaN(targetBet) || targetBet <= currentBet) {
+                showMessage(`Raise must be greater than current bet (${currentBet} pts)`);
+                return;
+            }
+
+            if (addedAmount > bank) {
+                showMessage('Not enough points to make that raise!');
+                return;
+            }
+
+            setBankroll(bank - addedAmount);
+            playerInPot += addedAmount;
+            pot += addedAmount;
+            currentBet = targetBet;
+
+            // Simple Opponent AI response to raise
+            opponentCallOrFold();
+        }
+
+        function opponentCallOrFold() {
+            const needed = currentBet - opponentInPot;
+            // Simple decision logic
+            const oppEval = evaluateHand([...opponentHand, ...communityCards]);
+            if (needed > 100 && oppEval.score < 1000000 && Math.random() < 0.6) {
+                // Opponent folds
+                endHand('Opponent folded! You win the pot.', 'PLAYER');
+            } else {
+                // Opponent calls
+                opponentInPot += needed;
+                pot += needed;
+                document.getElementById('opponentStatus').innerText = `Called ${needed} pts`;
+                advanceGamePhase();
             }
         }
 
-        function finishShowdown() {
-            handInProgress = false;
-            document.getElementById('actionControls').classList.add('hidden');
-            document.getElementById('bettingSection').classList.remove('hidden');
-            document.getElementById('handStage').innerText = 'Showdown';
-            document.getElementById('dealerStatus').innerText = 'Revealed';
+        function playerFold() {
+            if (!gameInProgress) return;
+            endHand('You folded! Opponent takes the pot.', 'OPPONENT');
+        }
 
+        function advanceGamePhase() {
+            if (!gameInProgress) return;
+
+            if (gamePhase === 'PRE-FLOP') {
+                gamePhase = 'FLOP';
+                communityCards = [deck.pop(), deck.pop(), deck.pop()];
+            } else if (gamePhase === 'FLOP') {
+                gamePhase = 'TURN';
+                communityCards.push(deck.pop());
+            } else if (gamePhase === 'TURN') {
+                gamePhase = 'RIVER';
+                communityCards.push(deck.pop());
+            } else if (gamePhase === 'RIVER') {
+                gamePhase = 'SHOWDOWN';
+                handleShowdown();
+                return;
+            }
+
+            currentBet = 0;
+            playerInPot = 0;
+            opponentInPot = 0;
+
+            renderTable(false);
+            updateActionButtons();
+        }
+
+        function handleShowdown() {
+            gameInProgress = false;
             renderTable(true);
 
-            const pEval = evaluateBestHand(playerHand.concat(communityCards));
-            const dEval = evaluateBestHand(dealerHand.concat(communityCards));
+            const pEval = evaluateHand([...playerHand, ...communityCards]);
+            const oEval = evaluateHand([...opponentHand, ...communityCards]);
 
-            document.getElementById('playerBestHand').innerText = 'Hand: ' + pEval.name;
+            document.getElementById('playerHandRank').innerText = `Hand: ${pEval.name}`;
+            document.getElementById('opponentStatus').innerText = `Hand: ${oEval.name}`;
 
-            let resultMsg = '';
-            if (pEval.score > dEval.score) {
-                let winnings = pot;
-                setBankroll(getBankroll() + winnings);
-                resultMsg = `You win the showdown with a ${pEval.name}! Collected ${winnings.toLocaleString()} pts.`;
-            } else if (pEval.score < dEval.score) {
-                resultMsg = `Dealer Bot wins with a ${dEval.name}. Better luck next hand!`;
+            if (pEval.score > oEval.score) {
+                setBankroll(getBankroll() + pot);
+                endHand(`Showdown Win! Your ${pEval.name} beats ${oEval.name}! Collected ${pot.toLocaleString()} pts.`, 'PLAYER');
+            } else if (oEval.score > pEval.score) {
+                endHand(`Showdown Loss! Opponent's ${oEval.name} beats your ${pEval.name}.`, 'OPPONENT');
             } else {
-                let refund = Math.floor(pot / 2);
-                setBankroll(getBankroll() + refund);
-                resultMsg = `Split Pot! Both have equivalent hands. Refunded ${refund.toLocaleString()} pts.`;
+                const split = Math.floor(pot / 2);
+                setBankroll(getBankroll() + split);
+                endHand(`Split Pot! Both had ${pEval.name}. Returned ${split.toLocaleString()} pts.`, 'SPLIT');
             }
-            showMessage(resultMsg);
         }
 
-        // Poker Hand Evaluator (Simplified scoring for 1v1 Texas Hold'em)
-        function evaluateBestHand(cards) {
-            const rankValues = { '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'j':11, 'q':12, 'k':13, 'a':14 };
-            
-            // Get all combinations of 5 cards from 7 available
-            let allCombs = getCombinations(cards, 5);
-            let bestScore = -1;
-            let bestName = 'High Card';
-
-            for (let comb of allCombs) {
-                let res = scoreFiveCardHand(comb, rankValues);
-                if (res.score > bestScore) {
-                    bestScore = res.score;
-                    bestName = res.name;
-                }
-            }
-            return { score: bestScore, name: bestName };
+        function endHand(msg, winner) {
+            gameInProgress = false;
+            document.getElementById('actionControls').classList.add('hidden');
+            document.getElementById('bettingSection').classList.remove('hidden');
+            showMessage(msg);
         }
 
-        function getCombinations(arr, k) {
-            let i, j, subscripts, ret = [];
-            if (k <= 0 || k > arr.length) return [];
-            if (k === arr.length) return [arr];
-            if (k === 1) return arr.map(el => [el]);
-            for (let i = 0; i < arr.length - k + 1; i++) {
-                let tail = getCombinations(arr.slice(i + 1), k - 1);
-                for (let t of tail) {
-                    ret.push([arr[i]].concat(t));
-                }
-            }
-            return ret;
-        }
-
-        function scoreFiveCardHand(cards, rankValues) {
-            let values = cards.map(c => rankValues[c.rank]).sort((a, b) => b - a);
-            let suits = cards.map(c => c.suit);
-            let isFlush = suits.every(s => s === suits[0]);
-
-            let isStraight = false;
-            // Check regular straight
-            if (values[0] - values[4] === 4 && new Set(values).size === 5) {
-                isStraight = true;
-            }
-            // Check A-5 straight
-            if (JSON.stringify(values) === JSON.stringify([14, 5, 4, 3, 2])) {
-                isStraight = true;
-                values = [5, 4, 3, 2, 1]; // low ace
-            }
-
-            let counts = {};
-            for (let v of values) counts[v] = (counts[v] || 0) + 1;
-            let freq = Object.values(counts).sort((a, b) => b - a);
-            let uniqueVals = Object.keys(counts).map(Number).sort((a, b) => counts[b] - counts[a] || b - a);
-
-            let baseScore = values[0] + values[1]/15 + values[2]/225 + values[3]/3375 + values[4]/50625;
-
-            if (isFlush && isStraight) return { score: 8000000 + baseScore, name: 'Straight Flush' };
-            if (freq[0] === 4) return { score: 7000000 + baseScore, name: 'Four of a Kind' };
-            if (freq[0] === 3 && freq[1] === 2) return { score: 6000000 + baseScore, name: 'Full House' };
-            if (isFlush) return { score: 5000000 + baseScore, name: 'Flush' };
-            if (isStraight) return { score: 4000000 + baseScore, name: 'Straight' };
-            if (freq[0] === 3) return { score: 3000000 + baseScore, name: 'Three of a Kind' };
-            if (freq[0] === 2 && freq[1] === 2) return { score: 2000000 + baseScore, name: 'Two Pair' };
-            if (freq[0] === 2) return { score: 1000000 + baseScore, name: 'One Pair' };
-            return { score: baseScore, name: 'High Card' };
-        }
-
-        function renderTable(revealDealer) {
-            // Render Dealer Cards
-            const dealerEl = document.getElementById('dealerCards');
-            let dHtml = '';
-            dealerHand.forEach((card, idx) => {
-                if (idx === 1 && !revealDealer && handInProgress) {
-                    dHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardBackUrl()}" alt="Face Down Card" class="w-full h-full card-img shadow"></div>`;
-                } else {
-                    dHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
-                }
-            });
-            dealerEl.innerHTML = dHtml;
-
-            // Render Community Cards
-            const commEl = document.getElementById('communityCards');
-            let cHtml = '';
-            if (communityCards.length === 0) {
-                cHtml = `<div class="w-16 h-24 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-[10px]">None</div>`;
-            } else {
-                communityCards.forEach(card => {
-                    cHtml += `<div class="w-16 h-24 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
-                });
-            }
-            commEl.innerHTML = cHtml;
-
+        function renderTable(revealOpponent) {
             // Render Player Cards
             const playerEl = document.getElementById('playerCards');
             let pHtml = '';
             playerHand.forEach(card => {
                 pHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
             });
-            playerEl.innerHTML = pHtml;
+            playerEl.innerHTML = pHtml || '<div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>';
 
+            // Render Opponent Cards
+            const oppEl = document.getElementById('opponentCards');
+            let oHtml = '';
+            opponentHand.forEach(card => {
+                if (!revealOpponent && gameInProgress) {
+                    oHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardBackUrl()}" alt="Face Down Card" class="w-full h-full card-img shadow"></div>`;
+                } else {
+                    oHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
+                }
+            });
+            oppEl.innerHTML = oHtml || '<div class="w-20 h-28 bg-emerald-900/30 border-2 border-emerald-800/60 rounded-xl flex items-center justify-center text-emerald-700/50 text-xs">Waiting</div>';
+
+            // Render Community Cards
+            const commEl = document.getElementById('communityCards');
+            let cHtml = '';
+            for (let i = 0; i < 5; i++) {
+                if (communityCards[i]) {
+                    const card = communityCards[i];
+                    cHtml += `<div class="w-20 h-28 poker-card"><img src="${getCardImageUrl(card.suit, card.rank)}" alt="${card.rank} of ${card.suit}" class="w-full h-full card-img shadow" onerror="this.onerror=null; this.src='https://placehold.co/80x110/1e293b/f59e0b?text=${card.rank.toUpperCase()}';"></div>`;
+                } else {
+                    const label = i < 3 ? 'Flop' : (i === 3 ? 'Turn' : 'River');
+                    cHtml += `<div class="w-20 h-28 bg-emerald-900/20 border border-emerald-800/40 rounded-xl flex items-center justify-center text-emerald-700/40 text-xs">${label}</div>`;
+                }
+            }
+            commEl.innerHTML = cHtml;
+
+            // Update Text Displays
             document.getElementById('potDisplay').innerText = pot.toLocaleString() + ' pts';
+            document.getElementById('currentBetDisplay').innerText = currentBet.toLocaleString() + ' pts';
+            document.getElementById('phaseDisplay').innerText = gamePhase;
+
+            if (playerHand.length > 0) {
+                const currentEval = evaluateHand([...playerHand, ...communityCards]);
+                document.getElementById('playerHandRank').innerText = `Hand: ${currentEval.name}`;
+            } else {
+                document.getElementById('playerHandRank').innerText = 'Hand: -';
+            }
         }
 
         window.onload = function() {
