@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUNCHYCARDS - Cho-Han Table</title>
+    <title>CRUNCHYCASINO - Cho-Han</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -43,8 +43,8 @@
                     <i class="fa-solid fa-dice text-slate-950 text-xl font-bold"></i>
                 </div>
                 <div>
-                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">CHO-HAN</span>
-                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">Japanese Dice Room</span>
+                    <span class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">CRUNCHYCASINO</span>
+                    <span class="block text-xs text-amber-500/80 font-semibold uppercase tracking-widest">Cho-Han</span>
                 </div>
             </div>
 
@@ -95,7 +95,7 @@
 
             <!-- Dice Area & Animated Cup -->
             <div class="bg-slate-950/80 border border-slate-800 rounded-3xl p-8 mb-8 text-center relative min-h-[280px] flex flex-col items-center justify-center shadow-inner overflow-hidden">
-                <div id="cupStatus" class="text-slate-400 text-sm font-medium mb-4">Place your bet and roll the cup!</div>
+                <div id="cupStatus" class="text-slate-400 text-sm font-medium mb-4">Place your bet and watch the dealter shake the cup!</div>
                 
                 <!-- Cup and Dice Container -->
                 <div id="cupContainer" class="relative w-40 h-40 flex items-center justify-center mb-6">
@@ -167,7 +167,7 @@
 
                 <button id="rollButton" onclick="rollDice()" class="w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold px-8 py-4 rounded-2xl transition shadow-xl shadow-amber-500/20 flex items-center justify-center space-x-3 text-base cursor-pointer">
                     <i class="fa-solid fa-dice text-lg"></i>
-                    <span>ROLL THE CUP</span>
+                    <span>ROLL THE DICE</span>
                 </button>
             </div>
         </div>
@@ -175,7 +175,7 @@
     </main>
 
     <footer class="border-t border-slate-800 bg-slate-900/50 py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 CRUNCHYCARDS Casino. Fully synced with your vault and equipment styles.</p>
+        <p>&copy; 2026 CRUNCHYCASINO.</p>
     </footer>
 
     <script>
@@ -215,7 +215,7 @@
             const style = getEquippedDiceStyle();
             const badge = document.getElementById('equippedDiceBadge');
             if (badge) {
-                badge.innerText = style === 'eggplant' ? 'Eggplant Royal' : 'Standard White';
+                badge.innerText = style === 'eggplant' ? 'Eggplant' : 'Standard White';
             }
         }
 
